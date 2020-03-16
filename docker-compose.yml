@@ -15,7 +15,7 @@ services:
         depends_on:
             - db
     dashboard:
-        image: parseplatform/parse-dashboard:latest
+        image: parseplatform/parse-dashboard:2.0.5
         command: parse-dashboard --dev
         volumes:
             - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
