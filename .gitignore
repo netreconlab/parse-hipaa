@@ -1,0 +1,7 @@
+*.DS_Store
+*.key
+*.pem
+*.srl
+*.crt
+*.csr
+docker-compose-private-debug.yml
