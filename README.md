@@ -13,7 +13,7 @@ The parse-server container will then attempt to connect to the postgres containe
 ```parse_1      | parse-server running on port 1337.
 parse_1      | publicServerURL: http://localhost:1337/parse, serverURL: http://parse:1337/parse
 parse_1      | GraphQL API running on http://localhost:1337/parsegraphql
-parse_1      | info: Parse LiveQuery Server starts running```
+parse_1      | info: Parse LiveQuery Server starts running
 ```
 You may also see(ignore these lines): 
 
