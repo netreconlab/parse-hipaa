@@ -38,3 +38,6 @@ services:
             PG_PARSE_USER: ${PG_PARSE_USER}
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
+    #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+    #volumes:
+    #    - ./data:/var/lib/postgresql/data
