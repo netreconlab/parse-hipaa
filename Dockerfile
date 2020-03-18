@@ -1,6 +1,11 @@
-FROM postgis/postgis:11-2.5
-MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
+FROM node:lts-alpine
 
-#Install additional scripts. These are run in abc order during initial start
-COPY ./setup-dbs.sh /docker-entrypoint-initdb.d/setup-dbs.sh
-RUN chmod +x /docker-entrypoint-initdb.d/setup-dbs.sh
+RUN mkdir parse
+#ADD . /parse/
+ADD ./package.json /parse/
+WORKDIR /parse
+RUN npm install
+
+EXPOSE 1337
+
+CMD [ "npm", "start" ]
