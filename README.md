@@ -33,3 +33,9 @@ Parse-dashboard is binded to your localhost on port 4040 and can be accessed as 
 Note that postgres is not binded to your interfaces and is only local to the docker virtual network. This was done on purpose as the parse and parse-desktop is already exposed. 
 
 If you want to persist the data in the database, you can uncomment the volume lines in [docker-compose](https://github.com/netreconlab/parse-postgres/blob/master/docker-compose.yml#L41)
+
+The mongo version for this isn't shown as there are many examples online on how to deploy with mongo and mongo is part of the default documentation for [parse-server](https://github.com/parse-community/parse-server). The purpose of this repo is to show how to integrate with postgres and provide something out-of-the-box like [parse-server-example](https://github.com/parse-community/parse-server-example).
+
+A parse-server BaaS such as this can be made HIPAA compliant by swapping out the "db" container for variants such as [postges]()(will post later) or [mongo](https://github.com/netreconlab/hipaa_mongodb).
+
+**Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
