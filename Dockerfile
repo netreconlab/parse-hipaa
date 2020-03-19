@@ -6,6 +6,6 @@ ADD ./package.json /parse/
 WORKDIR /parse
 RUN npm install
 
-EXPOSE 1337
+EXPOSE ${PORT}
 
 CMD [ "npm", "start" ]
