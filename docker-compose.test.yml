@@ -1,14 +1,24 @@
-sut:
-    build: .
-    dockerfile: Dockerfile.test
+version: '3.4'
+
+services:
+  sut:
+    build:
+      context: .
+      dockerfile: Dockerfile_test
     links:
         - parse
-        - dashboard
+#          - dashboard
     volumes:
-        - ./wait-for-parse.sh:/app/wait-for-parse.sh
-        - ./test.sh:/app/test.sh
-
-parse:
+        - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
+        - ./scripts/test.sh:/app/test.sh
+    depends_on:
+    - "parse"
+    #command: ["./wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+  parse:
+      #build:
+#      image: parse-postgres_parse:${tag:-latest}
+#      depends_on:
+#      - "db"
     build: .
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
@@ -23,14 +33,14 @@ parse:
     ports:
         - ${PORT}:${PORT}
     volumes:
-        - ./wait-for-postgres.sh:/parse/wait-for-postgres.sh
+        - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
         - ./index.js:/parse/index.js
         - ./cloud:/parse/cloud
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:
         - db
-    #depends_on:
-    #    - db
+    depends_on:
+        - db
     #parse-test:
     #    image : parseplatform/parse-server:latest
     #  environment:
@@ -43,7 +53,11 @@ parse:
     #    depends_on:
     #        - db
     #    command: npm run test
-dashboard:
+  dashboard:
+  #    build: .
+  #    image: parse-postgres_dashboard:${tag:-latest}
+  #    depends_on:
+  #    - "parse"
     image: parseplatform/parse-dashboard:2.0.5
     command: parse-dashboard --dev
     volumes:
@@ -52,16 +66,19 @@ dashboard:
         - 127.0.0.1:4040:4040
     links:
         - parse
-        #depends_on:
-        #    - parse
-db:
-    build: .
-    dockerfile: Dockerfile_postgis
+    depends_on:
+        - parse
+  db:
+  #    build: .
+  #    image: parse-postgres_db:${tag:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile_postgis
     environment:
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        PG_PARSE_USER: ${PG_PARSE_USER}
-        PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
-        PG_PARSE_DB: ${PG_PARSE_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PG_PARSE_USER: ${PG_PARSE_USER}
+      PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
+      PG_PARSE_DB: ${PG_PARSE_DB}
     #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
     #volumes:
     #    - ./data:/var/lib/postgresql/data

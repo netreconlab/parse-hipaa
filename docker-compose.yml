@@ -16,7 +16,7 @@ services:
         ports:
             - ${PORT}:${PORT}
         volumes:
-            - ./wait-for-postgres.sh:/parse/wait-for-postgres.sh
+            - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
             - ./index.js:/parse/index.js
             - ./cloud:/parse/cloud
         depends_on:
