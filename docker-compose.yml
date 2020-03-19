@@ -12,14 +12,16 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         ports:
             - ${PORT}:${PORT}
-        restart: always
         volumes:
+            - ./wait-for-postgres.sh:/parse/wait-for-postgres.sh
             - ./index.js:/parse/index.js
             - ./cloud:/parse/cloud
         depends_on:
             - db
+        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     dashboard:
         image: parseplatform/parse-dashboard:2.0.5
         command: parse-dashboard --dev

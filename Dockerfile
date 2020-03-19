@@ -1,5 +1,8 @@
 FROM node:lts-alpine
 
+RUN apk update; \
+  apk add postgresql-client;
+
 RUN mkdir parse
 #ADD . /parse/
 ADD ./package.json /parse/
