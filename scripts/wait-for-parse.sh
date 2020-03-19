@@ -6,3 +6,5 @@ until curl --silent parse:1337/parse | grep -q 'unauthorized'; do
 done
 
 echo "ParseServer is ready, starting test..."
+
+#exec "$@"

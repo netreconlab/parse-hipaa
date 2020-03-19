@@ -7,7 +7,8 @@ services:
       dockerfile: Dockerfile_test
     links:
         - parse
-#          - dashboard
+        - dashboard
+        - db
     volumes:
         - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
         - ./scripts/test.sh:/app/test.sh
