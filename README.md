@@ -2,7 +2,7 @@
 
 Example of how to run [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. To get started simply type:
 
-```docker-compose up -d```
+```docker-compose up```
 
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will error a few times because it can't connect to postgres (the "db") container. This is because postgres is still initializing, let it keep running and eventually you will see something like:
 

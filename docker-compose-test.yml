@@ -20,6 +20,18 @@ services:
             - ./cloud:/parse/cloud
         depends_on:
             - db
+    parse-test:
+        image : parseplatform/parse-server:latest
+        environment:
+            PARSE_SERVER_TEST_DB: postgres
+            PARSE_SERVER_TEST_DATABASE_URI: postgres://db:5432/parse_server_postgres_adapter_test_database
+            #PARSE_SERVER_LOG_LEVEL: debug
+        ports:
+            - 127.0.0.1:1400:${PORT}
+        restart: always
+        depends_on:
+            - db
+        command: npm run test
     dashboard:
         image: parseplatform/parse-dashboard:2.0.5
         command: parse-dashboard --dev

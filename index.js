@@ -1,7 +1,7 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
 
-var express = require('express');
+const express = require('express');
 const { default: ParseServer, ParseGraphQLServer } = require('parse-server');
 var path = require('path');
 var databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.MONGODB_URI;
