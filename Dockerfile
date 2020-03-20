@@ -9,7 +9,7 @@ ADD ./cloud /parse/cloud
 WORKDIR /parse
 RUN npm install
 
-#ADD ./scripts/wait-for-postgres.sh /parse/
+ADD ./scripts/wait-for-postgres.sh /parse/
 
 EXPOSE ${PORT}
 

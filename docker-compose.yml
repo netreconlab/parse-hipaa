@@ -22,8 +22,8 @@ services:
         restart: always
         depends_on:
             - db
-        command: npm start
-        #command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
+        #command: npm start
+        command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     dashboard:
         image: parseplatform/parse-dashboard:2.0.5
         command: parse-dashboard --dev
