@@ -1,6 +1,6 @@
-version: '3.4'
+#version: '3.1'
 
-services:
+#services:
   sut:
     build: .
       #context: .
@@ -8,19 +8,19 @@ services:
     links:
         - parse
         - parse-test
-        #- db
+        - db
         - dashboard
         - dashboard-test
     volumes:
     #    - ./test/results:/results
         - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
         - ./scripts/test.sh:/app/test.sh
-    depends_on:
-      - parse
-      - parse-test
-      - db
-      - dashboard
-      - dashboard-test
+#    depends_on:
+#      - parse
+#      - parse-test
+#      - db
+#      - dashboard
+#      - dashboard-test
     #command: ["bash", "/app/test.sh"]
     #command: ["./wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
@@ -48,8 +48,8 @@ services:
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:
         - db
-    depends_on:
-        - db
+#    depends_on:
+#        - db
   parse-test:
     image : parseplatform/parse-server:latest
     environment:
@@ -66,8 +66,8 @@ services:
     #volumes:
     #    - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
-    depends_on:
-        - db
+#    depends_on:
+#        - db
     #command: ["./wait-for-postgres.sh", "db", "npm", "run", "test"]
   dashboard:
   #    build: .
@@ -102,9 +102,10 @@ services:
   db:
   #    build: .
   #    image: parse-postgres_db:${tag:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile_postgis
+    build: .
+    dockerfile: Dockerfile_postgis
+      #context: .
+      #dockerfile: Dockerfile_postgis
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PG_PARSE_USER: ${PG_PARSE_USER}
