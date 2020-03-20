@@ -1,10 +1,10 @@
-#version: '3.1'
+#version: '3.4'
 
 #services:
   sut:
     build: .
       #context: .
-      #dockerfile: Dockerfile_test
+    dockerfile: Dockerfile_test
     links:
         - parse
         - parse-test
@@ -45,7 +45,7 @@
         - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
         - ./index.js:/parse/index.js
         - ./cloud:/parse/cloud
-    command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
+    command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
         - db
 #    depends_on:
