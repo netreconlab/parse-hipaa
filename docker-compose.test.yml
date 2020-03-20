@@ -1,26 +1,27 @@
-#version: '3.4'
+version: '3.4'
 
-#services:
+services:
   sut:
-    build: .
-      #context: .
-    dockerfile: Dockerfile_test
+    #build: .
+    build:
+      context: .
+      dockerfile: Dockerfile_test
     links:
         - parse
         - parse-test
-        - db
+        #- db
         - dashboard
         - dashboard-test
     volumes:
     #    - ./test/results:/results
         - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
         - ./scripts/test.sh:/app/test.sh
-#    depends_on:
-#      - parse
-#      - parse-test
+    depends_on:
+      - parse
+      - parse-test
 #      - db
-#      - dashboard
-#      - dashboard-test
+      - dashboard
+      - dashboard-test
     #command: ["bash", "/app/test.sh"]
     #command: ["./wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
@@ -48,8 +49,8 @@
     command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
         - db
-#    depends_on:
-#        - db
+    depends_on:
+        - db
   parse-test:
     image : parseplatform/parse-server:latest
     environment:
@@ -66,8 +67,8 @@
     #volumes:
     #    - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
-#    depends_on:
-#        - db
+    depends_on:
+        - db
     #command: ["./wait-for-postgres.sh", "db", "npm", "run", "test"]
   dashboard:
   #    build: .
@@ -82,8 +83,8 @@
         - 4040:4040
     links:
         - parse
-#    depends_on:
-#        - parse
+    depends_on:
+        - parse
   dashboard-test:
   #    build: .
   #    image: parse-postgres_dashboard:${tag:-latest}
@@ -97,15 +98,15 @@
         - 8040:4040
     links:
         - parse-test
-#    depends_on:
-#        - parse-test
+    depends_on:
+        - parse-test
   db:
   #    build: .
   #    image: parse-postgres_db:${tag:-latest}
-    build: .
-    dockerfile: Dockerfile_postgis
-      #context: .
-      #dockerfile: Dockerfile_postgis
+    build:
+    #dockerfile: Dockerfile_postgis
+      context: .
+      dockerfile: Dockerfile_postgis
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PG_PARSE_USER: ${PG_PARSE_USER}
