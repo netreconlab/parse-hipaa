@@ -1,0 +1,7 @@
+FROM parseplatform/parse-server:latest
+MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
+
+USER root
+
+RUN apk update; \
+  apk add bash;

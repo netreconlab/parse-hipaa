@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "Yooooooooooooooooooooooo"
-
 if curl --silent -X POST \
 -H "X-Parse-Application-Id: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2" \
 -H "Content-Type: application/json" \
