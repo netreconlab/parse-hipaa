@@ -12,9 +12,9 @@ services:
         - dashboard
         - dashboard-test
     volumes:
-        - ./test/results:/results
-    #    - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
-    #    - ./scripts/test.sh:/app/test.sh
+    #    - ./test/results:/results
+        - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
+        - ./scripts/test.sh:/app/test.sh
     depends_on:
       - parse
       - parse-test
