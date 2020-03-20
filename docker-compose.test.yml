@@ -11,7 +11,8 @@ services:
         #- db
         - dashboard
         - dashboard-test
-    #volumes:
+    volumes:
+        - ./test/results:/results
     #    - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
     #    - ./scripts/test.sh:/app/test.sh
     depends_on:
