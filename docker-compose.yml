@@ -15,13 +15,15 @@ services:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         ports:
             - ${PORT}:${PORT}
-        volumes:
-            - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-            - ./index.js:/parse/index.js
-            - ./cloud:/parse/cloud
+        #volumes:
+        #    - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
+        #    - ./index.js:/parse/index.js
+        #    - ./cloud:/parse/cloud
+        restart: always
         depends_on:
             - db
-        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
+        command: npm start
+        #command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     dashboard:
         image: parseplatform/parse-dashboard:2.0.5
         command: parse-dashboard --dev
