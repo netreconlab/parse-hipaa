@@ -1,23 +1,25 @@
-version: '3.4'
+#version: '3.4'
 
-services:
+#services:
   sut:
-    build:
-      context: .
-      dockerfile: Dockerfile_test
+    build: .
+      #context: .
+    dockerfile: Dockerfile_test
     links:
         - parse
-        - dashboard
+        - parse-test
         - db
+        - dashboard
+        - dashboard-test
     volumes:
         - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
         - ./scripts/test.sh:/app/test.sh
-    depends_on:
-      - "parse"
-      - "parse-test"
-      - "db"
-      - "dashboard"
-      - "dashboard-test"
+#    depends_on:
+#      - "parse"
+#      - "parse-test"
+#      - "db"
+#      - "dashboard"
+#      - "dashboard-test"
     #command: ["./wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
       #build:
@@ -44,8 +46,8 @@ services:
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:
         - db
-    depends_on:
-        - db
+#    depends_on:
+#        - db
   parse-test:
     image : parseplatform/parse-server:latest
     environment:
@@ -57,11 +59,13 @@ services:
       PARSE_SERVER_DATABASE_URI: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/parse_server_postgres_adapter_test_database
     ports:
       - 1400:1337
+    links:
+        - db
     #volumes:
     #    - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
-    depends_on:
-        - db
+#    depends_on:
+#        - db
     #command: ["./wait-for-postgres.sh", "db", "npm", "run", "test"]
   dashboard:
   #    build: .
@@ -76,8 +80,8 @@ services:
         - 4040:4040
     links:
         - parse
-    depends_on:
-        - parse
+#    depends_on:
+#        - parse
   dashboard-test:
   #    build: .
   #    image: parse-postgres_dashboard:${tag:-latest}
@@ -91,14 +95,14 @@ services:
         - 8040:4040
     links:
         - parse-test
-    depends_on:
-        - parse-test
+#    depends_on:
+#        - parse-test
   db:
   #    build: .
   #    image: parse-postgres_db:${tag:-latest}
-    build:
-      context: .
-      dockerfile: Dockerfile_postgis
+    build: .
+      #context: .
+    dockerfile: Dockerfile_postgis
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PG_PARSE_USER: ${PG_PARSE_USER}
