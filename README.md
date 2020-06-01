@@ -9,6 +9,10 @@ A parse-server BaaS such as this can be made HIPAA compliant by swapping out the
 
 ```docker-compose -f docker-compose.hipaa.yml up```
 
+If you would like to use the mongo version:
+
+```docker-compose -f docker-compose.hipaa.mongo.yml up```
+
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
 ## Getting started
