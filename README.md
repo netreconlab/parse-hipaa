@@ -4,6 +4,14 @@ Example of how to run [parse-server](https://github.com/parse-community/parse-se
 
 ```docker-compose up```
 
+## Can you use this image to make Parse a HIPAA compliant BaaS?
+A parse-server BaaS such as this can be made HIPAA compliant by swapping out the "db" container for variants such as [postges]()(will post later) or [mongo](https://github.com/netreconlab/hipaa_mongodb). To use a HIPAA compliant (includes the necessary auditing and logging, you will still need to mount to own encrypted drive and store the drive in a "safe" location, along with anything else HIPAA requires) version of parse-postgres, simply type:
+
+```docker-compose -f docker-compose.hipaa.yml up```
+
+**Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
+
+
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will error a few times because it can't connect to postgres (the "db") container. This is because postgres is still initializing, let it keep running and eventually you will see something like:
 
 ```db_1         | PostgreSQL init process complete; ready for start up.```
@@ -59,11 +67,6 @@ Default values for environment variables: `POSTGRES_PASSWORD, PG_PARSE_USER, PG_
 
 You can then make modifications using [psql](http://postgresguide.com/utilities/psql.html). Through psql, you can also add multiple databases and users to support a number of parse apps. Note that you will also need to add the respecting parse-server containers (copy parse container in the .yml and rename to your new app) along with the added app in [postgres-dashboard-config.json](https://github.com/netreconlab/parse-postgres/blob/master/parse-dashboard-config.json).
 
-
-## Can you use this image to make Parse a HIPAA compliant BaaS?
-A parse-server BaaS such as this can be made HIPAA compliant by swapping out the "db" container for variants such as [postges]()(will post later) or [mongo](https://github.com/netreconlab/hipaa_mongodb).
-
-**Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
 ## Is there a mongo version available?
 The mongo version for this isn't shown as there are many examples online on how to deploy with mongo and mongo is part of the default documentation for [parse-server](https://github.com/parse-community/parse-server). The purpose of this repo is to show how to integrate with postgres and provide something out-of-the-box like [parse-server-example](https://github.com/parse-community/parse-server-example).
