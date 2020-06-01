@@ -39,8 +39,6 @@ services:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
-        ports:
-            - 27017:27017
     #Uncomment volumes below to persist mongo data. Make sure to change directory to store data locally
    #     volumes:
    #         - /My/Encrypted/Drive/db:/data/db #Mount your own drive
