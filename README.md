@@ -11,7 +11,7 @@ A parse-server BaaS such as this can be made HIPAA compliant by swapping out the
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
-##Getting started
+## Getting started
 - ```docker-compose up```
 - or for HIPAA compliant version: ```docker-compose -f docker-compose.hipaa.yml up```
 
