@@ -1,6 +1,6 @@
 # parse-postgres
 
-Example of how to run [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, ([CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit)) uses parse-postgres along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). To get started simply type:
+Example of how to run [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-postgres along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). To get started simply type:
 
 ```docker-compose up```
 
