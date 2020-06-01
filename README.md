@@ -5,7 +5,7 @@ Example of how to run [parse-server](https://github.com/parse-community/parse-se
 ```docker-compose up```
 
 ## HIPAA compliant parse-postgres
-A parse-server BaaS such as this can be made HIPAA compliant by swapping out the "db" container for variants such as [postges](https://github.com/netreconlab/parse-postgres/blob/master/docker-compose.hipaa.yml)(included in this repo) or [mongo](https://github.com/netreconlab/hipaa_mongodb). To use a HIPAA compliant (includes the necessary auditing and logging, you will still need to mount to your own encrypted drive and store the drive in a "safe" location, along with anything else HIPAA requires) version of parse-postgres, simply type:
+A parse-server BaaS such as this can be made HIPAA compliant by swapping out the "db" container for variants such as [postges](https://github.com/netreconlab/parse-postgres/blob/master/docker-compose.hipaa.yml)(included in this repo) or [mongo](https://github.com/netreconlab/hipaa_mongodb). To use a HIPAA compliant (includes the necessary auditing and logging. You will still need to: use nginx for a TLS proxy, mount to your own encrypted drive, and store the drive in a "safe" location, along with anything else HIPAA requires) version of parse-postgres, simply type:
 
 ```docker-compose -f docker-compose.hipaa.yml up```
 
