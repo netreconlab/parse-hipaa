@@ -1,6 +1,6 @@
 # parse-postgres
 
-Example of how to run [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. To get started simply type:
+Example of how to run [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, ([CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit)) uses parse-postgres along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). To get started simply type:
 
 ```docker-compose up```
 
@@ -11,12 +11,15 @@ A parse-server BaaS such as this can be made HIPAA compliant by swapping out the
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
+##Getting started
+- ```docker-compose up```
+- or for HIPAA compliant version: ```docker-compose -f docker-compose.hipaa.yml up```
 
-Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will error a few times because it can't connect to postgres (the "db") container. This is because postgres is still initializing, let it keep running and eventually you will see something like:
+Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
 ```db_1         | PostgreSQL init process complete; ready for start up.```
 
-The parse-server container will then attempt to connect to the postgres container again and when it's complete you will see: 
+The parse-server container will automatically keep attempting to connect to the postgres container and when it's connected you will see: 
 
 ```
 parse_1      | parse-server running on port 1337.
@@ -24,7 +27,7 @@ parse_1      | publicServerURL: http://localhost:1337/parse, serverURL: http://p
 parse_1      | GraphQL API running on http://localhost:1337/parsegraphql
 parse_1      | info: Parse LiveQuery Server starts running
 ```
-You may also see(ignore these lines): 
+You may also see output such as the following in the console or log files: 
 
 ```
 db_1         | 2020-03-18 21:59:21.550 UTC [105] ERROR:  duplicate key value violates unique constraint "pg_type_typname_nsp_index"
