@@ -16,16 +16,14 @@ services:
         ports:
             - ${PORT}:${PORT}
         #volumes:
-        #    - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-        #    - ./index.js:/parse/index.js
-        #    - ./cloud:/parse/cloud
+        #    - ./index.js:/parse/index.js #Uncomment this to customize your parse server
+        #    - ./cloud:/parse/cloud #Uncomment this to provide your own cloud code
         restart: always
         depends_on:
             - db
-        #command: npm start
         command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     dashboard:
-        image: parseplatform/parse-dashboard:2.0.5
+        image: parseplatform/parse-dashboard:latest
         command: parse-dashboard --dev
         volumes:
             - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
@@ -43,5 +41,7 @@ services:
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
     #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
-    #volumes:
-    #    - ./data:/var/lib/postgresql/data
+   #     volumes:
+   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data
+   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
+   #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
