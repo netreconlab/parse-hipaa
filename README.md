@@ -65,8 +65,13 @@ Other [parse-server environment variables](https://github.com/parse-community/pa
 ### Cloud Code
 For verfying and cleaning your data along with other added functionality, you can add [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to the [cloud](https://github.com/netreconlab/parse-hipaa/tree/master/cloud) folder. Note that there is no need to rebuild your image when modifying files in the "cloud" folder since this is volume mounted, but you may need to restart the parse container for your changes to take effect.
 
-## Parse Dashboard
-Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. `http://localhost:4040/`. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) and setting "useEncryptedPasswords": false". You can also add more users through this method.
+## Viewing Your Data via Parse Dashboard
+Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. http://localhost:4040/. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) and setting "useEncryptedPasswords": false". You can also add more users through this method.
+
+1. Open your browser and go to http://localhost:4040/
+2. Username: `parse`
+3. Password: `1234`
+4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
 
 ### Configuring
 As mentioned, the default address and port the parse-server dashboard is binded to is 127.0.0.1:4040:4040 which means it can only be accessed by your local machine. If you want to change this, you should do it [here](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml#L29). If you plan on using this image to deploy in production, it is recommended to run this behind a proxy and add the environment variable `PARSE_DASHBOARD_TRUST_PROXY=1` to the dashboard container. Note that since the parse dashboard is running in docker, the following should remain in the yml, `command: parse-dashboard --dev`.
