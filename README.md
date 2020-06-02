@@ -1,10 +1,16 @@
 # parse-hipaa
 
-Example of how to run a HIPAA compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. These docker images include the necessary auditing and logging for HIPAA compliance. You will still need to setup the following on your own to be fully HIPAA compliant:
+Example of how to run a HIPAA compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. These docker images include the necessary auditing and logging for HIPAA compliance. 
 
-- Use nginx for a TLS proxy
-- Mount to your own encrypted storage drive, and store the drive in a "safe" location
-- Be sure to do anything else HIPAA requires
+The parse-hipaa repo provides the following:
+- [x] Auditing & logging on postgres or mongo
+- [x] Encryption in transit - setup to run behind a proxy with directions on how to complete the process 
+
+You will still need to setup the following on your own to be fully HIPAA compliant:
+
+- [ ] Encryption in transit - you will need to complete the process with LetsEncrypt
+- [ ] Encryption at rest - Mount to your own encrypted storage drive (Linux and macOS have API's for this) and store the drive in a "safe" location
+- [ ] Be sure to do anything else HIPAA requires
 
 A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
 
@@ -66,9 +72,9 @@ Other [parse-server environment variables](https://github.com/parse-community/pa
 For verfying and cleaning your data along with other added functionality, you can add [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to the [cloud](https://github.com/netreconlab/parse-hipaa/tree/master/cloud) folder. Note that there is no need to rebuild your image when modifying files in the "cloud" folder since this is volume mounted, but you may need to restart the parse container for your changes to take effect.
 
 ## Viewing Your Data via Parse Dashboard
-Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. http://localhost:4040/. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) and setting "useEncryptedPasswords": false". You can also add more users through this method.
+Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) and setting "useEncryptedPasswords": false". You can also add more users through this method.
 
-1. Open your browser and go to http://localhost:4040/
+1. Open your browser and go to http://localhost:4040/dashboard
 2. Username: `parse`
 3. Password: `1234`
 4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
@@ -88,8 +94,20 @@ Default values for environment variables: `POSTGRES_PASSWORD, PG_PARSE_USER, PG_
 
 You can then make modifications using [psql](http://postgresguide.com/utilities/psql.html). Through psql, you can also add multiple databases and users to support a number of parse apps. Note that you will also need to add the respecting parse-server containers (copy parse container in the .yml and rename to your new app) along with the added app in [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json).
 
+## Deploying on a real system
+The docker yml's here are intended to run behind a proxy that properly has ssl configured to encrypt data in transit. To create a proxy to parse-hipaa, nginx files are provided here. Simply add the "sites-available" folder to your nginx directory and add the following to "http" in your nginx.conf:
+
+```
+http {
+    include /usr/local/etc/nginx/sites-enabled/*.conf; #Add this line to end. This is for macOS, do whatever is appropriate on your system
+}
+```
+
+Setup your free certificates using [LetsEncrypt](https://letsencrypt.org), follow the directions [here](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/). Be sure to change the certificate and key lines to point to correct location in [default-ssl.conf]().
 
 ## Is there a mongo version available?
-The mongo version for this isn't shown as there are many examples online on how to deploy with mongo and mongo is part of the default documentation for [parse-server](https://github.com/parse-community/parse-server). The purpose of this repo is to show how to integrate with postgres and provide something out-of-the-box like [parse-server-example](https://github.com/parse-community/parse-server-example).
+The mongo equivalent is available in this repo. The same steps as above. but use:
+
+```docker-compose -f docker-compose.mongo.yml up```
 
 

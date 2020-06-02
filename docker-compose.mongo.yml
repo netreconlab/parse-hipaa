@@ -8,6 +8,7 @@ services:
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
             MONGODB_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
             PORT: ${PORT}
+            PARSE_SERVER_MOUNT_PATH: /parse
             PARSE_SERVER_URL: http://parse:${PORT}/parse
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse/cloud/main.js
@@ -24,6 +25,10 @@ services:
         command: ["npm", "start"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
+        environment:
+            PARSE_DASHBOARD_TRUST_PROXY: 1
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
+            MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
             - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
@@ -39,6 +44,7 @@ services:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
+        restart: always
     #Uncomment volumes below to persist mongo data. Make sure to change directory to store data locally
    #     volumes:
    #         - /My/Encrypted/Drive/db:/data/db #Mount your own drive
