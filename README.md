@@ -4,11 +4,11 @@ Example of how to run a HIPAA compliant [parse-server](https://github.com/parse-
 
 The parse-hipaa repo provides the following:
 - [x] Auditing & logging on postgres or mongo
-- [x] Encryption in transit - setup to run behind a proxy with directions on how to complete the process 
+- [x] Encryption in transit - setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
 
 You will still need to setup the following on your own to be fully HIPAA compliant:
 
-- [ ] Encryption in transit - you will need to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt
+- [ ] Encryption in transit - you will need to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system)
 - [ ] Encryption at rest - Mount to your own encrypted storage drive (Linux and macOS have API's for this) and store the drive in a "safe" location
 - [ ] Be sure to do anything else HIPAA requires
 
