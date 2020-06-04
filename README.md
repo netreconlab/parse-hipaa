@@ -1,6 +1,6 @@
 # parse-hipaa
 
-Example of how to run a HIPAA compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org) is also enabled and the playground can be accessed via parse-dashboard. These docker images include the necessary auditing and logging for HIPAA compliance. 
+Example of how to run a HIPAA compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org). This also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data. [GraphQL](https://graphql.org), REST, and JS are enabled and can be accessed in the "API Console" in parse-dashboard. These docker images include the necessary auditing and logging for HIPAA compliance. 
 
 The parse-hipaa repo provides the following:
 - [x] Auditing & logging on postgres or mongo
@@ -8,7 +8,7 @@ The parse-hipaa repo provides the following:
 
 You will still need to setup the following on your own to be fully HIPAA compliant:
 
-- [ ] Encryption in transit - you will need to complete the process with LetsEncrypt
+- [ ] Encryption in transit - you will need to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt
 - [ ] Encryption at rest - Mount to your own encrypted storage drive (Linux and macOS have API's for this) and store the drive in a "safe" location
 - [ ] Be sure to do anything else HIPAA requires
 
@@ -21,20 +21,21 @@ To get started with parse-hipaa simply type:
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
 ## HIPAA compliant parse-server with mongo
-Swapping out the "db" container for variants such as [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) (included in this repo) can be easily done. To use a HIPAA compliant variant of parse-hipaa, simply type:
+By default, the `docker-compose.mongo.yml` uses [postgres](https://www.postgresql.org) 12 with postgis 3. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:
 
 ```docker-compose -f docker-compose.mongo.yml up```
 
-If you would like to use a non HIPAA compliant postgres version:
+If you would like to use a non-HIPAA compliant postgres version:
 
 ```docker-compose -f docker-compose.no.hipaa.yml up```
 
+A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up are online already exist.
 
 ## Getting started
-- ```docker-compose up```
+- For the default postgres version: ```docker-compose up```
 - or for the mongo version: ```docker-compose -f docker-compose.mongo.yml up```
 
-Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
+Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to configure and initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
 ```db_1         | PostgreSQL init process complete; ready for start up.```
 
@@ -46,6 +47,7 @@ parse_1      | publicServerURL: http://localhost:1337/parse, serverURL: http://p
 parse_1      | GraphQL API running on http://localhost:1337/parsegraphql
 parse_1      | info: Parse LiveQuery Server starts running
 ```
+
 You may also see output such as the following in the console or log files: 
 
 ```
@@ -56,7 +58,7 @@ db_1         | 2020-03-18 21:59:21.550 UTC [106] ERROR:  duplicate key value vio
 ...
 ```
 
-The lines above are output from parse because they attempt to configure the postgres database everytime. They will not hurt your database.
+The lines above are console output from parse because they attempt to check and configure the postgres database if necessary. They doesn't hurt or slow down your parse-hipaa server.
 
 ## Parse Server
 Your parse-server is binded to all of your interfaces on port 1337/parse and be can be accessed as such, e.g. `http://localhost:1337/parse`.
