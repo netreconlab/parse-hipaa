@@ -148,7 +148,7 @@ httpServer.listen(port, host, function() {
 });
 
 // This will enable the Live Query real-time server
-ParseServer.createLiveQueryServer(httpServer);
+//ParseServer.createLiveQueryServer(httpServer);
 
 /*
 //Below is for SSL, but you should probably run this behind a proxy instead
