@@ -121,10 +121,10 @@ app.get('/', function(req, res) {
 
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
-app.get('/test', function(req, res) {
+/*app.get('/test', function(req, res) {
   res.sendFile(path.join(__dirname, '/public/test.html'));
 });
-
+*/
 if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
@@ -133,7 +133,7 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
       playgroundPath: '/playground'
     }
   );
-  app.use('/rest', api.app); // (Optional) Mounts the REST API
+  app.use('/parse', api.app); // (Optional) Mounts the REST API
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
@@ -143,7 +143,7 @@ var httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
     console.log('parse-server running on port ' + port + '.');
     console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
-    console.log('REST API running on ' + 'http://localhost:1337/rest');
+    console.log('REST API running on ' + process.env.PARSE_PUBLIC_SERVER_URL);
     if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
       console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
 });
