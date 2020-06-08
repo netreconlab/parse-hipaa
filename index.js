@@ -133,7 +133,7 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
       playgroundPath: '/playground'
     }
   );
-  //app.use('/parse', parseServer.app); // (Optional) Mounts the REST API
+  app.use('/rest', api.app); // (Optional) Mounts the REST API
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
@@ -143,8 +143,9 @@ var httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
     console.log('parse-server running on port ' + port + '.');
     console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
+    console.log('REST API running on ' + 'http://localhost:1337/rest');
     if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
-      console.log('GraphQL API running on ' + process.env.PARSE_PUBLIC_SERVER_URL + 'graphql');
+      console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
 });
 
 // This will enable the Live Query real-time server
