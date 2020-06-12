@@ -20,7 +20,7 @@ To get started with parse-hipaa simply type:
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
-## HIPAA compliant parse-server with mongo
+## HIPAA compliant parse-server with postgres or mongo
 By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) 12 with postgis 3. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:
 
 ```docker-compose -f docker-compose.mongo.yml up```
