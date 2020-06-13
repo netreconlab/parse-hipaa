@@ -16,6 +16,7 @@ const api = new ParseServer({
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
   masterKey: process.env.PARSE_SERVER_MASTER_KEY || '', //Add your master key here. Keep it secret!
   //readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
+  objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
   verbose: process.env.VERBOSE,

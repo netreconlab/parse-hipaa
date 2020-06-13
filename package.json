@@ -1,5 +1,5 @@
 {
-  "name": "parse-postgres-server",
+  "name": "parse-hipaa",
   "version": "1.0.0",
   "description": "Parse-postgres server using the parse-server module",
   "main": "index.js",
