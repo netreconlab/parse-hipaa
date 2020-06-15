@@ -6,6 +6,9 @@ require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
 
+//If you are not using ParseCareKit, comment out or remove this line
+Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit'); //Run function when server first starts up
+
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
     
     const patientSchema = new Parse.Schema('Patient');
@@ -15,7 +18,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('entityId')
         .addNumber('logicalClock')
         .save({useMasterKey: true}).then((result) => {
-          console.log("Patient class created and saved default fields");
+          console.log("Patient class created with default fields");
          })
         .catch(error => console.log(error));
     });
@@ -28,7 +31,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("CarePlan class created and saved default fields");
+          console.log("CarePlan class created with default fields");
          })
         .catch(error => console.log(error));
     });
@@ -41,7 +44,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Contact class created and saved default fields");
+          console.log("Contact class created with default fields");
         })
         .catch(error => console.log(error));
     });
@@ -54,7 +57,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Task class created and saved default fields");
+          console.log("Task class created with default fields");
          })
          .catch(error => console.log(error))
     });
@@ -67,7 +70,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Outcome class created and saved default fields");
+          console.log("Outcome class created with default fields");
         })
         .catch(error => console.log(error))
     });
@@ -80,7 +83,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("OutcomeValue class created and saved default fields");
+          console.log("OutcomeValue class created with default fields");
         })
         .catch(error => console.log(error))
     });
@@ -93,22 +96,86 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Note class created and saved default fields");
+          console.log("Note class created with default fields");
         })
         .catch(error => console.log(error))
     });
 });
 
-Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit'); //Run function when server first starts up
 
-Parse.Cloud.job("testRejectingDuplicates", (request) =>  {
+Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('Patient');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved patient");
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testCarePlanRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('CarePlan');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved carePlan");
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testContactRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('Contact');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved contact");
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testTaskRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('Task');
     object.set('uuid', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved task");
-      log("Saved task " + result)
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testOutcomeRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('Outcome');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved outcome");
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testOutcomeValueRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('OutcomeValue');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved outcomeValue");
+    })
+    .catch(error => message(error));
+});
+
+Parse.Cloud.job("testNoteRejectDuplicates", (request) =>  {
+    const { params, headers, log, message } = request;
+    
+    const object = new Parse.Object('Note');
+    object.set('uuid', "112");
+    object.save({useMasterKey: true}).then((result) => {
+      message("Saved note");
     })
     .catch(error => message(error));
 });
