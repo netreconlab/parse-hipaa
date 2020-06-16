@@ -79,7 +79,6 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     await outcomeValueSchema.get()
     .catch(error => {
         outcomeValueSchema.addString('uuid')
-        .addString('entityId')
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
@@ -92,7 +91,6 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     await noteSchema.get()
     .catch(error => {
         noteSchema.addString('uuid')
-        .addString('entityId')
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
