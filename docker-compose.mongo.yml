@@ -14,6 +14,7 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
+            PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0. Mongo has an error with this, leave as 0 for now, create the indexes manually instead
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         ports:
             - ${PORT}:${PORT}

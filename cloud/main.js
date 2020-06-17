@@ -6,11 +6,8 @@ require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
 
-//If you are not using ParseCareKit, comment out or remove this line
-Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit'); //Run function when server first starts up
-
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
-    
+
     const patientSchema = new Parse.Schema('Patient');
     await patientSchema.get()
     .catch(error => {
@@ -18,7 +15,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('entityId')
         .addNumber('logicalClock')
         .save({useMasterKey: true}).then((result) => {
-          console.log("Patient class created with default fields");
+          console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
          })
         .catch(error => console.log(error));
     });
@@ -31,7 +28,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("CarePlan class created with default fields");
+          console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
          })
         .catch(error => console.log(error));
     });
@@ -44,7 +41,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Contact class created with default fields");
+          console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error));
     });
@@ -57,7 +54,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Task class created with default fields");
+          console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
          })
          .catch(error => console.log(error))
     });
@@ -70,7 +67,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Outcome class created with default fields");
+          console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error))
     });
@@ -82,7 +79,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("OutcomeValue class created with default fields");
+          console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error))
     });
@@ -94,7 +91,18 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .save({useMasterKey: true})
         .then((result) => {
-          console.log("Note class created with default fields");
+          console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
+        })
+        .catch(error => console.log(error))
+    });
+    
+    const knowledgeVectorSchema = new Parse.Schema('KnowledgeVector');
+    await knowledgeVectorSchema.get()
+    .catch(error => {
+        knowledgeVectorSchema.addString('uuid')
+        .save({useMasterKey: true})
+        .then((result) => {
+          console.log("***Success: KnowledgeVector class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error))
     });

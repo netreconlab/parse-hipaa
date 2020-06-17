@@ -138,6 +138,11 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
+//If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
+if(process.env.PARSE_USING_PARSECAREKIT == "1"){
+    createIndexes();
+}
+
 const host = process.env.HOST || '0.0.0.0';
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
@@ -148,6 +153,53 @@ httpServer.listen(port, host, function() {
     if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
       console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
 });
+
+async function createIndexes(){
+    await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
+    let adapter = api.config.databaseController.adapter;
+    const indexNamePostfix = '_case_insensitive_uuid';
+    
+    const patientSchema = new Parse.Schema('Patient');
+    await patientSchema.get();
+    await adapter.ensureIndex('Patient', patientSchema, ['uuid'], 'patient'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+
+    const contactSchema = new Parse.Schema('Contact');
+    await contactSchema.get();
+    await adapter.ensureIndex('Contact', contactSchema, ['uuid'], 'contact'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const carePlanSchema = new Parse.Schema('CarePlan');
+    await carePlanSchema.get();
+    await adapter.ensureIndex('CarePlan', carePlanSchema, ['uuid'], 'care_plan'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const taskSchema = new Parse.Schema('Task');
+    await taskSchema.get();
+    await adapter.ensureIndex('Task', taskSchema, ['uuid'], 'task'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const outcomeSchema = new Parse.Schema('Outcome');
+    await outcomeSchema.get()
+    await adapter.ensureIndex('Outcome', outcomeSchema, ['uuid'], 'outcome'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const outcomeValueSchema = new Parse.Schema('OutcomeValue');
+    await outcomeValueSchema.get();
+    await adapter.ensureIndex('OutcomeValue', outcomeValueSchema, ['uuid'], 'outcome_value'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const noteSchema = new Parse.Schema('Note');
+    await noteSchema.get();
+    await adapter.ensureIndex('Note', noteSchema, ['uuid'], 'note'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+    
+    const knowledgeVectorSchema = new Parse.Schema('KnowledgeVector');
+    await knowledgeVectorSchema.get();
+    await adapter.ensureIndex('KnowledgeVector', knowledgeVectorSchema, ['uuid'], 'knowledge_vector'+indexNamePostfix, true)
+    .catch(error => console.log(error));
+}
+
 
 // This will enable the Live Query real-time server
 //ParseServer.createLiveQueryServer(httpServer);
