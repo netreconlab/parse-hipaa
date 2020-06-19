@@ -7,18 +7,11 @@ services:
       dockerfile: Dockerfile_test
     links:
         - parse
-        - parse-test
-        - dashboard
-        - dashboard-test
-    #volumes:
-    #    - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
-    #    - ./scripts/test.sh:/app/test.sh
+    volumes:
+        - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
+        - ./scripts/test.sh:/app/test.sh
     depends_on:
       - parse
-#      - parse-test
-#      - db
-      - dashboard
-#      - dashboard-test
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
     build: .
@@ -47,21 +40,6 @@ services:
         - db
     depends_on:
         - db
-  dashboard:
-    image: parseplatform/parse-dashboard:latest
-    environment:
-        PARSE_DASHBOARD_TRUST_PROXY: 1
-        PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
-        MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-    command: parse-dashboard --dev
-    volumes:
-        - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
-    ports:
-        - 127.0.0.1:4040:4040
-    links:
-        - parse
-    depends_on:
-        - parse
   db:
     build:
       context: .
