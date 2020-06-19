@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  sut:
+    build:
+      context: ../
+      dockerfile: ./Dockerfile_test
+    links:
+        - parse
+    volumes:
+        - ../scripts/wait-for-parse.sh:/app/wait-for-parse.sh
+        - ../scripts/test.sh:/app/test.sh
+    depends_on:
+      - parse
+    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+  parse:
+    build:
+        context: ../
+        dockerfile: ./parse-4_2/Dockerfile
+    environment:
+        PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
+        PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
+        PARSE_SERVER_OBJECT_ID_SIZE: 32
+        PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
+        PORT: ${PORT}
+        PARSE_SERVER_MOUNT_PATH: /parse
+        PARSE_SERVER_URL: http://parse:${PORT}/parse
+        PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
+        PARSE_SERVER_CLOUD: /parse/cloud/main.js
+        PARSE_SERVER_MOUNT_GRAPHQL: 1
+        PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+        - ${PORT}:${PORT}
+    volumes:
+        - ../scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
+        - ../index.js:/parse/index.js
+        - ../cloud:/parse/cloud
+    restart: always
+    command: ["./wait-for-postgres.sh", "db", "npm", "start"]
+    links:
+        - db
+    depends_on:
+        - db
+  db:
+    build:
+        context: ../
+        dockerfile: ./postgres-12-3_0/Dockerfile
+    environment:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        PG_PARSE_USER: ${PG_PARSE_USER}
+        PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
+        PG_PARSE_DB: ${PG_PARSE_DB}
+    restart: always

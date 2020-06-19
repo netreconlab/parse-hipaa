@@ -3,18 +3,20 @@ version: '3.4'
 services:
   sut:
     build:
-      context: .
-      dockerfile: Dockerfile_test
+      context: ../
+      dockerfile: ./Dockerfile_test
     links:
         - parse
     volumes:
-        - ./scripts/wait-for-parse.sh:/app/wait-for-parse.sh
-        - ./scripts/test.sh:/app/test.sh
+        - ../scripts/wait-for-parse.sh:/app/wait-for-parse.sh
+        - ../scripts/test.sh:/app/test.sh
     depends_on:
       - parse
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
-    build: .
+    build:
+        context: ../
+        dockerfile: ./parse/Dockerfile
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
         PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -31,9 +33,9 @@ services:
     ports:
         - ${PORT}:${PORT}
     volumes:
-        - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-        - ./index.js:/parse/index.js
-        - ./cloud:/parse/cloud
+        - ../scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
+        - ../index.js:/parse/index.js
+        - ../cloud:/parse/cloud
     restart: always
     command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
@@ -42,8 +44,8 @@ services:
         - db
   db:
     build:
-        context: .
-        dockerfile: ./Dockerfile_postgis
+        context: ../
+        dockerfile: ./postgres-12-3_0/Dockerfile
     environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         PG_PARSE_USER: ${PG_PARSE_USER}
