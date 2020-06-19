@@ -1,4 +1,4 @@
-FROM percona/percona-server-mongodb:latest
+FROM percona/percona-server-mongodb:4.2
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
 #Set up ssl files and log log folder for container
