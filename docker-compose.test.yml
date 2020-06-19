@@ -9,9 +9,7 @@ services:
       - parse
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
-    build:
-        context: .
-        dockerfile: ./parse/Dockerfile
+    image: netreconlab/parse-hipaa:latest
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
         PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -27,10 +25,6 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
-    volumes:
-        - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-        - ./index.js:/parse/index.js
-        - ./cloud:/parse/cloud
     restart: always
     command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
@@ -38,7 +32,9 @@ services:
     depends_on:
         - db
   db:
-    image: netreconlab/hipaa-postgres:latest
+    build:
+        context: .
+        dockerfile: ./postgres/Dockerfile
     environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         PG_PARSE_USER: ${PG_PARSE_USER}
