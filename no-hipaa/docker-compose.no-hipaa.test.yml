@@ -2,19 +2,14 @@ version: '3.4'
 
 services:
   sut:
-    build:
-      context: ../
-      dockerfile: Dockerfile
+    image: netreconlab/parse-sut:latest
     links:
         - parse
-    volumes:
-        - ../scripts/wait-for-parse.sh:/app/wait-for-parse.sh
-        - ../scripts/test.sh:/app/test.sh
     depends_on:
       - parse
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
-    build: .
+    image: netreconlab/parse-hipaa:latest
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
         PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -30,10 +25,6 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
-    volumes:
-        - ../scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-        - ../index.js:/parse/index.js
-        - ../cloud:/parse/cloud
     command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
         - db

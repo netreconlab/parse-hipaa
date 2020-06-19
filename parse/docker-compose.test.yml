@@ -2,14 +2,9 @@ version: '3.4'
 
 services:
   sut:
-    build:
-      context: ../
-      dockerfile: ./Dockerfile_test
+    image: netreconlab/parse-sut:latest
     links:
         - parse
-    volumes:
-        - ../scripts/wait-for-parse.sh:/app/wait-for-parse.sh
-        - ../scripts/test.sh:/app/test.sh
     depends_on:
       - parse
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
@@ -43,9 +38,7 @@ services:
     depends_on:
         - db
   db:
-    build:
-        context: ../
-        dockerfile: ./postgres-12-3_0/Dockerfile
+    image: netreconlab/hipaa-postgres:latest
     environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         PG_PARSE_USER: ${PG_PARSE_USER}
