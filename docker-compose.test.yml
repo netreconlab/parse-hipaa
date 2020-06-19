@@ -10,7 +10,7 @@ services:
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
     build:
-        context: ../
+        context: .
         dockerfile: ./parse/Dockerfile
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
@@ -28,9 +28,9 @@ services:
     ports:
         - ${PORT}:${PORT}
     volumes:
-        - ../scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-        - ../index.js:/parse/index.js
-        - ../cloud:/parse/cloud
+        - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
+        - ./index.js:/parse/index.js
+        - ./cloud:/parse/cloud
     restart: always
     command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
