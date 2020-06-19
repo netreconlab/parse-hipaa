@@ -10,5 +10,9 @@ COPY ./scripts/setup-dbs.sh /docker-entrypoint-initdb.d/setup-dbs.sh
 RUN chmod +x /docker-entrypoint-initdb.d/setup-0-pgaudit.sh /docker-entrypoint-initdb.d/setup-dbs.sh
 
 ENV POSTGRES_INITDB_ARGS "--data-checksums"
+ENV POSTGRES_PASSWORD ${POSTGRES_PASSWORD}
+ENV PG_PARSE_USER ${PG_PARSE_USER}
+ENV PG_PARSE_PASSWORD ${PG_PARSE_PASSWORD}
+ENV PG_PARSE_DB ${PG_PARSE_DB}
 
 CMD ["postgres", "-c", "shared_preload_libraries=pgaudit"]
