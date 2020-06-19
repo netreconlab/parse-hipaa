@@ -9,7 +9,7 @@ services:
       - parse
     command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
-    image: netreconlab/parse-hipaa:latest
+    image: netreconlab/parse-hipaa:netreconlab
     environment:
         PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
         PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -33,11 +33,12 @@ services:
         - db
   db:
     build:
-        context: .
-        dockerfile: ./Dockerfile
+      context: .
+      dockerfile: ./Dockerfile
     environment:
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-        PG_PARSE_USER: ${PG_PARSE_USER}
-        PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
-        PG_PARSE_DB: ${PG_PARSE_DB}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
     restart: always
+    ports:
+        - 27017:27017
