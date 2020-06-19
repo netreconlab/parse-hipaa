@@ -1,4 +1,4 @@
-FROM postgis/postgis:latest
+FROM postgis/postgis:12-3.0
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
 ENV POSTGRES_PASSWORD ${POSTGRES_PASSWORD}
