@@ -32,8 +32,57 @@ If you would like to use a non-HIPAA compliant postgres version:
 A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up are online already exist.
 
 ## Getting started
-- For the default postgres version: ```docker-compose up```
-- or for the mongo version: ```docker-compose -f docker-compose.mongo.yml up```
+parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at a time) that work together as one system. It's important to set the environment variables for your parse-hipaa server. 
+
+### Environment Variables
+
+#### netreconlab/parse-hipaa
+```
+PARSE_SERVER_APPLICATION_ID #Unique string value
+PARSE_SERVER_MASTER_KEY #Unique string value
+PARSE_SERVER_OBJECT_ID_SIZE #Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
+PARSE_SERVER_DATABASE_URI #URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+PORT #Port for parse-hipaa, default is 1337
+PARSE_SERVER_MOUNT_PATH: #Mounting path for parse-hipaa, default is /parse
+PARSE_SERVER_URL #Server URL, default is http://parse:${PORT}/parse
+PARSE_PUBLIC_SERVER_URL #Public Server URL, default is http://localhost:${PORT}/parse
+PARSE_SERVER_CLOUD #Path to cloud code, default is /parse/cloud/main.js
+PARSE_SERVER_MOUNT_GRAPHQL #Enable graphql, default is 1
+PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 0
+POSTGRES_PASSWORD: #Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
+```
+
+#### parseplatform/parse-dashboard
+```
+PARSE_DASHBOARD_TRUST_PROXY: #Default is 1, this should always be left as 1 when using docker
+PARSE_DASHBOARD_COOKIE_SESSION_SECRET: #Unique string. This should be constant across all deployments on your system
+MOUNT_PATH: #The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+```
+
+#### netreconlab/hipaa-postgres
+```
+POSTGRES_PASSWORD #Password for postgress db cluster
+PG_PARSE_USER #Username for logging into PG_PARSE_DB
+PG_PARSE_PASSWORD #Password for logging into PG_PARSE_DB
+PG_PARSE_DB #Name of parse-hipaa database
+```
+
+#### netreconlab/hipaa-mongo
+```
+MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa
+MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
+MONGO_PARSE_DB #Name of mongo db for parse-hipaa
+MONGO_INITDB_ROOT_PASSWORD #Password for mongo db cluster
+MONGO_INITDB_ROOT_USERNAME #Username for mongo db cluster
+MONGO_INITDB_DATABASE #Name of mongo db database
+```
+
+### Starting up parse-hipaa
+
+- For the default HIPAA compliant postgres version: ```docker-compose up```
+- or for the HIPAA compliant mongo version: ```docker-compose -f docker-compose.mongo.yml up```
+- or for the non-HIPAA compliant postgres version: ```docker-compose -f docker-compose.no.hipaa.yml up```
+- A non-HIPAA compliant mongo version isn't provided in this repo as that's just a standard parse-server
 
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to configure and initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
