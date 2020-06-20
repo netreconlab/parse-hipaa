@@ -25,9 +25,6 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
-    volumes:
-        - ./index.js:/parse/index.js
-        - ./cloud:/parse/cloud
     restart: always
     command: ["npm", "start"]
     links:

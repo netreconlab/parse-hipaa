@@ -7,7 +7,7 @@ services:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
             PARSE_SERVER_OBJECT_ID_SIZE: 32
-            MONGODB_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+            PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: /parse
             PARSE_SERVER_URL: http://parse:${PORT}/parse
@@ -15,12 +15,11 @@ services:
             PARSE_SERVER_CLOUD: /parse/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
             PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0. Mongo has an error with this, leave as 0 for now, create the indexes manually instead
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         ports:
             - ${PORT}:${PORT}
         volumes:
-            - ./index.js:/parse/index.js
-            - ./cloud:/parse/cloud
+            - ./parse/index.js:/parse/index.js
+            - ./parse/cloud:/parse/cloud
         restart: always
         depends_on:
             - db
@@ -33,7 +32,7 @@ services:
             MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
-            - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
+            - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
         ports:
             - 127.0.0.1:4040:4040
         depends_on:
