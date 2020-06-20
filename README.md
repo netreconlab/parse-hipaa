@@ -78,8 +78,10 @@ MONGO_INITDB_DATABASE #Name of mongo db database
 
 ### Starting up parse-hipaa
 
-- For the default postgres version: ```docker-compose up```
-- or for the mongo version: ```docker-compose -f docker-compose.mongo.yml up```
+- For the default HIPAA compliant postgres version: ```docker-compose up```
+- or for the HIPAA compliant mongo version: ```docker-compose -f docker-compose.mongo.yml up```
+- or for the non-HIPAA compliant postgres version: ```docker-compose -f docker-compose.no.hipaa.yml up```
+- A non-HIPAA compliant mongo version isn't provided in this repo as that's just a standard parse-server
 
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to configure and initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
