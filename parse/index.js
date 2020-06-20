@@ -4,7 +4,7 @@
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer } = require('parse-server');
 var path = require('path');
-var databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.MONGODB_URI;
+var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
 if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');

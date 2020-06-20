@@ -15,13 +15,13 @@ services:
             PARSE_SERVER_CLOUD: /parse/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
             PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
         ports:
             - ${PORT}:${PORT}
         volumes:
             - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-            - ./index.js:/parse/index.js
-            - ./cloud:/parse/cloud
+            - ./parse/index.js:/parse/index.js
+            - ./parse/cloud:/parse/cloud
         restart: always
         depends_on:
             - db
@@ -35,7 +35,7 @@ services:
             MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
-            - ./parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
+            - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
         ports:
             - 127.0.0.1:4040:4040
         depends_on:

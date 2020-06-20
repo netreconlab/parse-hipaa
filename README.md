@@ -49,6 +49,7 @@ PARSE_PUBLIC_SERVER_URL #Public Server URL, default is http://localhost:${PORT}/
 PARSE_SERVER_CLOUD #Path to cloud code, default is /parse/cloud/main.js
 PARSE_SERVER_MOUNT_GRAPHQL #Enable graphql, default is 1
 PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 0
+POSTGRES_PASSWORD: #Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
 #### parseplatform/parse-dashboard
