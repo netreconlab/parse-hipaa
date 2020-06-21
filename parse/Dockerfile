@@ -1,13 +1,19 @@
 FROM parseplatform/parse-server:latest
 
+USER root
+RUN apk add postgresql-client
+USER node
+
 ENV PARSE_SERVER_OBJECT_ID_SIZE 32
 ENV PARSE_SERVER_MOUNT_PATH /parse
 ENV PARSE_SERVER_URL http://parse:${PORT}/parse
 ENV PARSE_PUBLIC_SERVER_URL http://localhost:${PORT}/parse
 ENV PARSE_SERVER_CLOUD /parse-server/cloud/main.js
 ENV PARSE_SERVER_MOUNT_GRAPHQL 1
-ENV PARSE_USING_PARSECAREKIT 0 #If you are not using ParseCareKit, set this to 0
+ENV PARSE_USING_PARSECAREKIT 1 #If you are not using ParseCareKit, set this to 0
 
-ADD ./parse/index.js ./
+ADD ./parse/index.js ./index.js
 ADD ./parse/cloud/ ./cloud/
 
+ENTRYPOINT []
+CMD ["node", "index.js"]
