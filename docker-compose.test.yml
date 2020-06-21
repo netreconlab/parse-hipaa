@@ -27,10 +27,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
-    volumes:
-        - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
-    command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     links:
         - db
     depends_on:

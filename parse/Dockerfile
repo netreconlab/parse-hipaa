@@ -9,5 +9,5 @@ ENV PARSE_SERVER_MOUNT_GRAPHQL 1
 ENV PARSE_USING_PARSECAREKIT 0 #If you are not using ParseCareKit, set this to 0
 
 ADD ./parse/index.js ./
-ADD ./parse/default_main.js ./cloud/main.js
+ADD ./parse/cloud/ ./cloud/
 
