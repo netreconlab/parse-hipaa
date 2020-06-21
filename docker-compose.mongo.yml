@@ -23,7 +23,7 @@ services:
         restart: always
         depends_on:
             - db
-        command: ["npm", "start"]
+        command: ["node", "index.js"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
         environment:
