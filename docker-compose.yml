@@ -23,9 +23,9 @@ services:
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
         restart: always
+        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
             - db
-        command: ["./wait-for-postgres.sh", "db", "npm", "start"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
         environment:
