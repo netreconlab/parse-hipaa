@@ -12,16 +12,16 @@ services:
             PARSE_SERVER_MOUNT_PATH: /parse
             PARSE_SERVER_URL: http://parse:${PORT}/parse
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
-            PARSE_SERVER_CLOUD: /parse/cloud/main.js
+            PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
             PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
         ports:
             - ${PORT}:${PORT}
         volumes:
-            - ./scripts/wait-for-postgres.sh:/parse/wait-for-postgres.sh
-            - ./parse/index.js:/parse/index.js
-            - ./parse/cloud:/parse/cloud
+            - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
+            - ./parse/index.js:/parse-server/index.js
+            - ./parse/cloud:/parse-server/cloud
         restart: always
         depends_on:
             - db
