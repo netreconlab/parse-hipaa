@@ -7,7 +7,7 @@ services:
         - parse
     depends_on:
       - parse
-    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+    #command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
     image: netreconlab/parse-hipaa:netrecon
     environment:
@@ -19,14 +19,14 @@ services:
         PARSE_SERVER_MOUNT_PATH: /parse
         PARSE_SERVER_URL: http://parse:${PORT}/parse
         PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
-        PARSE_SERVER_CLOUD: /parse/cloud/main.js
+        PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
         PARSE_SERVER_MOUNT_GRAPHQL: 1
         PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0. Mongo has an error with this, leave as 0 for now, create the indexes manually instead
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
     restart: always
-    command: ["npm", "start"]
+    command: ["node", "index.js"]
     links:
         - db
     depends_on:
