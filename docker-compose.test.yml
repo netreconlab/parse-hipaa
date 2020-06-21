@@ -23,7 +23,7 @@ services:
         PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
         PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
         PARSE_SERVER_MOUNT_GRAPHQL: 1
-        PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
+        PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}

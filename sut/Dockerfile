@@ -1,4 +1,4 @@
-FROM ubuntu:trusty
+FROM ubuntu:trusty-20191217
 
 RUN apt-get update && apt-get install -yq curl && apt-get clean
 
@@ -7,5 +7,3 @@ WORKDIR /app
 ADD ./scripts/test.sh ./scripts/wait-for-parse.sh /app/
 
 CMD ["./wait-for-parse.sh", "db", "./test.sh"]
-
-#["bash", "test.sh"]
