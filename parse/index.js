@@ -2,7 +2,7 @@
 // compatible API routes.
 
 const express = require('express');
-const { default: ParseServer, ParseGraphQLServer } = require('parse-server');
+const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
 var path = require('path');
 var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
