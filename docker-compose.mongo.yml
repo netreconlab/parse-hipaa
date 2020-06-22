@@ -38,7 +38,7 @@ services:
         depends_on:
             - parse
     db:
-        image: netreconlab/hipaa-mongo:latest
+        image: netreconlab/hipaa-mongo:4.2
         environment:
             MONGO_PARSE_USER: ${MONGO_PARSE_USER}
             MONGO_PARSE_PASSWORD: ${MONGO_PARSE_PASSWORD}
@@ -47,3 +47,5 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
         restart: always
+        volumes:
+            - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
