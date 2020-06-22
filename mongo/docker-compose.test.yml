@@ -1,0 +1,44 @@
+version: '3.4'
+
+services:
+  sut:
+    image: netreconlab/parse-sut:latest
+    links:
+        - parse
+    depends_on:
+      - parse
+    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+  parse:
+    image: netreconlab/parse-hipaa:netrecon
+    environment:
+        PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
+        PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
+        PARSE_SERVER_OBJECT_ID_SIZE: 32
+        PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+        PORT: ${PORT}
+        PARSE_SERVER_MOUNT_PATH: /parse
+        PARSE_SERVER_URL: http://parse:${PORT}/parse
+        PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
+        PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
+        PARSE_SERVER_MOUNT_GRAPHQL: 1
+        PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0. Mongo has an error with this, leave as 0 for now, create the indexes manually instead
+    ports:
+        - ${PORT}:${PORT}
+    restart: always
+    command: ["node", "index.js"]
+    links:
+        - db
+    depends_on:
+        - db
+  db:
+    build:
+        context: .
+        dockerfile: ./mongo/Dockerfile
+    environment:
+        MONGO_PARSE_USER: ${MONGO_PARSE_USER}
+        MONGO_PARSE_PASSWORD: ${MONGO_PARSE_PASSWORD}
+        MONGO_PARSE_DB: ${MONGO_PARSE_DB}
+        MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    restart: always
