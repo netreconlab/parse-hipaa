@@ -40,7 +40,10 @@ services:
     db:
         image: netreconlab/hipaa-mongo:latest
         environment:
-            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
-            MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
+            MONGO_PARSE_USER: ${MONGO_PARSE_USER}
+            MONGO_PARSE_PASSWORD: ${MONGO_PARSE_PASSWORD}
+            MONGO_PARSE_DB: ${MONGO_PARSE_DB}
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
         restart: always
