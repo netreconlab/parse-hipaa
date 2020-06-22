@@ -43,3 +43,4 @@ services:
         PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
         PG_PARSE_DB: ${PG_PARSE_DB}
     restart: always
+
