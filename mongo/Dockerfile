@@ -6,10 +6,6 @@ USER root
 RUN mkdir mongologs
 RUN chown -R 1001:0 /mongologs
 
-ENV MONGO_INITDB_ROOT_USERNAME ${MONGO_USERNAME}
-ENV MONGO_INITDB_ROOT_PASSWORD ${MONGO_PASSWORD}
-ENV MONGO_INITDB_DATABASE ${MONGO_PARSE_DB}
-
 #Only run on master
 #ADD ./scripts/mongo-master.js /docker-entrypoint-initdb.d/
 
