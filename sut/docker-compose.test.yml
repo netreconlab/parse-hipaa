@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  sut:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    links:
+        - parse
+    depends_on:
+      - parse
+    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+  parse:
+    image: netreconlab/parse-hipaa:netrecon
+    environment:
+        PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
+        PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
+        PARSE_SERVER_OBJECT_ID_SIZE: 32
+        PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
+        PORT: ${PORT}
+        PARSE_SERVER_MOUNT_PATH: /parse
+        PARSE_SERVER_URL: http://parse:${PORT}/parse
+        PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
+        PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
+        PARSE_SERVER_MOUNT_GRAPHQL: 1
+        PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+        - ${PORT}:${PORT}
+    volumes:
+        - ../scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
+    restart: always
+    command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
+    links:
+        - db
+    depends_on:
+        - db
+  db:
+    image: netreconlab/hipaa-postgres:12-3.0
+    environment:
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        PG_PARSE_USER: ${PG_PARSE_USER}
+        PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
+        PG_PARSE_DB: ${PG_PARSE_DB}
+    restart: always
