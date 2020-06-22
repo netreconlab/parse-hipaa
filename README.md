@@ -69,12 +69,14 @@ PG_PARSE_DB #Name of parse-hipaa database
 
 #### netreconlab/hipaa-mongo
 ```
-MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa
-MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
-MONGO_PARSE_DB #Name of mongo db for parse-hipaa
 MONGO_INITDB_ROOT_USERNAME #Username for mongo db cluster
 MONGO_INITDB_ROOT_PASSWORD #Password for mongo db cluster
 MONGO_INITDB_DATABASE #Name of mongo db cluster
+
+//Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
+MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa.
+MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
+MONGO_PARSE_DB #Name of mongo db for parse-hipaa
 ```
 
 ### Starting up parse-hipaa
