@@ -72,9 +72,9 @@ PG_PARSE_DB #Name of parse-hipaa database
 MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa
 MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
 MONGO_PARSE_DB #Name of mongo db for parse-hipaa
-MONGO_INITDB_ROOT_PASSWORD #Password for mongo db cluster
 MONGO_INITDB_ROOT_USERNAME #Username for mongo db cluster
-MONGO_INITDB_DATABASE #Name of mongo db database
+MONGO_INITDB_ROOT_PASSWORD #Password for mongo db cluster
+MONGO_INITDB_DATABASE #Name of mongo db cluster
 ```
 
 ### Starting up parse-hipaa
