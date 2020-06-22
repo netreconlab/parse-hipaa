@@ -7,10 +7,10 @@ RUN mkdir mongologs
 RUN chown -R 1001:0 /mongologs
 
 #Only run on master
-#ADD ./scripts/mongo-master.js /docker-entrypoint-initdb.d/
+#COPY ./scripts/mongo-master.js /docker-entrypoint-initdb.d/
 
 #Run on all
-ADD ./scripts/mongo-init.js /docker-entrypoint-initdb.d/
+COPY ./scripts/mongo-init.js /docker-entrypoint-initdb.d/
 
 USER 1001
 

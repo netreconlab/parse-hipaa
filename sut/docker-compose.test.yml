@@ -2,11 +2,14 @@ version: '3.4'
 
 services:
   sut:
-    image: netreconlab/parse-sut:latest
+    build:
+        context: .
+        dockerfile: Dockerfile
     links:
         - parse
     depends_on:
       - parse
+    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
     image: netreconlab/parse-hipaa:netrecon
     environment:
@@ -20,7 +23,7 @@ services:
         PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
         PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
         PARSE_SERVER_MOUNT_GRAPHQL: 1
-        PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
+        PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
         - ${PORT}:${PORT}
@@ -33,9 +36,7 @@ services:
     depends_on:
         - db
   db:
-    build:
-        context: .
-        dockerfile: Dockerfile
+    image: netreconlab/hipaa-postgres:12-3.0
     environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         PG_PARSE_USER: ${PG_PARSE_USER}
