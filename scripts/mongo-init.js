@@ -1,11 +1,11 @@
 db.createUser(
         {
-            user: "parse",
-            pwd: "parse",
+            user: process.env.MONGO_PARSE_USER,
+            pwd: process.env.MONGO_PARSE_PASSWORD,
             roles: [
                 {
                     role: "readWrite",
-                    db: "parse_db"
+                    db: process.env.MONGO_PARSE_DB
                 }
             ]
         }
