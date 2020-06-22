@@ -7,7 +7,6 @@ services:
         - parse
     depends_on:
       - parse
-    #command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
   parse:
     build:
         context: .
