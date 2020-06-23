@@ -16,7 +16,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .addDate('effectiveDate')
         .addDate('deletedDate')
-        .addPointer('next')
+        .addPointer('next', 'Patient')
         .save({useMasterKey: true}).then((result) => {
           console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
          })
@@ -31,7 +31,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .addDate('effectiveDate')
         .addDate('deletedDate')
-        .addPointer('next')
+        .addPointer('next', 'CarePlan')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
@@ -47,7 +47,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .addDate('effectiveDate')
         .addDate('deletedDate')
-        .addPointer('next')
+        .addPointer('next', 'Contact')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
@@ -63,7 +63,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('logicalClock')
         .addDate('effectiveDate')
         .addDate('deletedDate')
-        .addPointer('next')
+        .addPointer('next', 'Task')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
