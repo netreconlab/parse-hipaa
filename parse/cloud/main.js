@@ -14,6 +14,9 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         patientSchema.addString('uuid')
         .addString('entityId')
         .addNumber('logicalClock')
+        .addDate('effectiveDate')
+        .addDate('deletedDate')
+        .addPointer('next')
         .save({useMasterKey: true}).then((result) => {
           console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
          })
@@ -26,6 +29,9 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         carePlanSchema.addString('uuid')
         .addString('entityId')
         .addNumber('logicalClock')
+        .addDate('effectiveDate')
+        .addDate('deletedDate')
+        .addPointer('next')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
@@ -39,6 +45,9 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         contactSchema.addString('uuid')
         .addString('entityId')
         .addNumber('logicalClock')
+        .addDate('effectiveDate')
+        .addDate('deletedDate')
+        .addPointer('next')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
@@ -52,6 +61,9 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         taskSchema.addString('uuid')
         .addString('entityId')
         .addNumber('logicalClock')
+        .addDate('effectiveDate')
+        .addDate('deletedDate')
+        .addPointer('next')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
@@ -65,6 +77,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         outcomeSchema.addString('uuid')
         .addString('entityId')
         .addNumber('logicalClock')
+        .addDate('deletedDate')
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");

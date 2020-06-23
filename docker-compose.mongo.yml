@@ -14,7 +14,7 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
-            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0.
+            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         ports:
             - ${PORT}:${PORT}
         volumes:
@@ -43,6 +43,7 @@ services:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
+            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         restart: always
         ports:
             - 27017:27017

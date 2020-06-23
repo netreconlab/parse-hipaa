@@ -46,6 +46,7 @@ services:
             PG_PARSE_USER: ${PG_PARSE_USER}
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
+            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         restart: always
         ports:
             - 5432:5432
