@@ -157,7 +157,8 @@ httpServer.listen(port, host, function() {
 async function createIndexes(){
     await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
     let adapter = api.config.databaseController.adapter;
-    const indexNamePostfix = '_entityId';
+    const indexEntityIdPostfix = '_entityId';
+    const indexEffectiveDatePostfix = '_effectiveDate';
     
     const schema = {
       fields: {
@@ -168,33 +169,42 @@ async function createIndexes(){
     const versionedSchema = {
       fields: {
         uuid: { type: 'String' },
-        entityId: { type: 'String' }
+        entityId: { type: 'String' },
+        effectiveDate: { type: 'Date' }
       },
     };
     
     await adapter.ensureUniqueness('Patient', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexNamePostfix, false)
+    await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
 
     await adapter.ensureUniqueness('Contact', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexNamePostfix, false)
+    await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('CarePlan', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexNamePostfix, false)
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Task', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexNamePostfix, false)
+    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Outcome', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexNamePostfix, false)
+    await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
