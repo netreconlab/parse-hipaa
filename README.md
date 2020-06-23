@@ -69,11 +69,10 @@ PG_PARSE_DB #Name of parse-hipaa database
 
 #### netreconlab/hipaa-mongo
 ```
-MONGO_INITDB_ROOT_USERNAME #Username for mongo db cluster
-MONGO_INITDB_ROOT_PASSWORD #Password for mongo db cluster
-MONGO_INITDB_DATABASE #Name of mongo db cluster
-
 //Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
+MONGO_INITDB_ROOT_USERNAME #Username for mongo db. Should be MONGO_PARSE_USER
+MONGO_INITDB_ROOT_PASSWORD #Password for mongo db. Should be MONGO_PARSE_PASSWORD
+MONGO_INITDB_DATABASE #Name of mongo db. Should be MONGO_PARSE_DB
 MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa.
 MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
 MONGO_PARSE_DB #Name of mongo db for parse-hipaa
@@ -118,6 +117,20 @@ The standard configuration can be modified to your liking by editing [index.js](
 
 ### Configuring
 Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PARSE_SERVER_MASTER_KEY` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change both values. Environment variables, `PARSE_SERVER_DATABASE_URI, PARSE_SERVER_URL, PORT, PARSE_PUBLIC_SERVER_URL, PARSE_SERVER_CLOUD, and PARSE_SERVER_MOUNT_GRAPHQL` should not be changed unles you are confident with configuring parse-server or else you image may not work properly. In particular, changing `PORT` should only be done in [.env](https://github.com/netreconlab/parse-hipaa/blob/master/.env) and will also require you to change the port manually in the [parse-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L4) for both "serverURL" and "graphQLServerURL" to have the Parse Dashboard work correctly.
+
+#### Running in production for ParseCareKit
+If you are plan on using parse-hipaa in production. You should run the additional scripts to create the rest of the indexes for optimized queries.
+
+##### Postgres
+If you are using `hipaa_postgres` or `parse-postgres` (the two images included in this repo). The `setup-parse-index.sh` is already in the container. You just have to run it. 
+
+1. Log into your docker container, type: ```docker exec -u postgres -ti parse-hipaa_db_1 bash```
+2. Run the script, type: ```./parseScripts/setup-parse-index.h```
+
+If you are using your own postgres image, you should copy [setup-parse-index.sh](https://github.com/netreconlab/parse-hipaa/blob/main/postgres/docker-compose.test.yml) to your container and complete the login and run steps above (be sure to switch `parse-hipaa_db_1` to your actual running container name).
+
+##### Mongo
+Will be created in the future...
 
 Other [parse-server environment variables](https://github.com/parse-community/parse-server/blob/master/src/Options/Definitions.js) can be set, but they require you to make additions/modifications to the [index.js](https://github.com/netreconlab/parse-hipaa/blob/master/index.js).
 

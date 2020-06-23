@@ -157,56 +157,63 @@ httpServer.listen(port, host, function() {
 async function createIndexes(){
     await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
     let adapter = api.config.databaseController.adapter;
-    const indexNamePostfix = '_entityId';
+    const indexEntityIdPostfix = '_entityId';
+    const indexEffectiveDatePostfix = '_effectiveDate';
     
-    const patientSchema = new Parse.Schema('Patient');
-    await patientSchema.get();
-    await adapter.ensureUniqueness('Patient', patientSchema, ['uuid'])
+    const schema = {
+      fields: {
+        uuid: { type: 'String' }
+      },
+    };
+    
+    const versionedSchema = {
+      fields: {
+        uuid: { type: 'String' },
+        entityId: { type: 'String' },
+        effectiveDate: { type: 'Date' }
+      },
+    };
+    
+    await adapter.ensureUniqueness('Patient', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Patient', patientSchema, ['entityId'], 'Patient'+indexNamePostfix, false)
+    await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
 
-    const contactSchema = new Parse.Schema('Contact');
-    await contactSchema.get();
-    await adapter.ensureUniqueness('Contact', contactSchema, ['uuid'])
+    await adapter.ensureUniqueness('Contact', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Contact', contactSchema, ['entityId'], 'Contact'+indexNamePostfix, false)
+    await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
-    
-    const carePlanSchema = new Parse.Schema('CarePlan');
-    await carePlanSchema.get();
-    await adapter.ensureUniqueness('CarePlan', carePlanSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('CarePlan', carePlanSchema, ['entityId'], 'CarePlan'+indexNamePostfix, false)
+    await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    const taskSchema = new Parse.Schema('Task');
-    await taskSchema.get();
-    await adapter.ensureUniqueness('Task', taskSchema, ['uuid'])
+    await adapter.ensureUniqueness('CarePlan', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Task', taskSchema, ['entityId'], 'Task'+indexNamePostfix, false)
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
-    
-    const outcomeSchema = new Parse.Schema('Outcome');
-    await outcomeSchema.get()
-    await adapter.ensureUniqueness('Outcome', outcomeSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Outcome', outcomeSchema, ['entityId'], 'Outcome'+indexNamePostfix, false)
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    const outcomeValueSchema = new Parse.Schema('OutcomeValue');
-    await outcomeValueSchema.get();
-    await adapter.ensureUniqueness('OutcomeValue', outcomeValueSchema, ['uuid'])
+    await adapter.ensureUniqueness('Task', versionedSchema, ['uuid'])
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    const noteSchema = new Parse.Schema('Note');
-    await noteSchema.get();
-    await adapter.ensureUniqueness('Note', noteSchema, ['uuid'])
+    await adapter.ensureUniqueness('Outcome', versionedSchema, ['uuid'])
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     
-    const knowledgeVectorSchema = new Parse.Schema('KnowledgeVector');
-    await knowledgeVectorSchema.get();
-    await adapter.ensureUniqueness('KnowledgeVector', knowledgeVectorSchema, ['uuid'])
+    await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
+    .catch(error => console.log(error));
+    
+    await adapter.ensureUniqueness('Note', schema, ['uuid'])
+    .catch(error => console.log(error));
+    
+    await adapter.ensureUniqueness('KnowledgeVector', schema, ['uuid'])
     .catch(error => console.log(error));
 }
 
