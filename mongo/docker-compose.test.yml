@@ -6,8 +6,7 @@ services:
     links:
         - parse
     depends_on:
-      - parse
-    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+        - parse
   parse:
     image: netreconlab/parse-hipaa:netrecon
     environment:
@@ -33,12 +32,9 @@ services:
   db:
     build:
         context: .
-        dockerfile: ./mongo/Dockerfile
+        dockerfile: Dockerfile
     environment:
-        MONGO_PARSE_USER: ${MONGO_PARSE_USER}
-        MONGO_PARSE_PASSWORD: ${MONGO_PARSE_PASSWORD}
-        MONGO_PARSE_DB: ${MONGO_PARSE_DB}
-        MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-        MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+        MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
+        MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
     restart: always

@@ -4,7 +4,7 @@ services:
   sut:
     build:
         context: .
-        dockerfile: ./sut/Dockerfile
+        dockerfile: Dockerfile
     links:
         - parse
     depends_on:
@@ -28,7 +28,7 @@ services:
     ports:
         - ${PORT}:${PORT}
     volumes:
-        - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
+        - ../scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:

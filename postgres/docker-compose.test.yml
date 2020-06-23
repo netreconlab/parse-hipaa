@@ -6,8 +6,7 @@ services:
     links:
         - parse
     depends_on:
-      - parse
-    command: ["/app/wait-for-parse.sh", "db", "bash", "/app/test.sh"]
+        - parse
   parse:
     image: netreconlab/parse-hipaa:netrecon
     environment:
@@ -26,7 +25,7 @@ services:
     ports:
         - ${PORT}:${PORT}
     volumes:
-        - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
+        - ../scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
     restart: always
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:
@@ -36,7 +35,7 @@ services:
   db:
     build:
         context: .
-        dockerfile: ./postgres/Dockerfile
+        dockerfile: Dockerfile
     environment:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         PG_PARSE_USER: ${PG_PARSE_USER}
