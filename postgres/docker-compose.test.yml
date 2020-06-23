@@ -6,7 +6,7 @@ services:
     links:
         - parse
     depends_on:
-      - parse
+        - parse
   parse:
     image: netreconlab/parse-hipaa:netrecon
     environment:
