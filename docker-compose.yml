@@ -51,6 +51,5 @@ services:
             - 5432:5432
     #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
    #     volumes:
-   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive

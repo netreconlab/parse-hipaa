@@ -46,3 +46,7 @@ services:
         restart: always
         ports:
             - 27017:27017
+        #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        #volumes:
+        #  - /My/Encrypted/Drive/db:/data/db
+        #  - /My/Encrypted/Drive/log/:/mongologs
