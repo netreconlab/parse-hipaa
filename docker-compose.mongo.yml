@@ -43,7 +43,10 @@ services:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
-            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         restart: always
         ports:
             - 27017:27017
+        #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        #volumes:
+        #  - /My/Encrypted/Drive/db:/data/db
+        #  - /My/Encrypted/Drive/log/:/mongologs
