@@ -3,6 +3,7 @@
 
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
+const FSFilesAdapter = require('@parse/fs-files-adapter');
 var path = require('path');
 var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
@@ -20,6 +21,7 @@ const api = new ParseServer({
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
   verbose: process.env.VERBOSE,
+  filesAdapter: new FSFilesAdapter(),
   //Setup your push adatper
   /*push: {
     ios: [
