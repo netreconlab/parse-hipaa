@@ -207,14 +207,18 @@ async function createIndexes(){
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     
+    await adapter.ensureUniqueness('KnowledgeVector', schema, ['uuid'])
+    .catch(error => console.log(error));
+    
+    //Because of way ParseCareKit handles this class, comment out these checks
+    /*
     await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Note', schema, ['uuid'])
     .catch(error => console.log(error));
+    */
     
-    await adapter.ensureUniqueness('KnowledgeVector', schema, ['uuid'])
-    .catch(error => console.log(error));
 }
 
 
