@@ -8,6 +8,16 @@ require('./note.js');
 
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
+    const clp = {
+        get: { requiresAuthentication: true },
+        find: {},
+        create: { requiresAuthentication: true },
+        update: { requiresAuthentication: true },
+        delete: { requiresAuthentication: true },
+        addField: {},
+        protectedFields: {}
+    };
+    
     const patientSchema = new Parse.Schema('Patient');
     await patientSchema.get()
     .catch(error => {
@@ -17,6 +27,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addDate('effectiveDate')
         .addDate('deletedDate')
         .addPointer('next', 'Patient')
+        .setCLP(clp)
         .save({useMasterKey: true}).then((result) => {
           console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
          })
@@ -32,6 +43,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addDate('effectiveDate')
         .addDate('deletedDate')
         .addPointer('next', 'CarePlan')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
@@ -48,6 +60,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addDate('effectiveDate')
         .addDate('deletedDate')
         .addPointer('next', 'Contact')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
@@ -64,6 +77,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addDate('effectiveDate')
         .addDate('deletedDate')
         .addPointer('next', 'Task')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
@@ -78,6 +92,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('entityId')
         .addNumber('logicalClock')
         .addDate('deletedDate')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
@@ -90,6 +105,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     .catch(error => {
         outcomeValueSchema.addString('uuid')
         .addNumber('logicalClock')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
@@ -102,6 +118,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     .catch(error => {
         noteSchema.addString('uuid')
         .addNumber('logicalClock')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
@@ -113,6 +130,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     await knowledgeVectorSchema.get()
     .catch(error => {
         knowledgeVectorSchema.addString('uuid')
+        .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
           console.log("***Success: KnowledgeVector class created with default fields. Ignore any previous errors about this class***");
@@ -121,6 +139,20 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     });
 });
 
+Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
+    const userSchema = new Parse.Schema('_User');
+    await userSchema.get();
+    userSchema.setCLP({
+      get: { requiresAuthentication: true },
+      find: {},
+      create: { '*': true },
+      update: { requiresAuthentication: true },
+      delete: { requiresAuthentication: true },
+      addField: {},
+      protectedFields: {}
+    });
+    await userSchema.update({useMasterKey: true});
+});
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
@@ -177,6 +209,7 @@ Parse.Cloud.job("testOutcomeRejectDuplicates", (request) =>  {
     .catch(error => message(error));
 });
 
+/*
 Parse.Cloud.job("testOutcomeValueRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
@@ -198,3 +231,4 @@ Parse.Cloud.job("testNoteRejectDuplicates", (request) =>  {
     })
     .catch(error => message(error));
 });
+*/

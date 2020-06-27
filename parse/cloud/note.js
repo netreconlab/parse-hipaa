@@ -1,4 +1,5 @@
-Parse.Cloud.beforeSave("Note", async (request) => {
+//Because of way ParseCareKit handles this class, comment out this check
+/*Parse.Cloud.beforeSave("Note", async (request) => {
     var object = request.object;
      
     if (object.isNew()){
@@ -10,3 +11,4 @@ Parse.Cloud.beforeSave("Note", async (request) => {
         }
     }
 });
+*/
