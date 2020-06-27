@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:netrecon
+        image: netreconlab/parse-hipaa:latest
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -14,6 +14,8 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
+            PARSE_SET_USER_CLP: 1 #Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         ports:
             - ${PORT}:${PORT}
@@ -43,7 +45,11 @@ services:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
-            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         restart: always
         ports:
             - 27017:27017
+        #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        #volumes:
+        #  - /My/Encrypted/Drive/db:/data/db
+        #  - /My/Encrypted/Drive/log/:/mongologs
+        
