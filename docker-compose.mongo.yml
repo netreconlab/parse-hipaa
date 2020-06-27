@@ -14,13 +14,14 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
+            PARSE_SET_USER_CLP: 1 #Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
         ports:
             - ${PORT}:${PORT}
         volumes:
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
-            - ./files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
         depends_on:
             - db
