@@ -10,22 +10,67 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
 
     const clp = {
         get: { requiresAuthentication: true },
-        find: {},
+        find: { requiresAuthentication: true },
         create: { requiresAuthentication: true },
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
         addField: {},
         protectedFields: {}
     };
+        
+    const noteSchema = new Parse.Schema('Note');
+    await noteSchema.get()
+    .catch(error => {
+        noteSchema.addString('uuid')
+        .addDate('createdDate')
+        .addDate('updatedDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addString('content')
+        .addString('title')
+        .addString('author')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .setCLP(clp)
+        .save({useMasterKey: true})
+        .then((result) => {
+          console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
+        })
+        .catch(error => console.log(error))
+    });
     
     const patientSchema = new Parse.Schema('Patient');
     await patientSchema.get()
     .catch(error => {
         patientSchema.addString('uuid')
         .addString('entityId')
-        .addNumber('logicalClock')
-        .addDate('effectiveDate')
+        .addDate('createdDate')
+        .addDate('updatedDate')
         .addDate('deletedDate')
+        .addDate('effectiveDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addObject('name')
+        .addString('sex')
+        .addDate('birthday')
+        .addString('alergies')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .addString('previousVersionUUIDString')
+        .addPointer('previous', 'Patient')
+        .addString('nextVersionUUIDString')
         .addPointer('next', 'Patient')
         .setCLP(clp)
         .save({useMasterKey: true}).then((result) => {
@@ -39,9 +84,26 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     .catch(error => {
         carePlanSchema.addString('uuid')
         .addString('entityId')
-        .addNumber('logicalClock')
-        .addDate('effectiveDate')
+        .addDate('createdDate')
+        .addDate('updatedDate')
         .addDate('deletedDate')
+        .addDate('effectiveDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addString('title')
+        .addString('patientUUIDString')
+        .addPointer('patient', 'Patient')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .addString('previousVersionUUIDString')
+        .addPointer('previous', 'CarePlan')
+        .addString('nextVersionUUIDString')
         .addPointer('next', 'CarePlan')
         .setCLP(clp)
         .save({useMasterKey: true})
@@ -56,9 +118,35 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     .catch(error => {
         contactSchema.addString('uuid')
         .addString('entityId')
-        .addNumber('logicalClock')
-        .addDate('effectiveDate')
+        .addDate('createdDate')
+        .addDate('updatedDate')
         .addDate('deletedDate')
+        .addDate('effectiveDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addObject('name')
+        .addString('title')
+        .addString('role')
+        .addString('organization')
+        .addString('category')
+        .addArray('emailAddressesArray')
+        .addArray('messagingNumbersArray')
+        .addArray('otherContactInfoArray')
+        .addArray('phoneNumbersArray')
+        .addObject('address')
+        .addString('carePlanUUIDString')
+        .addPointer('carePlan', 'CarePlan')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .addString('previousVersionUUIDString')
+        .addPointer('previous', 'Contact')
+        .addString('nextVersionUUIDString')
         .addPointer('next', 'Contact')
         .setCLP(clp)
         .save({useMasterKey: true})
@@ -68,14 +156,86 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .catch(error => console.log(error));
     });
     
+    const outcomeValueSchema = new Parse.Schema('OutcomeValue');
+    await outcomeValueSchema.get()
+    .catch(error => {
+        outcomeValueSchema.addString('uuid')
+        .addDate('createdDate')
+        .addDate('updatedDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addNumber('index')
+        .addString('kind')
+        .addString('units')
+        .addString('typeString')
+        .addString('textValue')
+        .addObject('binaryValue')
+        .addBoolean('booleanValue')
+        .addNumber('integerValue')
+        .addNumber('doubleValue')
+        .addDate('dateValue')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .setCLP(clp)
+        .save({useMasterKey: true})
+        .then((result) => {
+          console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
+        })
+        .catch(error => console.log(error))
+    });
+    
+    const scheduleElementSchema = new Parse.Schema('ScheduleElement');
+    await scheduleElementSchema.get()
+    .catch(error => {
+        scheduleElementSchema.addNumber('logicalClock')
+        .addDate('start')
+        .addDate('end')
+        .addObject('interval')
+        .addString('text')
+        .addArray('targetValues')
+        .addArray('elements')
+        .setCLP(clp)
+        .save({useMasterKey: true})
+        .then((result) => {
+          console.log("***Success: ScheduleElement class created with default fields. Ignore any previous errors about this class***");
+        })
+        .catch(error => console.log(error))
+    });
+    
     const taskSchema = new Parse.Schema('Task');
     await taskSchema.get()
     .catch(error => {
         taskSchema.addString('uuid')
         .addString('entityId')
-        .addNumber('logicalClock')
-        .addDate('effectiveDate')
+        .addDate('createdDate')
+        .addDate('updatedDate')
         .addDate('deletedDate')
+        .addDate('effectiveDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addString('title')
+        .addString('instructions')
+        .addBoolean('impactsAdherence')
+        .addArray('elements')
+        .addString('carePlanUUIDString')
+        .addPointer('carePlan', 'CarePlan')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
+        .addString('previousVersionUUIDString')
+        .addPointer('previous', 'Task')
+        .addString('nextVersionUUIDString')
         .addPointer('next', 'Task')
         .setCLP(clp)
         .save({useMasterKey: true})
@@ -90,8 +250,24 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     .catch(error => {
         outcomeSchema.addString('uuid')
         .addString('entityId')
-        .addNumber('logicalClock')
+        .addDate('createdDate')
+        .addDate('updatedDate')
         .addDate('deletedDate')
+        .addNumber('logicalClock')
+        .addString('timezone')
+        .addDate('date')
+        .addNumber('taskOccurrenceIndex')
+        .addArray('values')
+        .addString('taskUUIDString')
+        .addPointer('task', 'Task')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addObject('schemaVersion')
         .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
@@ -100,36 +276,11 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .catch(error => console.log(error))
     });
     
-    const outcomeValueSchema = new Parse.Schema('OutcomeValue');
-    await outcomeValueSchema.get()
-    .catch(error => {
-        outcomeValueSchema.addString('uuid')
-        .addNumber('logicalClock')
-        .setCLP(clp)
-        .save({useMasterKey: true})
-        .then((result) => {
-          console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });
-    
-    const noteSchema = new Parse.Schema('Note');
-    await noteSchema.get()
-    .catch(error => {
-        noteSchema.addString('uuid')
-        .addNumber('logicalClock')
-        .setCLP(clp)
-        .save({useMasterKey: true})
-        .then((result) => {
-          console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });
-    
     const knowledgeVectorSchema = new Parse.Schema('KnowledgeVector');
     await knowledgeVectorSchema.get()
     .catch(error => {
         knowledgeVectorSchema.addString('uuid')
+        .addString('vector')
         .setCLP(clp)
         .save({useMasterKey: true})
         .then((result) => {
@@ -144,7 +295,7 @@ Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
     await userSchema.get();
     userSchema.setCLP({
       get: { requiresAuthentication: true },
-      find: {},
+      find: { requiresAuthentication: true },
       create: { '*': true },
       update: { requiresAuthentication: true },
       delete: { requiresAuthentication: true },
