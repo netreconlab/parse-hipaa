@@ -112,12 +112,6 @@ const api = new ParseServer({
 });
 
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
-
-//Turn off grid apdapter for mongo
-if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("mongo") !== -1){
-  api.filesAdapter = null;
-}
-
 //Need to use local file adapter for postgres
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("postgres") !== -1){
     api.filesAdapter = new FSFilesAdapter({secretKey: process.env.PARSE_SERVER_FILE_KEY});
