@@ -1,7 +1,9 @@
 FROM parseplatform/parse-server:latest
 
 USER root
-RUN apk add postgresql-client
+RUN apk add postgresql-client; \
+   apk add clamav;
+RUN npm install clamscan
 USER node
 
 ENV PARSE_SERVER_OBJECT_ID_SIZE 32

@@ -5,6 +5,7 @@ require('./task.js');
 require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
+require('./files.js');
 
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
