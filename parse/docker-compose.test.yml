@@ -28,6 +28,7 @@ services:
         - ${PORT}:${PORT}
     volumes:
         - ../scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
+        - ./files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
     restart: always
     command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     links:

@@ -22,6 +22,7 @@ const api = new ParseServer({
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
   masterKey: process.env.PARSE_SERVER_MASTER_KEY || '', //Add your master key here. Keep it secret!
   //readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
+  fileKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
@@ -118,9 +119,9 @@ if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("mongo") !== -1){
 }
 
 //Need to use local file adapter for postgres
-/*if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("postgres") !== -1){
-  api.filesAdapter = new FSFilesAdapter();
-}*/
+if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("postgres") !== -1){
+    api.filesAdapter = new FSFilesAdapter({secretKey: process.env.PARSE_SERVER_FILE_KEY});
+}
 
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
