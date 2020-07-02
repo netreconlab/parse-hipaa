@@ -1,4 +1,5 @@
-Parse.Cloud.beforeSave("CarePlan", async (request) => {
+//The DB Unique index handles this now. No need for the extra query
+/*Parse.Cloud.beforeSave("CarePlan", async (request) => {
     var object = request.object;
      
     if (object.isNew()){
@@ -10,3 +11,4 @@ Parse.Cloud.beforeSave("CarePlan", async (request) => {
         }
     }
 });
+*/
