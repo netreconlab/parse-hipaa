@@ -293,16 +293,6 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
 });
 
 Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
-    const auditCLP = {
-      get: { requiresAuthentication: true },
-      find: { requiresAuthentication: true },
-      create: {},
-      update: { requiresAuthentication: true },
-      delete: { requiresAuthentication: true },
-      addField: {},
-      protectedFields: {}
-    };
-    ParseAuditor(['_User', '_Role', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], [], { useMasterKey: true, clp: auditCLP });
     const userSchema = new Parse.Schema('_User');
     await userSchema.get();
     userSchema.setCLP({
@@ -315,6 +305,19 @@ Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
       protectedFields: {}
     });
     await userSchema.update({useMasterKey: true});
+});
+
+Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
+    const auditCLP = {
+      get: { requiresAuthentication: true },
+      find: { requiresAuthentication: true },
+      create: {},
+      update: { requiresAuthentication: true },
+      delete: { requiresAuthentication: true },
+      addField: {},
+      protectedFields: {}
+    };
+    ParseAuditor(['_User', '_Role', 'KnowledgeVector', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], [], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
