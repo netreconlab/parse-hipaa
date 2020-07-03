@@ -40,7 +40,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
         })
@@ -75,7 +75,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('nextVersionUUIDString')
         .addPointer('next', 'Patient')
         .setCLP(clp)
-        .save({useMasterKey: true}).then((result) => {
+        .save().then((result) => {
           console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
          })
         .catch(error => console.log(error));
@@ -108,7 +108,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('nextVersionUUIDString')
         .addPointer('next', 'CarePlan')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
          })
@@ -151,7 +151,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('nextVersionUUIDString')
         .addPointer('next', 'Contact')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
         })
@@ -185,7 +185,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
         })
@@ -203,7 +203,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('targetValues')
         .addArray('elements')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: ScheduleElement class created with default fields. Ignore any previous errors about this class***");
         })
@@ -240,7 +240,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addString('nextVersionUUIDString')
         .addPointer('next', 'Task')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
          })
@@ -271,7 +271,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
         })
@@ -284,7 +284,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         knowledgeVectorSchema.addString('uuid')
         .addString('vector')
         .setCLP(clp)
-        .save({useMasterKey: true})
+        .save()
         .then((result) => {
           console.log("***Success: KnowledgeVector class created with default fields. Ignore any previous errors about this class***");
         })
@@ -296,10 +296,10 @@ Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
     const auditCLP = {
       get: { requiresAuthentication: true },
       find: { requiresAuthentication: true },
-      create: { '*': true },
+      create: {},
       update: { requiresAuthentication: true },
       delete: { requiresAuthentication: true },
-      addField: { '*': true },
+      addField: {},
       protectedFields: {}
     };
     ParseAuditor(['_User', '_Role', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], [], { useMasterKey: true, clp: auditCLP });
