@@ -1,4 +1,5 @@
-Parse.Cloud.beforeSave("Outcome", async (request) => {
+//The DB Unique index handles this now. No need for the extra query
+/*Parse.Cloud.beforeSave("Outcome", async (request) => {
     var object = request.object;
      
     if (object.isNew()){
@@ -9,4 +10,4 @@ Parse.Cloud.beforeSave("Outcome", async (request) => {
             throw "Duplicate: Outcome with this uuid already exists";
         }
     }
-});
+});*/

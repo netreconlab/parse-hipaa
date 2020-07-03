@@ -1,3 +1,5 @@
+//Because of way ParseCareKit handles this class, comment out this check
+/*
 Parse.Cloud.beforeSave("OutcomeValue", async (request) => {
     var object = request.object;
      
@@ -10,3 +12,4 @@ Parse.Cloud.beforeSave("OutcomeValue", async (request) => {
         }
     }
 });
+*/

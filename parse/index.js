@@ -3,11 +3,17 @@
 
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
+const FSFilesAdapter = require('@parse/fs-files-adapter');
 var path = require('path');
 var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
 if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
+}
+
+var allowNewClasses = false;
+if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
+    allowNewClasses = true
 }
 
 const api = new ParseServer({
@@ -16,10 +22,12 @@ const api = new ParseServer({
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
   masterKey: process.env.PARSE_SERVER_MASTER_KEY || '', //Add your master key here. Keep it secret!
   //readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
+  fileKey: process.env.PARSE_SERVER_FILE_KEY,
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
   verbose: process.env.VERBOSE,
+  allowClientClassCreation: allowNewClasses,
   //Setup your push adatper
   /*push: {
     ios: [
@@ -93,15 +101,22 @@ const api = new ParseServer({
     // 1. a RegExp object or a regex string representing the pattern to enforce
     validatorPattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/, // enforce password with at least 8 char with at least 1 lower case, 1 upper case and 1 digit
     // 2. a callback function to be invoked to validate the password
-    validatorCallback: (password) => { return validatePassword(password) },
-    validationError: 'Password must contain at least 1 digit.', // optional error message to be sent instead of the default "Password does not meet the Password Policy requirements." message.
+    //validatorCallback: (password) => { return validatePassword(password) },
+    validationError: 'Password must have atleast 8 characters and contain at least 1 digit.', // optional error message to be sent instead of the default "Password does not meet the Password Policy requirements." message.
     doNotAllowUsername: true, // optional setting to disallow username in passwords
-    maxPasswordAge: 90, // optional setting in days for password expiry. Login fails if user does not reset the password within this period after signup/last reset.
+    //maxPasswordAge: 90, // optional setting in days for password expiry. Login fails if user does not reset the password within this period after signup/last reset.
     maxPasswordHistory: 5, // optional setting to prevent reuse of previous n passwords. Maximum value that can be specified is 20. Not specifying it or specifying 0 will not enforce history.
     //optional setting to set a validity duration for password reset links (in seconds)
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
   }
 });
+
+//If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
+//Need to use local file adapter for postgres
+if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("postgres") !== -1){
+    api.filesAdapter = new FSFilesAdapter({secretKey: process.env.PARSE_SERVER_FILE_KEY});
+}
+
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
 // javascriptKey, restAPIKey, dotNetKey, clientKey
@@ -207,14 +222,24 @@ async function createIndexes(){
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     
+    await adapter.ensureUniqueness('KnowledgeVector', schema, ['uuid'])
+    .catch(error => console.log(error));
+    
+    //Because of way ParseCareKit handles this class, comment out these checks
+    /*
     await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Note', schema, ['uuid'])
     .catch(error => console.log(error));
+    */
     
-    await adapter.ensureUniqueness('KnowledgeVector', schema, ['uuid'])
-    .catch(error => console.log(error));
+}
+
+//If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
+if(process.env.PARSE_SET_USER_CLP == "1"){
+    //Fire after 5 seconds to allow _User class to be created
+    setTimeout(function() {Parse.Cloud.run('setUserClassLevelPermissions');},  3000);
 }
 
 
