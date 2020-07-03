@@ -239,7 +239,12 @@ async function createIndexes(){
 //If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
 if(process.env.PARSE_SET_USER_CLP == "1"){
     //Fire after 5 seconds to allow _User class to be created
-    setTimeout(function() {Parse.Cloud.run('setUserClassLevelPermissions');},  3000);
+    setTimeout(async function() {
+      await Parse.Cloud.run('setUserClassLevelPermissions');
+      if(process.env.PARSE_USING_PARSECAREKIT == "1"){
+        Parse.Cloud.run('setAuditClassLevelPermissions');
+      }
+    },  3000);
 }
 
 
