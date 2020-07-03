@@ -6,6 +6,7 @@ require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
 require('./files.js');
+const ParseAuditor = require('../node_modules/parse-auditor/src/index.js');
 
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
@@ -292,6 +293,16 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
 });
 
 Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
+    const auditCLP = {
+      get: { requiresAuthentication: true },
+      find: { requiresAuthentication: true },
+      create: { '*': true },
+      update: { requiresAuthentication: true },
+      delete: { requiresAuthentication: true },
+      addField: { '*': true },
+      protectedFields: {}
+    };
+    ParseAuditor(['_User', '_Role', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], [], { useMasterKey: true, clp: auditCLP });
     const userSchema = new Parse.Schema('_User');
     await userSchema.get();
     userSchema.setCLP({

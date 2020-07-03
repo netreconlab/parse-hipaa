@@ -2,7 +2,7 @@ FROM parseplatform/parse-server:latest
 
 USER root
 RUN apk add postgresql-client;
-RUN npm install clamscan
+RUN npm install --save netreconlab/parse-auditor#masterKey clamscan 
 RUN mkdir ./files
 USER node
 
