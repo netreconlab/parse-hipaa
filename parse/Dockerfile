@@ -1,7 +1,8 @@
 FROM parseplatform/parse-server:latest
 
 USER root
-RUN apk add postgresql-client;
+RUN apk add postgresql-client \
+  clamav;
 RUN npm install --save netreconlab/parse-auditor#masterKey clamscan 
 RUN mkdir ./files
 USER node
