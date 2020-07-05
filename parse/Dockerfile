@@ -5,6 +5,7 @@ RUN apk add postgresql-client \
   clamav;
 RUN npm install --save netreconlab/parse-auditor#masterKey clamscan 
 RUN mkdir ./files
+RUN chown node ./files
 USER node
 
 ENV PARSE_SERVER_OBJECT_ID_SIZE 32

@@ -16,6 +16,19 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
     allowNewClasses = true
 }
 
+//If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
+//Need to use local file adapter for postgres
+var fileAdapter;
+if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
+  filesAdapter = new FSFilesAdapter({fileKey: process.env.PARSE_SERVER_FILE_KEY});
+}else{
+  filesAdapter = new GridFSBucketAdapter(
+    databaseURI,
+    {},
+    process.env.PARSE_SERVER_FILE_KEY
+  );
+}
+
 const api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
@@ -28,6 +41,7 @@ const api = new ParseServer({
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
   verbose: process.env.VERBOSE,
   allowClientClassCreation: allowNewClasses,
+  filesAdapter: filesAdapter,
   //Setup your push adatper
   /*push: {
     ios: [
@@ -110,12 +124,6 @@ const api = new ParseServer({
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
   }
 });
-
-//If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
-//Need to use local file adapter for postgres
-if (process.env.PARSE_SERVER_DATABASE_URI.indexOf("postgres") !== -1){
-    api.filesAdapter = new FSFilesAdapter({secretKey: process.env.PARSE_SERVER_FILE_KEY});
-}
 
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
 // If you wish you require them, you can set them as options in the initialization above:
