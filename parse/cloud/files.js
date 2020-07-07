@@ -1,14 +1,11 @@
 const NodeClam = require('clamscan');
-const {PassThrough} = require('stream');
+const {Readable} = require('stream');
 const webRequest = require('request');
 
 Parse.Cloud.beforeSaveFile(async (request) => {
     const { file, user } = request;
-    
-    var isInfected;
-    var virusesFound;
-    const fileData = await file.getData();
     try {
+        const fileData = Buffer.from(await file.getData(), 'base64').toString();
         // Get instance by resolving ClamScan promise object
         const clamscan = await new NodeClam().init({
             clamdscan: {
@@ -16,24 +13,20 @@ Parse.Cloud.beforeSaveFile(async (request) => {
                 port: 3310,
             }
         });
-        var stream = new PassThrough();
-        console.log('1111');
-        stream.write(fileData);
-        stream.end();
+        const stream = new Readable();
+        stream.push(fileData);
+        stream.push(null);
         const {is_infected, viruses} = await clamscan.scan_stream(stream);
-        isInfected = is_infected;
-        virusesFound = viruses;
+        if (is_infected === true) {
+            throw `********* Virus or malware was detected! This file was not uploaded. Viruses detected: (${viruses.join('')})`;
+        } else if (is_infected === null) {
+            throw `Couldn't scan file for virus, not saving...`
+        }
+        return file;
     } catch (err) {
         // Handle any errors raised by the code in the try block
         throw `Error scanning for virus or malware ${err}`;
     }
-    if (isInfected === true) {
-        throw `********* Virus or malware was detected! This file was not uploaded. Viruses detected: (${virusesFound.join('')})`;
-    } else if (isInfected === null) {
-        throw `Couldn't scan file for virus, not saving...`
-    }
-    file.da
-    return file;
 });
 
 Parse.Cloud.define("setTestSchema", async (request) =>  {
@@ -53,7 +46,7 @@ Parse.Cloud.define("setTestSchema", async (request) =>  {
         .setCLP(clp)
         .save()
         .then((result) => {
-          console.log("***Success: ScheduleElement class created with default fields. Ignore any previous errors about this class***");
+          console.log("***Success: Test class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error))
     });
@@ -89,10 +82,10 @@ Parse.Cloud.job("testDontSaveUnauthenticatedFile", async (request) =>  {
 
 Parse.Cloud.job("testDontSaveVirusFile", async (request) =>  {
     const { params, headers, log, message } = request;
-    const fake_virus_url = 'https://secure.eicar.org/eicar_com.txt';
+    const fake_virus_url = 'https://secure.eicar.org/eicar.com';
     await Parse.Cloud.run("setTestSchema");
     const object = new Parse.Object('Test');
-    var file = new Parse.File("eicar_com.txt", {uri: fake_virus_url});
+    var file = new Parse.File("eicar.com", {uri: fake_virus_url});
     object.set('textFile', file);
     object.save(null,{useMasterKey: true}).then((result) => {
         console.log("Saved file");
