@@ -1,6 +1,6 @@
 # parse-hipaa
 
-Example of how to setup and run your own HIPAA compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org) or [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), and web based apps. API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/), [REST](https://docs.parseplatform.org/rest/guide/), and [JS](https://docs.parseplatform.org/js/guide/) are also enabled in parse-hipaa and can be tested directly or via the "API Console" in parse-dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. These docker images include the necessary database auditing and logging for HIPAA compliance. 
+Example of how to setup and run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org) or [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), and web based apps. API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/), [REST](https://docs.parseplatform.org/rest/guide/), and [JS](https://docs.parseplatform.org/js/guide/) are also enabled in parse-hipaa and can be tested directly or via the "API Console" in parse-dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. These docker images include the necessary database auditing and logging for HIPAA compliance. 
 
 The parse-hipaa repo provides the following:
 - [x] Auditing & logging at server-admin level (Parse) and at the database level (postgres or mongo)
@@ -11,11 +11,11 @@ The parse-hipaa repo provides the following:
 - [x] File uploads are scanned for viruses and malware by clamscan before they are saved to parse-hipaa. If any virus or malware is detected the files won't be saved 
 - [x] Encryption in transit - parse-hipaa and it's companion images are setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
 
-You will still need to setup the following on your own to be fully HIPAA compliant:
+You will still need to setup the following on your own to be fully HIPAA & GDPR compliant:
 
 - [ ] Encryption in transit - you will need to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system)
 - [ ] Encryption at rest - Mount to your own encrypted storage drive for your database (Linux and macOS have API's for this) and store the drive in a "safe" location
-- [ ] Be sure to do anything else HIPAA requires
+- [ ] Be sure to do anything else HIPAA & GDPR requires
 
 A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
 
