@@ -7,7 +7,8 @@ The parse-hipaa repo provides the following:
 - [x] The User class (and the ParseCareKit classes if you are using them) are locked down and doesn't allow unauthenticated access (the standard parse-server allows unauthenticated read access by default)
 - [x] The creation of new Parse Classes and the addition of adding fields from the client-side are disabled. These can be created/added on the server-side using Parse Dashboard (the standard parse-server allows Class and field creation on the client-side by default)
 - [x] File uploads are only allowed by authenticated users (the standard parse-server allows unauthenticated uploads by default)
-- [x] Files uploads are encrypted with AES-256-GCM by default (the standard parse-server doesn't encrypt files by default) 
+- [x] File uploads are encrypted with AES-256-GCM by default (the standard parse-server doesn't encrypt files by default)
+- [x] File uploads are scanned for viruses and malware by clamscan before they are saved to parse-hipaa. If any virus or malware is detected the files won't be saved 
 - [x] Encryption in transit - parse-hipaa and it's companion images are setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
 
 You will still need to setup the following on your own to be fully HIPAA compliant:
