@@ -62,9 +62,9 @@ Parse.Cloud.job("testSaveFile", async (request) =>  {
     console.log(file);
     object.set('textFile', file);
     object.save(null,{useMasterKey: true}).then((result) => {
-      console.log("Saved file");
+        message("Saved file");
     })
-    .catch(error => console.log(error));
+    .catch(error => message(error));
 });
 
 Parse.Cloud.job("testDontSaveUnauthenticatedFile", async (request) =>  {
@@ -75,9 +75,9 @@ Parse.Cloud.job("testDontSaveUnauthenticatedFile", async (request) =>  {
     var file = new Parse.File("README.md", {uri: normal_file_url});
     object.set('textFile', file);
     object.save().then((result) => {
-        console.log("Saved file");
+        message("Saved file");
     })
-    .catch(error => console.log(error));
+    .catch(error => message(error));
 });
 
 Parse.Cloud.job("testDontSaveVirusFile", async (request) =>  {
@@ -88,7 +88,7 @@ Parse.Cloud.job("testDontSaveVirusFile", async (request) =>  {
     var file = new Parse.File("eicar.com", {uri: fake_virus_url});
     object.set('textFile', file);
     object.save(null,{useMasterKey: true}).then((result) => {
-        console.log("Saved file");
+        message("Saved file");
     })
-    .catch(error => console.log(error));
+    .catch(error => message(error));
 });
