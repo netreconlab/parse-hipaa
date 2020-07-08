@@ -4,6 +4,8 @@
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
+const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
+  .GridFSBucketAdapter;
 var path = require('path');
 var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
@@ -23,7 +25,7 @@ if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
   filesAdapter = new FSFilesAdapter({fileKey: process.env.PARSE_SERVER_FILE_KEY});
 }else{
   filesAdapter = new GridFSBucketAdapter(
-    databaseURI,
+    databaseUri,
     {},
     process.env.PARSE_SERVER_FILE_KEY
   );
