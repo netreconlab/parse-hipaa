@@ -56,5 +56,3 @@ services:
     scan:
         image: netreconlab/clamscan:latest
         restart: always
-        ports:
-            - 3310:3310
