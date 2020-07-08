@@ -62,4 +62,3 @@ services:
         restart: always
         ports:
             - 3310:3310
-    

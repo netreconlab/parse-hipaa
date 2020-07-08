@@ -53,4 +53,8 @@ services:
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/log/:/mongologs
-        
+    scan:
+        image: netreconlab/clamscan:latest
+        restart: always
+        ports:
+            - 3310:3310
