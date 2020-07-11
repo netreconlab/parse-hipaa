@@ -111,7 +111,7 @@ const api = new ParseServer({
     threshold: 3, // threshold policy setting determines the number of failed sign-in attempts that will cause a user account to be locked. Set it to an integer value greater than 0 and less than 1000.
   },
   // optional settings to enforce password policies
-  passwordPolicy: {
+  /*passwordPolicy: {
     // Two optional settings to enforce strong passwords. Either one or both can be specified.
     // If both are specified, both checks must pass to accept the password
     // 1. a RegExp object or a regex string representing the pattern to enforce
@@ -124,7 +124,7 @@ const api = new ParseServer({
     maxPasswordHistory: 5, // optional setting to prevent reuse of previous n passwords. Maximum value that can be specified is 20. Not specifying it or specifying 0 will not enforce history.
     //optional setting to set a validity duration for password reset links (in seconds)
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
-  }
+  }*/
 });
 
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server

@@ -5,8 +5,8 @@ require('./task.js');
 require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
-require('./files.js');
-const ParseAuditor = require('../node_modules/parse-auditor/src/index.js');
+//require('./files.js');
+//const ParseAuditor = require('../node_modules/parse-auditor/src/index.js');
 
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
@@ -306,7 +306,7 @@ Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
     });
     await userSchema.update({useMasterKey: true});
 });
-
+/*
 Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
     const auditCLP = {
       get: { requiresAuthentication: true },
@@ -319,7 +319,7 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
     };
     ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'KnowledgeVector', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], ['_User', '_Role', 'KnowledgeVector', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
-
+*/
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
