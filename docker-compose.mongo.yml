@@ -4,15 +4,15 @@ services:
     parse:
         image: parseplatform/parse-server:latest
         environment:
-            PARSE_SERVER_APPLICATION_ID: applicationId
-            PARSE_SERVER_MASTER_KEY: masterKey
+            PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
+            PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
             #PARSE_SERVER_FILE_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
             PORT: ${PORT}
-            PARSE_SERVER_MOUNT_PATH: /1
-            PARSE_SERVER_URL: http://parse:${PORT}/1
-            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/1
+            PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
+            PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
+            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 0
             PARSE_SET_USER_CLP: 0 #Default User schema so only authenticated users can access

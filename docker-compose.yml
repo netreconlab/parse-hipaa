@@ -4,20 +4,20 @@ services:
     parse:
         image: netreconlab/parse-hipaa:netrecon
         environment:
-            PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
-            PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
-            PARSE_SERVER_FILE_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+            PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
+            PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
+            #PARSE_SERVER_FILE_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
             PORT: ${PORT}
-            PARSE_SERVER_MOUNT_PATH: /parse
-            PARSE_SERVER_URL: http://parse:${PORT}/parse
-            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
+            PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
+            PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
+            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
-            PARSE_SERVER_MOUNT_GRAPHQL: 1
-            PARSE_SET_USER_CLP: 1 #Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
-            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
+            PARSE_SERVER_MOUNT_GRAPHQL: 0
+            PARSE_SET_USER_CLP: 0 #Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
         ports:
             - ${PORT}:${PORT}
@@ -25,7 +25,7 @@ services:
             - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
-            #- /My/Encrypted/Drive/files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
+            - ./files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
         command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
