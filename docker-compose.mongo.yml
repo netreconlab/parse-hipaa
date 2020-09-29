@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:latest
+        image: netreconlab/parse-hipaa:netrecon
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
