@@ -1,4 +1,4 @@
-FROM parseplatform/parse-server:4.2.0
+FROM parseplatform/parse-server:4.3.0
 
 USER root
 RUN apk add postgresql-client;
