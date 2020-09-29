@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:netrecon
+        image: netreconlab/parse-hipaa:latest
         environment:
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
             PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
@@ -57,6 +57,6 @@ services:
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
-    scan:
-        image: netreconlab/clamscan:latest
-        restart: always
+   # scan:
+   #     image: netreconlab/clamscan:latest
+   #     restart: always
