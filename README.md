@@ -45,6 +45,7 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 ```
 PARSE_SERVER_APPLICATION_ID #Unique string value
 PARSE_SERVER_MASTER_KEY #Unique string value
+PARSE_SERVER_ENCRYPTION_KEY #Unique string used for encrypting files stored by parse-hipaa
 PARSE_SERVER_OBJECT_ID_SIZE #Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
 PARSE_SERVER_DATABASE_URI #URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
 PORT #Port for parse-hipaa, default is 1337
@@ -53,7 +54,9 @@ PARSE_SERVER_URL #Server URL, default is http://parse:${PORT}/parse
 PARSE_PUBLIC_SERVER_URL #Public Server URL, default is http://localhost:${PORT}/parse
 PARSE_SERVER_CLOUD #Path to cloud code, default is /parse/cloud/main.js
 PARSE_SERVER_MOUNT_GRAPHQL #Enable graphql, default is 1
-PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 0
+PARSE_SET_USER_CLP #Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
+PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION #String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
+PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
 POSTGRES_PASSWORD: #Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 

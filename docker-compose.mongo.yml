@@ -6,7 +6,7 @@ services:
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
-            PARSE_SERVER_FILE_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+            PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
             PORT: ${PORT}
@@ -53,4 +53,6 @@ services:
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/log/:/mongologs
-        
+    scan:
+        image: netreconlab/clamscan:latest
+        restart: always
