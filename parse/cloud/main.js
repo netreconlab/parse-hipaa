@@ -256,10 +256,10 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .catch(error => console.log(error))
     });
     
-    const knowledgeVectorSchema = new Parse.Schema('Clock');
-    await knowledgeVectorSchema.get()
+    const clockSchema = new Parse.Schema('Clock');
+    await clockSchema.get()
     .catch(error => {
-        knowledgeVectorSchema.addString('uuid')
+        clockSchema.addString('uuid')
         .addString('vector')
         .setCLP(clp)
         .save()

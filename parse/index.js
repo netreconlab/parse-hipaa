@@ -22,12 +22,12 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
 //Need to use local file adapter for postgres
 var fileAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
-  filesAdapter = new FSFilesAdapter({fileKey: process.env.PARSE_SERVER_FILE_KEY});
+  filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
 }else{
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
     {},
-    process.env.PARSE_SERVER_FILE_KEY
+    process.env.PARSE_SERVER_ENCRYPTION_KEY
   );
 }
 
@@ -37,7 +37,7 @@ const api = new ParseServer({
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
   masterKey: process.env.PARSE_SERVER_MASTER_KEY || '', //Add your master key here. Keep it secret!
   //readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
-  fileKey: process.env.PARSE_SERVER_FILE_KEY,
+  encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
