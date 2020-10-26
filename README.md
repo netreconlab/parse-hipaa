@@ -53,7 +53,7 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 ```
 PARSE_SERVER_APPLICATION_ID #Unique string value
 PARSE_SERVER_MASTER_KEY #Unique string value
-PARSE_SERVER_FILE_KEY #Unique string used for encrypting files stored by parse-hipaa
+PARSE_SERVER_ENCRYPTION_KEY #Unique string used for encrypting files stored by parse-hipaa
 PARSE_SERVER_OBJECT_ID_SIZE #Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
 PARSE_SERVER_DATABASE_URI #URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
 PORT #Port for parse-hipaa, default is 1337
