@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:netrecon
+        image: parseplatform/parse-server:4.4.0
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -27,7 +27,7 @@ services:
             - ./parse/cloud:/parse-server/cloud
             - ./files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
-        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
+        command: ["node", "index.js"]
         depends_on:
             - db
     dashboard:
