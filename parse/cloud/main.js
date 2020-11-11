@@ -61,7 +61,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('name')
         .addString('sex')
         .addDate('birthday')
-        .addString('alergies')
+        .addString('allergies')
         .addString('groupIdentifier')
         .addArray('tags')
         .addString('source')
@@ -278,15 +278,15 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .catch(error => console.log(error))
     });
     
-    const knowledgeVectorSchema = new Parse.Schema('KnowledgeVector');
-    await knowledgeVectorSchema.get()
+    const clockSchema = new Parse.Schema('Clock');
+    await clockSchema.get()
     .catch(error => {
-        knowledgeVectorSchema.addString('uuid')
+        clockSchema.addString('uuid')
         .addString('vector')
         .setCLP(clp)
         .save()
         .then((result) => {
-          console.log("***Success: KnowledgeVector class created with default fields. Ignore any previous errors about this class***");
+          console.log("***Success: Clock class created with default fields. Ignore any previous errors about this class***");
         })
         .catch(error => console.log(error))
     });
@@ -317,7 +317,7 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       addField: {},
       protectedFields: {}
     };
-    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'KnowledgeVector', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], ['_User', '_Role', 'KnowledgeVector', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
+    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'ScheduleElement', 'Outcome', 'OutcomeValue', 'Note'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
