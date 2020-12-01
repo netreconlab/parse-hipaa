@@ -61,7 +61,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('name')
         .addString('sex')
         .addDate('birthday')
-        .addString('allergies')
+        .addArray('allergies')
         .addString('groupIdentifier')
         .addArray('tags')
         .addString('source')
