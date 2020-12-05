@@ -41,7 +41,7 @@ services:
         depends_on:
             - parse
     db:
-        image: netreconlab/hipaa-mongo:4.2
+        image: netreconlab/hipaa-mongo:4.4
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
