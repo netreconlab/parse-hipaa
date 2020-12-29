@@ -22,7 +22,7 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
 //Need to use local file adapter for postgres
 var fileAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
-  filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+  filesAdapter = new FSFilesAdapter();
 }else{
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
