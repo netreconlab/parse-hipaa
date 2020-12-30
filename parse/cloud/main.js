@@ -8,6 +8,11 @@ require('./note.js');
 //require('./files.js');
 //const ParseAuditor = require('../node_modules/parse-auditor/src/index.js');
 
+// main.js
+Parse.Cloud.define('hello', async () => {
+  return 'Hello world!';
+});
+
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
     const clp = {
