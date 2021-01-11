@@ -63,7 +63,7 @@ const api = new ParseServer({
    }
   },*/
   liveQuery: {
-    classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
+    classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   //Setup your mail adapter
@@ -142,7 +142,7 @@ app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+  res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
@@ -257,9 +257,8 @@ if(process.env.PARSE_SET_USER_CLP == "1"){
     },  3000);
 }
 
-
 // This will enable the Live Query real-time server
-//ParseServer.createLiveQueryServer(httpServer);
+ParseServer.createLiveQueryServer(httpServer);
 
 /*
 //Below is for SSL, but you should probably run this behind a proxy instead
@@ -274,7 +273,4 @@ var httpsServer = require('https').createServer({
 httpsServer.listen(port, host, function() {
     console.log('parse-server running on port ' + port + '.');
 });
-
-// This will enable the Live Query real-time server
-ParseServer.createLiveQueryServer(httpsServer);
 */
