@@ -22,7 +22,7 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
 //Need to use local file adapter for postgres
 var fileAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
-  filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+  filesAdapter = new FSFilesAdapter();
 }else{
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
@@ -63,7 +63,7 @@ const api = new ParseServer({
    }
   },*/
   liveQuery: {
-    classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
+    classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   //Setup your mail adapter
@@ -111,7 +111,7 @@ const api = new ParseServer({
     threshold: 3, // threshold policy setting determines the number of failed sign-in attempts that will cause a user account to be locked. Set it to an integer value greater than 0 and less than 1000.
   },
   // optional settings to enforce password policies
-  passwordPolicy: {
+  /*passwordPolicy: {
     // Two optional settings to enforce strong passwords. Either one or both can be specified.
     // If both are specified, both checks must pass to accept the password
     // 1. a RegExp object or a regex string representing the pattern to enforce
@@ -124,7 +124,7 @@ const api = new ParseServer({
     maxPasswordHistory: 5, // optional setting to prevent reuse of previous n passwords. Maximum value that can be specified is 20. Not specifying it or specifying 0 will not enforce history.
     //optional setting to set a validity duration for password reset links (in seconds)
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
-  }
+  }*/
 });
 
 // Client-keys like the javascript key or the .NET key are not necessary with parse-server
@@ -142,7 +142,7 @@ app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+  res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
@@ -257,9 +257,8 @@ if(process.env.PARSE_SET_USER_CLP == "1"){
     },  3000);
 }
 
-
 // This will enable the Live Query real-time server
-//ParseServer.createLiveQueryServer(httpServer);
+ParseServer.createLiveQueryServer(httpServer);
 
 /*
 //Below is for SSL, but you should probably run this behind a proxy instead
@@ -274,7 +273,4 @@ var httpsServer = require('https').createServer({
 httpsServer.listen(port, host, function() {
     console.log('parse-server running on port ' + port + '.');
 });
-
-// This will enable the Live Query real-time server
-ParseServer.createLiveQueryServer(httpsServer);
 */
