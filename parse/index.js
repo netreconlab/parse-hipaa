@@ -63,7 +63,7 @@ const api = new ParseServer({
    }
   },*/
   liveQuery: {
-  classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
+    classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   //Setup your mail adapter
@@ -142,7 +142,7 @@ app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+  res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
