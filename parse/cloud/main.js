@@ -71,9 +71,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .addString('previousVersionUUID')
-        .addPointer('previousVersion', 'Patient')
         .addString('nextVersionUUID')
-        .addPointer('nextVersion', 'Patient')
         .setCLP(clp)
         .save().then((result) => {
           console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
@@ -104,9 +102,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .addString('previousVersionUUID')
-        .addPointer('previousVersion', 'CarePlan')
         .addString('nextVersionUUID')
-        .addPointer('nextVersion', 'CarePlan')
         .setCLP(clp)
         .save()
         .then((result) => {
@@ -147,9 +143,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .addString('previousVersionUUID')
-        .addPointer('previousVersion', 'Contact')
         .addString('nextVersionUUID')
-        .addPointer('nextVersion', 'Contact')
         .setCLP(clp)
         .save()
         .then((result) => {
@@ -214,9 +208,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addObject('userInfo')
         .addObject('schemaVersion')
         .addString('previousVersionUUID')
-        .addPointer('previousVersion', 'Task')
         .addString('nextVersionUUID')
-        .addPointer('nextVersion', 'Task')
         .setCLP(clp)
         .save()
         .then((result) => {
@@ -235,7 +227,8 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addDate('deletedDate')
         .addNumber('logicalClock')
         .addObject('timezone')
-        .addDate('date')
+        .addDate('startDate')
+        .addDate('endDate')
         .addNumber('taskOccurrenceIndex')
         .addArray('values')
         .addString('taskUUID')
