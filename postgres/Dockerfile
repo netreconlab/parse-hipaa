@@ -1,4 +1,4 @@
-FROM postgis/postgis:13-3.1
+FROM postgis/postgis:13-3.0
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
 RUN apt-get update && apt-get install -y --no-install-recommends\
