@@ -1,4 +1,4 @@
-FROM postgis/postgis:11-3.0
+FROM postgis/postgis:11-3.1
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
 #Install additional scripts. These are run in abc order during initial start
