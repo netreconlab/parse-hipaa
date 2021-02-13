@@ -44,7 +44,7 @@ services:
         depends_on:
             - parse
     db:
-        image: netreconlab/parse-postgres:13-3.0
+        image: netreconlab/parse-postgres:13-3.1
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}
