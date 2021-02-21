@@ -226,6 +226,13 @@ async function createIndexes(){
     .catch(error => console.log(error));
     await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
+
+    await adapter.ensureUniqueness('HealthKitTask', versionedSchema, ['uuid'])
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['entityId'], 'HealthKitTask'+indexEntityIdPostfix, false)
+    .catch(error => console.log(error));
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['effectiveDate'], 'HealthKitTask'+indexEffectiveDatePostfix, false)
+    .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Outcome', versionedSchema, ['uuid'])
     .catch(error => console.log(error));
