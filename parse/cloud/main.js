@@ -19,21 +19,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         addField: {},
         protectedFields: {}
     };
-        /*
-    const noteSchema = new Parse.Schema('Note');
-    await noteSchema.get()
-    .catch(error => {
-        noteSchema.addString('content')
-        .addString('title')
-        .addString('author')
-        .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: Note class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });*/
-    
+
     const patientSchema = new Parse.Schema('Patient');
     await patientSchema.get()
     .catch(error => {
@@ -138,36 +124,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         })
         .catch(error => console.log(error));
     });
-    /*
-    const outcomeValueSchema = new Parse.Schema('OutcomeValue');
-    await outcomeValueSchema.get()
-    .catch(error => {
-        outcomeValueSchema.addString('uuid')
-        .addDate('createdDate')
-        .addDate('updatedDate')
-        .addNumber('logicalClock')
-        .addObject('timezone')
-        .addNumber('index')
-        .addString('kind')
-        .addString('units')
-        .addString('type')
-        .addObject('value')
-        .addString('groupIdentifier')
-        .addArray('tags')
-        .addString('source')
-        .addString('asset')
-        .addArray('notes')
-        .addString('remoteID')
-        .addObject('userInfo')
-        .addObject('schemaVersion')
-        .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: OutcomeValue class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });
-    */
+
     const taskSchema = new Parse.Schema('Task');
     await taskSchema.get()
     .catch(error => {
@@ -315,7 +272,7 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       addField: {},
       protectedFields: {}
     };
-    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'Outcome', 'OutcomeValue', 'Note'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'Outcome', 'OutcomeValue', 'Note'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
+    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'OutcomeValue', 'Note'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'OutcomeValue', 'Note'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
