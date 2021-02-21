@@ -193,7 +193,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .setCLP(clp)
         .save()
         .then((result) => {
-          console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
+          console.log("***Success: HealthKitTask class created with default fields. Ignore any previous errors about this class***");
          })
          .catch(error => console.log(error))
     });
