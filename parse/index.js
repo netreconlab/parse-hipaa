@@ -64,7 +64,7 @@ const api = new ParseServer({
    }
   },*/
   liveQuery: {
-    classNames: ["GameScore", "Book", "Author"] // List of classes to support for query subscriptions
+    classNames: ["Activity", "Post"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   //Setup your mail adapter
