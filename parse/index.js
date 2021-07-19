@@ -20,7 +20,7 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
 
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
 //Need to use local file adapter for postgres
-var fileAdapter;
+var filesAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
   filesAdapter = new FSFilesAdapter();
 }else{
@@ -164,11 +164,6 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
-//If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
-if(process.env.PARSE_USING_PARSECAREKIT == "1"){
-    createIndexes();
-}
-
 const host = process.env.HOST || '0.0.0.0';
 var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
@@ -181,83 +176,42 @@ httpServer.listen(port, host, function() {
 });
 
 async function createIndexes(){
-    await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
+    await Parse.Cloud.run('ensureClassDefaultFields');
     let adapter = api.config.databaseController.adapter;
-    const indexEntityIdPostfix = '_entityId';
-    const indexEffectiveDatePostfix = '_effectiveDate';
     
-    const schema = {
+    const postSchema = {
       fields: {
-        uuid: { type: 'String' }
+        user: { type: 'Pointer',
+                targetClass: '_User' }
       },
     };
     
-    const versionedSchema = {
+    const activitySchema = {
       fields: {
-        uuid: { type: 'String' },
-        entityId: { type: 'String' },
-        effectiveDate: { type: 'Date' }
+        fromUser: { type: 'Pointer',
+                    targetClass: '_User' },
+        toUser: { type: 'Pointer',
+                  targetClass: '_User' },
+        type: { type: 'String' }
       },
     };
-    
-    await adapter.ensureUniqueness('Patient', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
+
+    await adapter.ensureIndex('Post', postSchema, ['user'], 'Post_user', false)
     .catch(error => console.log(error));
 
-    await adapter.ensureUniqueness('Contact', versionedSchema, ['uuid'])
+    await adapter.ensureIndex('Activity', activitySchema, ['fromUser'], 'Activity_fromUser', false)
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
+    await adapter.ensureIndex('Activity', activitySchema, ['toUser'], 'Activity_toUser', false)
     .catch(error => console.log(error));
-    await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
+    await adapter.ensureIndex('Activity', activitySchema, ['type'], 'Activity_type', false)
     .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('CarePlan', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Task', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Outcome', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Clock', schema, ['uuid'])
-    .catch(error => console.log(error));
-    
-    //Because of way ParseCareKit handles this class, comment out these checks
-    /*
-    await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Note', schema, ['uuid'])
-    .catch(error => console.log(error));
-    */
-    
 }
 
-//If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
-if(process.env.PARSE_SET_USER_CLP == "1"){
-    //Fire after 5 seconds to allow _User class to be created
-    setTimeout(async function() {
-      await Parse.Cloud.run('setUserClassLevelPermissions');
-      if(process.env.PARSE_USING_PARSECAREKIT == "1"){
-        Parse.Cloud.run('setAuditClassLevelPermissions');
-      }
-    },  3000);
-}
-
+//Fire after 5 seconds to allow _User class to be created
+setTimeout(async function() {
+  // Create indexs
+  createIndexes();
+},  3000);
 
 // This will enable the Live Query real-time server
 ParseServer.createLiveQueryServer(httpServer);
