@@ -20,7 +20,7 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
 
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
 //Need to use local file adapter for postgres
-var fileAdapter;
+var filesAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
   filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
 }else{
