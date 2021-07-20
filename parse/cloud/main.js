@@ -13,27 +13,6 @@ Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {
         addField: {},
         protectedFields: {}
     };
-
-    const userSchema = new Parse.Schema('_User');
-    await userSchema.get();
-    const userCLP = {
-      get: { requiresAuthentication: true },
-      find: { requiresAuthentication: true },
-      create: { '*': true },
-      update: { requiresAuthentication: true },
-      delete: { requiresAuthentication: true },
-      addField: {},
-      protectedFields: {}
-    };
-
-    userSchema
-        .addString('name')
-        .addString('bio')
-        .addString('link')
-        .addFile('profileImage')
-        .addFile('profileThumbnail')
-        .setCLP(userCLP)
-    await userSchema.update( { useMasterKey: true } );
   
     const postSchema = new Parse.Schema('Post');
     await postSchema.get()
@@ -51,7 +30,7 @@ Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {
           })
           .catch(error => console.log(error))
     });
-    
+
     const activitySchema = new Parse.Schema('Activity');
     await activitySchema.get()
     .catch(error => {
@@ -64,12 +43,13 @@ Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {
           .setCLP(clp)
           .save().then((result) => {
             console.log("***Success: Activity class created with default fields. Ignore any previous errors about this class***");
+            setUserClassLevelPermissions();
           })
           .catch(error => console.log(error));
     });
 });
-/*
-Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
+
+async function setUserClassLevelPermissions() {
     const userSchema = new Parse.Schema('_User');
     await userSchema.get();
     const clp = {
@@ -90,4 +70,4 @@ Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
         .addNumber('profileThumbnail')
         .setCLP(clp)
     await userSchema.update({useMasterKey: true});
-});*/
+}
