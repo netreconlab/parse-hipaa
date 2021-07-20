@@ -66,8 +66,8 @@ async function setUserClassLevelPermissions() {
         .addString('name')
         .addString('bio')
         .addObject('link')
-        .addDate('profileImage')
-        .addNumber('profileThumbnail')
+        .addFile('profileImage')
+        .addFile('profileThumbnail')
         .setCLP(clp)
     await userSchema.update({useMasterKey: true});
 }
