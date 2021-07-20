@@ -40,6 +40,7 @@ Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {
           .addPointer('activity', 'Activity')
           .addPointer('post', 'Post')
           .addString('type')
+          .addString('comment')
           .setCLP(clp)
           .save().then((result) => {
             console.log("***Success: Activity class created with default fields. Ignore any previous errors about this class***");
