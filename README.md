@@ -1,4 +1,4 @@
-# parse-hipaa
+# parse-hipaa 
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
