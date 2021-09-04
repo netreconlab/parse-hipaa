@@ -38,7 +38,7 @@ jobs:
       # https://github.com/docker/login-action
       - name: Log into dockerhub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@1.10
+        uses: docker/login-action@V1.10
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
@@ -54,7 +54,7 @@ jobs:
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
-        uses: docker/build-push-action@2.7
+        uses: docker/build-push-action@v2.7
         with:
           context: parse/.
           push: ${{ github.event_name != 'pull_request' }}
