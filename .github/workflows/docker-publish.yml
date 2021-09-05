@@ -7,11 +7,11 @@ name: Docker
 
 on:
   push:
-    branches: [ 4.4 ]
+    branches: [ mongo-4.4 ]
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
   pull_request:
-    branches: [ 4.4 ]
+    branches: [ mongo-4.4 ]
 
 env:
   # Use docker.io for Docker Hub if empty
