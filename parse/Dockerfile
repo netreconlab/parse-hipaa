@@ -1,4 +1,4 @@
-FROM parseplatform/parse-server:latest
+FROM netreconlab/parse-server:latest
 
 USER root
 RUN apk add postgresql-client;

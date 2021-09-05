@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:4.5.0
+        image: netreconlab/parse-hipaa:4.10.3
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -28,7 +28,7 @@ services:
             - db
         command: ["node", "index.js"]
     dashboard:
-        image: parseplatform/parse-dashboard:latest
+        image: netreconlab/parse-dashboard:2.2.1
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
