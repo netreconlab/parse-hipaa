@@ -13,8 +13,8 @@ RUN apt-get update \
       && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /docker-entrypoint-initdb.d
-COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
-COPY ./update-postgis.sh /usr/local/bin
+COPY ./scripts/initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
+COPY ./scripts/update-postgis.sh /usr/local/bin
 
 #Install additional scripts. These are run in abc order during initial start
 COPY ./scripts/setup-0-pgaudit.sh /docker-entrypoint-initdb.d/setup-0-pgaudit.sh
