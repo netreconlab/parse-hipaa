@@ -1,8 +1,20 @@
-FROM postgis/postgis:13-3.1
+FROM postgres:13
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
-RUN apt-get update && apt-get install -y --no-install-recommends\
-  postgresql-$PG_MAJOR-pgaudit
+ENV POSTGIS_MAJOR 3
+ENV POSTGIS_VERSION 3.1.3+dfsg-1~exp1.pgdg100+1
+
+RUN apt-get update \
+      && apt-cache showpkg postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR \
+      && apt-get install -y --no-install-recommends \
+           postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR=$POSTGIS_VERSION \
+           postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR-scripts \
+           postgresql-$PG_MAJOR-pgaudit \
+      && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /docker-entrypoint-initdb.d
+COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
+COPY ./update-postgis.sh /usr/local/bin
 
 #Install additional scripts. These are run in abc order during initial start
 COPY ./scripts/setup-0-pgaudit.sh /docker-entrypoint-initdb.d/setup-0-pgaudit.sh
