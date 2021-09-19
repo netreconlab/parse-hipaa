@@ -28,7 +28,7 @@ services:
             - db
         command: ["node", "index.js"]
     dashboard:
-        image: netreconlab/parse-dashboard:2.2.1
+        image: parseplatform/parse-dashboard:3.0.0
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
