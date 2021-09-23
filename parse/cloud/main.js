@@ -13,6 +13,10 @@ Parse.Cloud.define('hello', async () => {
   return 'Hello world!';
 });
 
+Parse.Cloud.define("testCloudCode", async() => {
+   throw new Parse.Error(3000, "cloud has an error on purpose.");
+});
+
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {
 
     const clp = {
