@@ -6,14 +6,12 @@ name: Docker
 # documentation.
 
 on:
-  schedule:
-    - cron: '19 17 * * *'
   push:
-    branches: [ main ]
+    branches: [ 5.0.0-alpha.1 ]
     # Publish semver tags as releases.
     tags: [ '*.*.*' ]
   pull_request:
-    branches: [ main ]
+    branches: [ 5.0.0-alpha.1 ]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -58,7 +56,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=true
+            latest=false
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
