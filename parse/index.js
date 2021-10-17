@@ -44,7 +44,14 @@ const api = new ParseServer({
   verbose: process.env.VERBOSE,
   allowClientClassCreation: allowNewClasses,
   filesAdapter: filesAdapter,
-  allowCustomObjectId: true,
+  fileUpload: {
+    enableForPublic: false,
+    enableForAnonymousUser: true,
+    enableForAuthenticatedUser: true,
+  },
+  enableSchemaHooks: true,
+  directAccess: true,
+  allowCustomObjectId: false,
   //Setup your push adatper
   /*push: {
     ios: [
