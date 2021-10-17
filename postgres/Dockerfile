@@ -1,4 +1,4 @@
-FROM postgres:13
+FROM postgres:13-bullseye
 MAINTAINER Network Reconnaissance Lab <baker@cs.uky.edu>
 
 ENV POSTGIS_MAJOR 3
