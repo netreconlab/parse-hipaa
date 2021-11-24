@@ -45,7 +45,7 @@ const api = new ParseServer({
   allowClientClassCreation: allowNewClasses,
   filesAdapter: filesAdapter,
   enableSchemaHooks: true,
-  directAccess: true,
+  directAccess: false,
   //Setup your push adatper
   /*push: {
     ios: [
