@@ -272,7 +272,7 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       addField: {},
       protectedFields: {}
     };
-    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
+    ParseAuditor(['_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], ['_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
