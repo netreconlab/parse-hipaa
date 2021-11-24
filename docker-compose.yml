@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:4.10.4
+        image: netreconlab/parse-hipaa:5.0.0-beta.3
         environment:
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_MASTER_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
@@ -44,7 +44,7 @@ services:
         depends_on:
             - parse
     db:
-        image: netreconlab/hipaa-postgres:13-3.1
+        image: netreconlab/hipaa-postgres:14-3_1
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}
