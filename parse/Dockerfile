@@ -1,4 +1,4 @@
-FROM netreconlab/parse-server:docker
+FROM parseplatform/parse-server:5.0.0-beta.4
 
 USER root
 RUN apk add postgresql-client;

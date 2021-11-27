@@ -13,9 +13,20 @@ if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
 }
 
+
 var allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
-    allowNewClasses = true
+  allowNewClasses = true
+}
+
+var enableSchemaHooks = false;
+if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
+  enableSchemaHooks = true
+}
+
+var useDirectAccess = false;
+if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
+  useDirectAccess = true
 }
 
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
@@ -44,8 +55,8 @@ const api = new ParseServer({
   verbose: process.env.VERBOSE,
   allowClientClassCreation: allowNewClasses,
   filesAdapter: filesAdapter,
-  enableSchemaHooks: true,
-  directAccess: false,
+  enableSchemaHooks: enableSchemaHooks,
+  directAccess: useDirectAccess,
   //Setup your push adatper
   /*push: {
     ios: [

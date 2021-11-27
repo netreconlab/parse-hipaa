@@ -16,7 +16,9 @@ services:
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
             PARSE_SET_USER_CLP: 1 #Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: false #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ENABLE_SCHEMA_HOOKS: true
+            PARSE_SERVER_DIRECT_ACCESS: false #Known to cause crashes when true on single instance of server and not behind public server
             PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
         ports:
