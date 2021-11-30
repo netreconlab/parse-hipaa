@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: parseplatform/parse-server:latest
+        image: parseplatform/parse-server:5.0.0-beta.4
         environment:
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
             PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
@@ -17,6 +17,8 @@ services:
             PARSE_SERVER_MOUNT_GRAPHQL: 0
             PARSE_SET_USER_CLP: 0 #Default User schema so only authenticated users can access
             PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
+            PARSE_SERVER_DIRECT_ACCESS: 'true'
             PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
         ports:
             - ${PORT}:${PORT}

@@ -18,6 +18,16 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
     allowNewClasses = true
 }
 
+var enableSchemaHooks = false;
+if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
+  enableSchemaHooks = true
+}
+
+var useDirectAccess = false;
+if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
+  useDirectAccess = true
+}
+
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
 //Need to use local file adapter for postgres
 var fileAdapter;
@@ -45,6 +55,8 @@ const api = new ParseServer({
   allowClientClassCreation: allowNewClasses,
   filesAdapter: filesAdapter,
   allowCustomObjectId: true,
+  enableSchemaHooks: enableSchemaHooks,
+  directAccess: useDirectAccess,
   //Setup your push adatper
   /*push: {
     ios: [
