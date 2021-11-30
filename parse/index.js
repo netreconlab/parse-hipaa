@@ -13,7 +13,6 @@ if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
 }
 
-
 var allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
@@ -27,6 +26,11 @@ if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
 var useDirectAccess = false;
 if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
   useDirectAccess = true
+}
+
+var verbose = false;
+if (process.env.PARSE_VERBOSE == 'true'){
+  verbose = true
 }
 
 //If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
@@ -52,7 +56,7 @@ const api = new ParseServer({
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
-  verbose: process.env.VERBOSE,
+  verbose: verbose,
   allowClientClassCreation: allowNewClasses,
   filesAdapter: filesAdapter,
   enableSchemaHooks: enableSchemaHooks,
