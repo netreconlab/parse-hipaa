@@ -28,6 +28,11 @@ if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
   useDirectAccess = true
 }
 
+var enforcePrivateUsers = false;
+if (process.env.PARSE_SERVER_ENABLE_PRIVATE_USERS == 'true'){
+  enforcePrivateUsers = true
+}
+
 var verbose = false;
 if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
@@ -61,6 +66,7 @@ const api = new ParseServer({
   filesAdapter: filesAdapter,
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
+  enforcePrivateUsers: enforcePrivateUsers,
   //Setup your push adatper
   /*push: {
     ios: [
