@@ -44,48 +44,53 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 ### Environment Variables
 
 #### netreconlab/parse-hipaa
-```
-PARSE_SERVER_APPLICATION_ID #Unique string value
-PARSE_SERVER_MASTER_KEY #Unique string value
-PARSE_SERVER_ENCRYPTION_KEY #Unique string used for encrypting files stored by parse-hipaa
-PARSE_SERVER_OBJECT_ID_SIZE #Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
-PARSE_SERVER_DATABASE_URI #URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
-PORT #Port for parse-hipaa, default is 1337
-PARSE_SERVER_MOUNT_PATH: #Mounting path for parse-hipaa, default is /parse
-PARSE_SERVER_URL #Server URL, default is http://parse:${PORT}/parse
-PARSE_PUBLIC_SERVER_URL #Public Server URL, default is http://localhost:${PORT}/parse
-PARSE_SERVER_CLOUD #Path to cloud code, default is /parse/cloud/main.js
-PARSE_SERVER_MOUNT_GRAPHQL #Enable graphql, default is 1
-PARSE_SET_USER_CLP #Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
-PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION #String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
-PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
-POSTGRES_PASSWORD: #Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
+```bash
+PARSE_SERVER_APPLICATION_ID # Unique string value
+PARSE_SERVER_MASTER_KEY # Unique string value
+PARSE_SERVER_ENCRYPTION_KEY # Unique string used for encrypting files stored by parse-hipaa
+PARSE_SERVER_OBJECT_ID_SIZE # Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
+PARSE_SERVER_DATABASE_URI # URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+PORT # Port for parse-hipaa, default is 1337
+PARSE_SERVER_MOUNT_PATH: # Mounting path for parse-hipaa, default is /parse
+PARSE_SERVER_URL # Server URL, default is http://parse:${PORT}/parse
+PARSE_PUBLIC_SERVER_URL # Public Server URL, default is http://localhost:${PORT}/parse
+PARSE_SERVER_CLOUD # Path to cloud code, default is /parse/cloud/main.js
+PARSE_SERVER_MOUNT_GRAPHQL # Enable graphql, default is 1
+PARSE_SET_USER_CLP # Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
+PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
+PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
+PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
+PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
+PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
+PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
+PARSE_VERBOSE: 'false'
+POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
 #### parseplatform/parse-dashboard
-```
-PARSE_DASHBOARD_TRUST_PROXY: #Default is 1, this should always be left as 1 when using docker
-PARSE_DASHBOARD_COOKIE_SESSION_SECRET: #Unique string. This should be constant across all deployments on your system
-MOUNT_PATH: #The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+```bash
+PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
+PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
+MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
 ```
 
 #### netreconlab/hipaa-postgres
-```
-POSTGRES_PASSWORD #Password for postgress db cluster
-PG_PARSE_USER #Username for logging into PG_PARSE_DB
-PG_PARSE_PASSWORD #Password for logging into PG_PARSE_DB
-PG_PARSE_DB #Name of parse-hipaa database
+```bash
+POSTGRES_PASSWORD # Password for postgress db cluster
+PG_PARSE_USER # Username for logging into PG_PARSE_DB
+PG_PARSE_PASSWORD # Password for logging into PG_PARSE_DB
+PG_PARSE_DB # Name of parse-hipaa database
 ```
 
 #### netreconlab/hipaa-mongo
-```
-//Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
-MONGO_INITDB_ROOT_USERNAME #Username for mongo db. Should be MONGO_PARSE_USER
-MONGO_INITDB_ROOT_PASSWORD #Password for mongo db. Should be MONGO_PARSE_PASSWORD
-MONGO_INITDB_DATABASE #Name of mongo db. Should be MONGO_PARSE_DB
-MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa.
-MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
-MONGO_PARSE_DB #Name of mongo db for parse-hipaa
+```bash
+# Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
+MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Should be MONGO_PARSE_USER
+MONGO_INITDB_ROOT_PASSWORD # Password for mongo db. Should be MONGO_PARSE_PASSWORD
+MONGO_INITDB_DATABASE # Name of mongo db. Should be MONGO_PARSE_DB
+MONGO_PARSE_USER # Username for logging into mongo db for parse-hipaa.
+MONGO_PARSE_PASSWORD # Password for logging into mongo db for parse-hipaa
+MONGO_PARSE_DB # Name of mongo db for parse-hipaa
 ```
 
 ### Starting up parse-hipaa
@@ -97,11 +102,13 @@ MONGO_PARSE_DB #Name of mongo db for parse-hipaa
 
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to configure and initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
-```db_1         | PostgreSQL init process complete; ready for start up.```
+```bash
+db_1         | PostgreSQL init process complete; ready for start up.
+```
 
 The parse-server container will automatically keep attempting to connect to the postgres container and when it's connected you will see: 
 
-```
+```bash
 parse_1      | parse-server running on port 1337.
 parse_1      | publicServerURL: http://localhost:1337/parse, serverURL: http://parse:1337/parse
 parse_1      | GraphQL API running on http://localhost:1337/parsegraphql
@@ -110,7 +117,7 @@ parse_1      | info: Parse LiveQuery Server starts running
 
 You may also see output such as the following in the console or log files: 
 
-```
+```bash
 db_1         | 2020-03-18 21:59:21.550 UTC [105] ERROR:  duplicate key value violates unique constraint "pg_type_typname_nsp_index"
 db_1         | 2020-03-18 21:59:21.550 UTC [105] DETAIL:  Key (typname, typnamespace)=(_SCHEMA, 2200) already exists.
 db_1         | 2020-03-18 21:59:21.550 UTC [105] STATEMENT:  CREATE TABLE IF NOT EXISTS "_SCHEMA" ( "className" varChar(120), "schema" jsonb, "isParseClass" bool, PRIMARY KEY ("className") )
@@ -173,9 +180,9 @@ You can then make modifications using [psql](http://postgresguide.com/utilities/
 ## Deploying on a real system
 The docker yml's here are intended to run behind a proxy that properly has ssl configured to encrypt data in transit. To create a proxy to parse-hipaa, nginx files are provided [here](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled). Simply add the [sites-available](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled) folder to your nginx directory and add the following to "http" in your nginx.conf:
 
-```
+```bash
 http {
-    include /usr/local/etc/nginx/sites-enabled/*.conf; #Add this line to end. This is for macOS, do whatever is appropriate on your system
+    include /usr/local/etc/nginx/sites-enabled/*.conf; # Add this line to end. This is for macOS, do whatever is appropriate on your system
 }
 ```
 

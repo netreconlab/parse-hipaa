@@ -21,9 +21,11 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     };
 
     const patientSchema = new Parse.Schema('Patient');
-    await patientSchema.get()
-    .catch(error => {
-        patientSchema
+    try {
+      await patientSchema.get();
+    } catch(error) {
+      try {
+        await patientSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -46,16 +48,17 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save().then((result) => {
-          console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
-         })
-        .catch(error => console.log(error));
-    });
+        .save();
+        console.log("***Success: Patient class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
     
     const carePlanSchema = new Parse.Schema('CarePlan');
-    await carePlanSchema.get()
-    .catch(error => {
-        carePlanSchema
+    try {
+      await carePlanSchema.get();
+    } catch(error) {
+      try {
+        await carePlanSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -77,17 +80,17 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
-         })
-        .catch(error => console.log(error));
-    });
+        .save();
+        console.log("***Success: CarePlan class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
     
     const contactSchema = new Parse.Schema('Contact');
-    await contactSchema.get()
-    .catch(error => {
-        contactSchema
+    try {
+      await contactSchema.get();
+    } catch(error) {
+      try {
+        await contactSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -118,17 +121,17 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error));
-    });
+        .save();
+        console.log("***Success: Contact class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
 
     const taskSchema = new Parse.Schema('Task');
-    await taskSchema.get()
-    .catch(error => {
-        taskSchema
+    try {
+      await taskSchema.get();
+    }catch(error) {
+      try {
+        await taskSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -154,17 +157,17 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
-         })
-         .catch(error => console.log(error))
-    });
+        .save();
+        console.log("***Success: Task class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
 
     const healthKitTaskSchema = new Parse.Schema('HealthKitTask');
-    await healthKitTaskSchema.get()
-    .catch(error => {
-        healthKitTaskSchema
+    try {
+      await healthKitTaskSchema.get();
+    }catch(error) {
+      try {
+        await healthKitTaskSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -191,17 +194,17 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: HealthKitTask class created with default fields. Ignore any previous errors about this class***");
-         })
-         .catch(error => console.log(error))
-    });
+        .save();
+        console.log("***Success: HealthKitTask class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
 
     const outcomeSchema = new Parse.Schema('Outcome');
-    await outcomeSchema.get()
-    .catch(error => {
-        outcomeSchema
+    try {
+      await outcomeSchema.get();
+    } catch(error) {
+      try {
+        await outcomeSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -226,25 +229,24 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addArray('previousVersionUUIDs')
         .addArray('nextVersionUUIDs')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });
+        .save();
+        console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
     
     const clockSchema = new Parse.Schema('Clock');
-    await clockSchema.get()
-    .catch(error => {
-        clockSchema
+    try {
+      await clockSchema.get();
+    } catch(error) {
+      try {
+        await clockSchema
+        .addString('uuid')
         .addString('vector')
         .setCLP(clp)
-        .save()
-        .then((result) => {
-          console.log("***Success: Clock class created with default fields. Ignore any previous errors about this class***");
-        })
-        .catch(error => console.log(error))
-    });
+        .save();
+        console.log("***Success: Clock class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
 });
 
 Parse.Cloud.define("setUserClassLevelPermissions", async (request) =>  {
@@ -272,7 +274,7 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       addField: {},
       protectedFields: {}
     };
-    ParseAuditor(['_User', '_Role', '_Installaiton', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
+    ParseAuditor(['_User', '_Role', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], ['_User', '_Role', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'], { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
 Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
