@@ -44,7 +44,7 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 ### Environment Variables
 
 #### netreconlab/parse-hipaa
-```
+```bash
 PARSE_SERVER_APPLICATION_ID # Unique string value
 PARSE_SERVER_MASTER_KEY # Unique string value
 PARSE_SERVER_ENCRYPTION_KEY # Unique string used for encrypting files stored by parse-hipaa
@@ -68,14 +68,14 @@ POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POST
 ```
 
 #### parseplatform/parse-dashboard
-```
+```bash
 PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
 PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
 MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
 ```
 
 #### netreconlab/hipaa-postgres
-```
+```bash
 POSTGRES_PASSWORD # Password for postgress db cluster
 PG_PARSE_USER # Username for logging into PG_PARSE_DB
 PG_PARSE_PASSWORD # Password for logging into PG_PARSE_DB
@@ -83,8 +83,8 @@ PG_PARSE_DB # Name of parse-hipaa database
 ```
 
 #### netreconlab/hipaa-mongo
-```
-//Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
+```bash
+# Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
 MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Should be MONGO_PARSE_USER
 MONGO_INITDB_ROOT_PASSWORD # Password for mongo db. Should be MONGO_PARSE_PASSWORD
 MONGO_INITDB_DATABASE # Name of mongo db. Should be MONGO_PARSE_DB
