@@ -23,7 +23,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const patientSchema = new Parse.Schema('Patient');
     await patientSchema.get()
     .catch(error => {
-        patientSchema.addString('uuid')
+        patientSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -55,7 +55,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const carePlanSchema = new Parse.Schema('CarePlan');
     await carePlanSchema.get()
     .catch(error => {
-        carePlanSchema.addString('uuid')
+        carePlanSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -87,7 +87,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const contactSchema = new Parse.Schema('Contact');
     await contactSchema.get()
     .catch(error => {
-        contactSchema.addString('uuid')
+        contactSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -128,7 +128,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const taskSchema = new Parse.Schema('Task');
     await taskSchema.get()
     .catch(error => {
-        taskSchema.addString('uuid')
+        taskSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -164,7 +164,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const healthKitTaskSchema = new Parse.Schema('HealthKitTask');
     await healthKitTaskSchema.get()
     .catch(error => {
-        healthKitTaskSchema.addString('uuid')
+        healthKitTaskSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')
@@ -201,7 +201,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const outcomeSchema = new Parse.Schema('Outcome');
     await outcomeSchema.get()
     .catch(error => {
-        outcomeSchema.addString('uuid')
+        outcomeSchema
         .addString('entityId')
         .addDate('createdDate')
         .addDate('updatedDate')

@@ -18,6 +18,11 @@ if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
 }
 
+var allowCustomObjectId = false;
+if (process.env.PARSE_SERVER_ALLOW_CUSTOM_OBJECTID == 'true'){
+  allowCustomObjectId = true
+}
+
 var enableSchemaHooks = false;
 if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
   enableSchemaHooks = true
@@ -63,6 +68,7 @@ const api = new ParseServer({
   publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
   verbose: verbose,
   allowClientClassCreation: allowNewClasses,
+  allowCustomObjectId: allowCustomObjectId,
   filesAdapter: filesAdapter,
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
@@ -216,64 +222,41 @@ async function createIndexes(){
     
     const versionedSchema = {
       fields: {
-        uuid: { type: 'String' },
         entityId: { type: 'String' },
         effectiveDate: { type: 'Date' }
       },
     };
     
-    await adapter.ensureUniqueness('Patient', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
 
-    await adapter.ensureUniqueness('Contact', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    await adapter.ensureUniqueness('CarePlan', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    await adapter.ensureUniqueness('Task', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
 
-    await adapter.ensureUniqueness('HealthKitTask', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('HealthKitTask', versionedSchema, ['entityId'], 'HealthKitTask'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     await adapter.ensureIndex('HealthKitTask', versionedSchema, ['effectiveDate'], 'HealthKitTask'+indexEffectiveDatePostfix, false)
     .catch(error => console.log(error));
     
-    await adapter.ensureUniqueness('Outcome', versionedSchema, ['uuid'])
-    .catch(error => console.log(error));
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
     .catch(error => console.log(error));
     
     await adapter.ensureUniqueness('Clock', schema, ['uuid'])
     .catch(error => console.log(error));
-    
-    //Because of way ParseCareKit handles this class, comment out these checks
-    /*
-    await adapter.ensureUniqueness('OutcomeValue', schema, ['uuid'])
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Note', schema, ['uuid'])
-    .catch(error => console.log(error));
-    */
-    
 }
 
 //If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
