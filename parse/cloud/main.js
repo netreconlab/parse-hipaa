@@ -236,7 +236,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
     const clockSchema = new Parse.Schema('Clock');
     await clockSchema.get()
     .catch(error => {
-        clockSchema.addString('uuid')
+        clockSchema
         .addString('vector')
         .setCLP(clp)
         .save()
@@ -279,7 +279,7 @@ Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('Patient');
-    object.set('uuid', "112");
+    object.set('objectId', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved patient");
     })
@@ -290,7 +290,7 @@ Parse.Cloud.job("testCarePlanRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('CarePlan');
-    object.set('uuid', "112");
+    object.set('objectId', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved carePlan");
     })
@@ -301,7 +301,7 @@ Parse.Cloud.job("testContactRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('Contact');
-    object.set('uuid', "112");
+    object.set('objectId', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved contact");
     })
@@ -312,7 +312,7 @@ Parse.Cloud.job("testTaskRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('Task');
-    object.set('uuid', "112");
+    object.set('objectId', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved task");
     })
@@ -323,33 +323,9 @@ Parse.Cloud.job("testOutcomeRejectDuplicates", (request) =>  {
     const { params, headers, log, message } = request;
     
     const object = new Parse.Object('Outcome');
-    object.set('uuid', "112");
+    object.set('objectId', "112");
     object.save({useMasterKey: true}).then((result) => {
       message("Saved outcome");
     })
     .catch(error => message(error));
 });
-
-/*
-Parse.Cloud.job("testOutcomeValueRejectDuplicates", (request) =>  {
-    const { params, headers, log, message } = request;
-    
-    const object = new Parse.Object('OutcomeValue');
-    object.set('uuid', "112");
-    object.save({useMasterKey: true}).then((result) => {
-      message("Saved outcomeValue");
-    })
-    .catch(error => message(error));
-});
-
-Parse.Cloud.job("testNoteRejectDuplicates", (request) =>  {
-    const { params, headers, log, message } = request;
-    
-    const object = new Parse.Object('Note');
-    object.set('uuid', "112");
-    object.save({useMasterKey: true}).then((result) => {
-      message("Saved note");
-    })
-    .catch(error => message(error));
-});
-*/

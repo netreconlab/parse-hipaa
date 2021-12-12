@@ -213,13 +213,6 @@ async function createIndexes(){
     let adapter = api.config.databaseController.adapter;
     const indexEntityIdPostfix = '_entityId';
     const indexEffectiveDatePostfix = '_effectiveDate';
-    
-    const schema = {
-      fields: {
-        uuid: { type: 'String' }
-      },
-    };
-    
     const versionedSchema = {
       fields: {
         entityId: { type: 'String' },
@@ -253,9 +246,6 @@ async function createIndexes(){
     .catch(error => console.log(error));
     
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureUniqueness('Clock', schema, ['uuid'])
     .catch(error => console.log(error));
 }
 
