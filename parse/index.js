@@ -6,49 +6,48 @@ const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
-var path = require('path');
-var databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
+const path = require('path');
+const databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
 
 if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
 }
 
-var allowNewClasses = false;
+let allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
 }
 
-var allowCustomObjectId = false;
+let allowCustomObjectId = false;
 if (process.env.PARSE_SERVER_ALLOW_CUSTOM_OBJECTID == 'true'){
   allowCustomObjectId = true
 }
 
-var enableSchemaHooks = false;
+let enableSchemaHooks = false;
 if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
   enableSchemaHooks = true
 }
 
-var useDirectAccess = false;
+let useDirectAccess = false;
 if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
   useDirectAccess = true
 }
 
-var enforcePrivateUsers = false;
+let enforcePrivateUsers = false;
 if (process.env.PARSE_SERVER_ENABLE_PRIVATE_USERS == 'true'){
   enforcePrivateUsers = true
 }
 
-var verbose = false;
+let verbose = false;
 if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
 }
 
-//If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
-//Need to use local file adapter for postgres
-var filesAdapter;
+// Need to use local file adapter for postgres
+let filesAdapter;
 if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
   filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
-}else{
+} else{
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
     {},
@@ -73,7 +72,7 @@ const api = new ParseServer({
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
-  //Setup your push adatper
+  // Setup your push adatper
   /*push: {
     ios: [
       {
@@ -95,7 +94,7 @@ const api = new ParseServer({
     classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
-  //Setup your mail adapter
+  // Setup your mail adapter
   /*emailAdapter: {
     module: '@parse/simple-mailgun-adapter',
       /*options: {
@@ -160,13 +159,13 @@ const api = new ParseServer({
 // If you wish you require them, you can set them as options in the initialization above:
 // javascriptKey, restAPIKey, dotNetKey, clientKey
 
-var app = express();
+const app = express();
 
 // Serve static assets from the /public folder
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
 // Serve the Parse API on the /parse URL prefix
-var mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
+const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
@@ -174,12 +173,6 @@ app.get('/', function(req, res) {
   res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
-// There will be a test page available on the /test path of your server url
-// Remove this before launching your app
-/*app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname, '/public/test.html'));
-});
-*/
 if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
@@ -192,64 +185,91 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
-//If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
+// If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
 if(process.env.PARSE_USING_PARSECAREKIT == "1"){
-    createIndexes();
+  createIndexes();
 }
 
 const host = process.env.HOST || '0.0.0.0';
-var port = process.env.PORT || 1337;
-var httpServer = require('http').createServer(app);
+const port = process.env.PORT || 1337;
+const httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
-    console.log('parse-server running on port ' + port + '.');
-    console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
-    console.log('REST API running on ' + process.env.PARSE_PUBLIC_SERVER_URL);
-    if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
-      console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
+  console.log('parse-server running on port ' + port + '.');
+  console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
+  console.log('REST API running on ' + process.env.PARSE_PUBLIC_SERVER_URL);
+  if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
+    console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
 });
 
 async function createIndexes(){
-    await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
-    let adapter = api.config.databaseController.adapter;
-    const indexEntityIdPostfix = '_entityId';
-    const indexEffectiveDatePostfix = '_effectiveDate';
-    const versionedSchema = {
-      fields: {
-        entityId: { type: 'String' },
-        effectiveDate: { type: 'Date' }
-      },
-    };
-    
+  await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
+  const adapter = api.config.databaseController.adapter;
+  const indexEntityIdPostfix = '_entityId';
+  const indexEffectiveDatePostfix = '_effectiveDate';
+  
+  const schema = {
+    fields: {
+      uuid: { type: 'String' }
+    },
+  };
+  
+  const versionedSchema = {
+    fields: {
+      entityId: { type: 'String' },
+      effectiveDate: { type: 'Date' }
+    },
+  };
+
+  try {
     await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
+  } catch(error) { console.log(error); }
+
+  try {
     await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
+  } catch(error) { console.log(error); } 
 
+  try {
     await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
-    
-    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
+  } catch(error) { console.log(error); }
 
-    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['entityId'], 'HealthKitTask'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
-    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['effectiveDate'], 'HealthKitTask'+indexEffectiveDatePostfix, false)
-    .catch(error => console.log(error));
+  try {
+    await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
     
+  try {
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['entityId'], 'HealthKitTask'+indexEntityIdPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['effectiveDate'], 'HealthKitTask'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
-    .catch(error => console.log(error));
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureUniqueness('Clock', schema, ['uuid'])
+  } catch(error) { console.log(error); }
 }
 
-//If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
+// If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
 if(process.env.PARSE_SET_USER_CLP == "1"){
     //Fire after 5 seconds to allow _User class to be created
     setTimeout(async function() {
@@ -257,7 +277,7 @@ if(process.env.PARSE_SET_USER_CLP == "1"){
       if(process.env.PARSE_USING_PARSECAREKIT == "1"){
         Parse.Cloud.run('setAuditClassLevelPermissions');
       }
-    },  3000);
+    }, 3000);
 }
 
 // This will enable the Live Query real-time server
