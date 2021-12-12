@@ -45,47 +45,52 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 
 #### netreconlab/parse-hipaa
 ```
-PARSE_SERVER_APPLICATION_ID #Unique string value
-PARSE_SERVER_MASTER_KEY #Unique string value
-PARSE_SERVER_ENCRYPTION_KEY #Unique string used for encrypting files stored by parse-hipaa
-PARSE_SERVER_OBJECT_ID_SIZE #Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
-PARSE_SERVER_DATABASE_URI #URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
-PORT #Port for parse-hipaa, default is 1337
-PARSE_SERVER_MOUNT_PATH: #Mounting path for parse-hipaa, default is /parse
-PARSE_SERVER_URL #Server URL, default is http://parse:${PORT}/parse
-PARSE_PUBLIC_SERVER_URL #Public Server URL, default is http://localhost:${PORT}/parse
-PARSE_SERVER_CLOUD #Path to cloud code, default is /parse/cloud/main.js
-PARSE_SERVER_MOUNT_GRAPHQL #Enable graphql, default is 1
-PARSE_SET_USER_CLP #Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
-PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION #String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
-PARSE_USING_PARSECAREKIT #If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
-POSTGRES_PASSWORD: #Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
+PARSE_SERVER_APPLICATION_ID # Unique string value
+PARSE_SERVER_MASTER_KEY # Unique string value
+PARSE_SERVER_ENCRYPTION_KEY # Unique string used for encrypting files stored by parse-hipaa
+PARSE_SERVER_OBJECT_ID_SIZE # Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
+PARSE_SERVER_DATABASE_URI # URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+PORT # Port for parse-hipaa, default is 1337
+PARSE_SERVER_MOUNT_PATH: # Mounting path for parse-hipaa, default is /parse
+PARSE_SERVER_URL # Server URL, default is http://parse:${PORT}/parse
+PARSE_PUBLIC_SERVER_URL # Public Server URL, default is http://localhost:${PORT}/parse
+PARSE_SERVER_CLOUD # Path to cloud code, default is /parse/cloud/main.js
+PARSE_SERVER_MOUNT_GRAPHQL # Enable graphql, default is 1
+PARSE_SET_USER_CLP # Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
+PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
+PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
+PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
+PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
+PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
+PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
+PARSE_VERBOSE: 'false'
+POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
 #### parseplatform/parse-dashboard
 ```
-PARSE_DASHBOARD_TRUST_PROXY: #Default is 1, this should always be left as 1 when using docker
-PARSE_DASHBOARD_COOKIE_SESSION_SECRET: #Unique string. This should be constant across all deployments on your system
-MOUNT_PATH: #The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
+PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
+MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
 ```
 
 #### netreconlab/hipaa-postgres
 ```
-POSTGRES_PASSWORD #Password for postgress db cluster
-PG_PARSE_USER #Username for logging into PG_PARSE_DB
-PG_PARSE_PASSWORD #Password for logging into PG_PARSE_DB
-PG_PARSE_DB #Name of parse-hipaa database
+POSTGRES_PASSWORD # Password for postgress db cluster
+PG_PARSE_USER # Username for logging into PG_PARSE_DB
+PG_PARSE_PASSWORD # Password for logging into PG_PARSE_DB
+PG_PARSE_DB # Name of parse-hipaa database
 ```
 
 #### netreconlab/hipaa-mongo
 ```
 //Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
-MONGO_INITDB_ROOT_USERNAME #Username for mongo db. Should be MONGO_PARSE_USER
-MONGO_INITDB_ROOT_PASSWORD #Password for mongo db. Should be MONGO_PARSE_PASSWORD
-MONGO_INITDB_DATABASE #Name of mongo db. Should be MONGO_PARSE_DB
-MONGO_PARSE_USER #Username for logging into mongo db for parse-hipaa.
-MONGO_PARSE_PASSWORD #Password for logging into mongo db for parse-hipaa
-MONGO_PARSE_DB #Name of mongo db for parse-hipaa
+MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Should be MONGO_PARSE_USER
+MONGO_INITDB_ROOT_PASSWORD # Password for mongo db. Should be MONGO_PARSE_PASSWORD
+MONGO_INITDB_DATABASE # Name of mongo db. Should be MONGO_PARSE_DB
+MONGO_PARSE_USER # Username for logging into mongo db for parse-hipaa.
+MONGO_PARSE_PASSWORD # Password for logging into mongo db for parse-hipaa
+MONGO_PARSE_DB # Name of mongo db for parse-hipaa
 ```
 
 ### Starting up parse-hipaa

@@ -15,22 +15,22 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 1
-            PARSE_SET_USER_CLP: 1 #Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
-            PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' #Required to be true for ParseCareKit
+            PARSE_SET_USER_CLP: 1 # Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
-            PARSE_SERVER_DIRECT_ACCESS: 'false' #Known to cause crashes when true on single instance of server and not behind public server
+            PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
-            PARSE_USING_PARSECAREKIT: 1 #If you are not using ParseCareKit, set this to 0
+            PARSE_USING_PARSECAREKIT: 1 # If you are not using ParseCareKit, set this to 0
             PARSE_VERBOSE: 'false'
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
             - ${PORT}:${PORT}
         volumes:
             - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
-            - ./files:/parse-server/files #All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
+            - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
         command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
@@ -39,8 +39,8 @@ services:
         image: parseplatform/parse-dashboard:3.3.0-beta.3
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
+            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
             - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
@@ -58,7 +58,7 @@ services:
         restart: always
         ports:
             - 5432:5432
-        #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
