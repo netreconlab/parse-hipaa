@@ -102,11 +102,13 @@ MONGO_PARSE_DB # Name of mongo db for parse-hipaa
 
 Imporant Note: On the very first run, the "parse-server"(which will show up as "parse_1" in the console) will sleep and error a few times because it can't connect to postgres (the "db") container. This is suppose to happen and is due to postgres needing to configure and initialize, install the necessary extensions, and setup it's databases. Let it keep running and eventually you will see something like:
 
-```db_1         | PostgreSQL init process complete; ready for start up.```
+```bash
+db_1         | PostgreSQL init process complete; ready for start up.
+```
 
 The parse-server container will automatically keep attempting to connect to the postgres container and when it's connected you will see: 
 
-```
+```bash
 parse_1      | parse-server running on port 1337.
 parse_1      | publicServerURL: http://localhost:1337/parse, serverURL: http://parse:1337/parse
 parse_1      | GraphQL API running on http://localhost:1337/parsegraphql
@@ -115,7 +117,7 @@ parse_1      | info: Parse LiveQuery Server starts running
 
 You may also see output such as the following in the console or log files: 
 
-```
+```bash
 db_1         | 2020-03-18 21:59:21.550 UTC [105] ERROR:  duplicate key value violates unique constraint "pg_type_typname_nsp_index"
 db_1         | 2020-03-18 21:59:21.550 UTC [105] DETAIL:  Key (typname, typnamespace)=(_SCHEMA, 2200) already exists.
 db_1         | 2020-03-18 21:59:21.550 UTC [105] STATEMENT:  CREATE TABLE IF NOT EXISTS "_SCHEMA" ( "className" varChar(120), "schema" jsonb, "isParseClass" bool, PRIMARY KEY ("className") )
@@ -178,9 +180,9 @@ You can then make modifications using [psql](http://postgresguide.com/utilities/
 ## Deploying on a real system
 The docker yml's here are intended to run behind a proxy that properly has ssl configured to encrypt data in transit. To create a proxy to parse-hipaa, nginx files are provided [here](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled). Simply add the [sites-available](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled) folder to your nginx directory and add the following to "http" in your nginx.conf:
 
-```
+```bash
 http {
-    include /usr/local/etc/nginx/sites-enabled/*.conf; #Add this line to end. This is for macOS, do whatever is appropriate on your system
+    include /usr/local/etc/nginx/sites-enabled/*.conf; # Add this line to end. This is for macOS, do whatever is appropriate on your system
 }
 ```
 
