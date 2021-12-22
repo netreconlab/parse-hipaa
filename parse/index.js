@@ -205,6 +205,7 @@ async function createIndexes(){
   await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
   const adapter = api.config.databaseController.adapter;
   const indexEntityIdPostfix = '_entityId';
+  const indexRemoteIdPostfix = '_remoteId';
   const indexEffectiveDatePostfix = '_effectiveDate';
   
   const schema = {
@@ -216,12 +217,17 @@ async function createIndexes(){
   const versionedSchema = {
     fields: {
       entityId: { type: 'String' },
+      remoteID: { type: 'String' },
       effectiveDate: { type: 'Date' }
     },
   };
 
   try {
     await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Patient', versionedSchema, ['remoteID'], 'Patient'+indexRemoteIdPostfix, false)
   } catch(error) { console.log(error); }
 
   try {
