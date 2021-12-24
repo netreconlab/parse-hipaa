@@ -59,8 +59,8 @@ const api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
-  masterKey: process.env.PARSE_SERVER_MASTER_KEY || '', //Add your master key here. Keep it secret!
-  //readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_MASTER_KEY,
+  masterKey: process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey', // Keep it secret!
+  readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_PRIMARY_KEY || 'myOtherKey',
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
   serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
@@ -173,7 +173,7 @@ app.get('/', function(req, res) {
   res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
-if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
+if(process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
     {
@@ -186,7 +186,7 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL){
 }
 
 // If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
-if(process.env.PARSE_USING_PARSECAREKIT == "1"){
+if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
   createIndexes();
 }
 
@@ -275,12 +275,12 @@ async function createIndexes(){
   } catch(error) { console.log(error); }
 }
 
-// If you are custimizing your own user schema, set PARSE_SET_USER_CLP to 0
-if(process.env.PARSE_SET_USER_CLP == "1"){
+// If you are custimizing your own user schema, set PARSE_SET_USER_CLP to `false`
+if(process.env.PARSE_SET_USER_CLP == 'true'){
     //Fire after 5 seconds to allow _User class to be created
     setTimeout(async function() {
-      await Parse.Cloud.run('setUserClassLevelPermissions');
-      if(process.env.PARSE_USING_PARSECAREKIT == "1"){
+      await Parse.Cloud.run('setParseClassLevelPermissions');
+      if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
         Parse.Cloud.run('setAuditClassLevelPermissions');
       }
     }, 3000);

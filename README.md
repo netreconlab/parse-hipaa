@@ -46,7 +46,8 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 #### netreconlab/parse-hipaa
 ```bash
 PARSE_SERVER_APPLICATION_ID # Unique string value
-PARSE_SERVER_MASTER_KEY # Unique string value
+PARSE_SERVER_PRIMARY_KEY # Unique string value
+PARSE_SERVER_READ_ONLY_PRIMARY_KEY # Unique string value
 PARSE_SERVER_ENCRYPTION_KEY # Unique string used for encrypting files stored by parse-hipaa
 PARSE_SERVER_OBJECT_ID_SIZE # Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables
 PARSE_SERVER_DATABASE_URI # URI to connect to parse-hipaa. postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB} or mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
@@ -55,15 +56,15 @@ PARSE_SERVER_MOUNT_PATH: # Mounting path for parse-hipaa, default is /parse
 PARSE_SERVER_URL # Server URL, default is http://parse:${PORT}/parse
 PARSE_PUBLIC_SERVER_URL # Public Server URL, default is http://localhost:${PORT}/parse
 PARSE_SERVER_CLOUD # Path to cloud code, default is /parse/cloud/main.js
-PARSE_SERVER_MOUNT_GRAPHQL # Enable graphql, default is 1
+PARSE_SERVER_MOUNT_GRAPHQL # Enable graphql, default is 'true'
 PARSE_SET_USER_CLP # Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
-PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
-PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
-PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
-PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
-PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
-PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 0, or else enable with 1. The default value is 1
-PARSE_VERBOSE: 'false'
+PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'
+PARSE_SERVER_ALLOW_CUSTOM_OBJECTID # Required to be true for ParseCareKit
+PARSE_SERVER_ENABLE_SCHEMA_HOOKS # Keeps the schema in sync across all instances
+PARSE_SERVER_DIRECT_ACCESS # Known to cause crashes when true on single instance of server and not behind public server
+PARSE_SERVER_ENABLE_PRIVATE_USERS # Set to 'true' if new users should be created without public read and write access
+PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 'false', or else enable with 'true'. The default value is 'true'
+PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
@@ -133,7 +134,7 @@ Your parse-server is binded to all of your interfaces on port 1337/parse and be 
 The standard configuration can be modified to your liking by editing [index.js](https://github.com/netreconlab/parse-hipaa/blob/master/index.js). Here you can add/modify things like push notifications, password resets, [adapters](https://github.com/parse-community/parse-server#available-adapters), etc. This file as an express app and some examples provided from parse can be found [here](https://github.com/parse-community/parse-server#using-expressjs). Note that there is no need to rebuild your image when modifying files in the "index.js" file since it is volume mounted, but you will need to restart the parse container for your changes to take effect.
 
 ### Configuring
-Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PARSE_SERVER_MASTER_KEY` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change both values. Environment variables, `PARSE_SERVER_DATABASE_URI, PARSE_SERVER_URL, PORT, PARSE_PUBLIC_SERVER_URL, PARSE_SERVER_CLOUD, and PARSE_SERVER_MOUNT_GRAPHQL` should not be changed unles you are confident with configuring parse-server or else you image may not work properly. In particular, changing `PORT` should only be done in [.env](https://github.com/netreconlab/parse-hipaa/blob/master/.env) and will also require you to change the port manually in the [parse-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L4) for both "serverURL" and "graphQLServerURL" to have the Parse Dashboard work correctly.
+Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PARSE_SERVER_PRIMARY_KEY` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change both values. Environment variables, `PARSE_SERVER_DATABASE_URI, PARSE_SERVER_URL, PORT, PARSE_PUBLIC_SERVER_URL, PARSE_SERVER_CLOUD, and PARSE_SERVER_MOUNT_GRAPHQL` should not be changed unles you are confident with configuring parse-server or else you image may not work properly. In particular, changing `PORT` should only be done in [.env](https://github.com/netreconlab/parse-hipaa/blob/master/.env) and will also require you to change the port manually in the [parse-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L4) for both "serverURL" and "graphQLServerURL" to have the Parse Dashboard work correctly.
 
 #### Running in production for ParseCareKit
 If you are plan on using parse-hipaa in production. You should run the additional scripts to create the rest of the indexes for optimized queries.
@@ -158,8 +159,8 @@ For verfying and cleaning your data along with other added functionality, you ca
 Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) and setting "useEncryptedPasswords": false". You can also add more users through this method.
 
 1. Open your browser and go to http://localhost:4040/dashboard
-2. Username: `parse`
-3. Password: `1234`
+2. Username: `parse` # You can use `parseRead` to login as a read only user
+3. Password: `1234` # You can generate your own password hashes here: https://bcrypt-generator.com. You can also setup multi factor authentication: https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password
 4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
 
 ### Configuring
