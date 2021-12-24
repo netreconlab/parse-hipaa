@@ -16,8 +16,8 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         create: { requiresAuthentication: true },
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
-        addField: {},
-        protectedFields: {}
+        addField: { },
+        protectedFields: { }
     };
 
     const patientSchema = new Parse.Schema('Patient');
@@ -259,9 +259,9 @@ Parse.Cloud.define("setParseClassLevelPermissions", async (request) =>  {
       update: { requiresAuthentication: true },
       delete: { requiresAuthentication: true },
       addField: { requiresAuthentication: true },
-      protectedFields: {}
+      protectedFields: { }
     });
-    await userSchema.update({useMasterKey: true});
+    await userSchema.update({ useMasterKey: true });
     // Can uncomment out below once the respective Schema's are created.
     /*
     try {
@@ -274,9 +274,9 @@ Parse.Cloud.define("setParseClassLevelPermissions", async (request) =>  {
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
         addField: { requiresAuthentication: true },
-        protectedFields: {}
+        protectedFields: { }
       });
-      await installationSchema.update({useMasterKey: true});
+      await installationSchema.update({ useMasterKey: true });
     } catch(error) { console.log(error); }
 
     try {
@@ -289,9 +289,9 @@ Parse.Cloud.define("setParseClassLevelPermissions", async (request) =>  {
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
         addField: { },
-        protectedFields: {}
+        protectedFields: { }
       });
-      await sessionSchema.update({useMasterKey: true});
+      await sessionSchema.update({ useMasterKey: true });
     } catch(error) { console.log(error); }
 
     try {
@@ -304,9 +304,9 @@ Parse.Cloud.define("setParseClassLevelPermissions", async (request) =>  {
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
         addField: { requiresAuthentication: true },
-        protectedFields: {}
+        protectedFields: { }
       });
-      await roleSchema.update({useMasterKey: true});
+      await roleSchema.update({ useMasterKey: true });
     } catch(error) { console.log(error); }
 
     try {
@@ -319,9 +319,9 @@ Parse.Cloud.define("setParseClassLevelPermissions", async (request) =>  {
         update: { requiresAuthentication: true },
         delete: { requiresAuthentication: true },
         addField: { requiresAuthentication: true },
-        protectedFields: {}
+        protectedFields: { }
       });
-      await audienceSchema.update({useMasterKey: true});
+      await audienceSchema.update({ useMasterKey: true });
     } catch(error) { console.log(error); }
     */
 });
@@ -330,11 +330,11 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
     const auditCLP = {
       get: { requiresAuthentication: true },
       find: { requiresAuthentication: true },
-      create: {},
+      create: { },
       update: { requiresAuthentication: true },
       delete: { requiresAuthentication: true },
-      addField: {},
-      protectedFields: {}
+      addField: { },
+      protectedFields: { }
     };
     const modifiedClasses = ['_User', '_Role', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
     const accessedClasses = ['_User', '_Role', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
@@ -346,7 +346,7 @@ Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
     
     const object = new Parse.Object('Patient');
     object.set('objectId', "112");
-    object.save({useMasterKey: true}).then((result) => {
+    object.save({ useMasterKey: true }).then((result) => {
       message("Saved patient");
     })
     .catch(error => message(error));
@@ -357,7 +357,7 @@ Parse.Cloud.job("testCarePlanRejectDuplicates", (request) =>  {
     
     const object = new Parse.Object('CarePlan');
     object.set('objectId', "112");
-    object.save({useMasterKey: true}).then((result) => {
+    object.save({ useMasterKey: true }).then((result) => {
       message("Saved carePlan");
     })
     .catch(error => message(error));
@@ -368,7 +368,7 @@ Parse.Cloud.job("testContactRejectDuplicates", (request) =>  {
     
     const object = new Parse.Object('Contact');
     object.set('objectId', "112");
-    object.save({useMasterKey: true}).then((result) => {
+    object.save({ useMasterKey: true }).then((result) => {
       message("Saved contact");
     })
     .catch(error => message(error));
@@ -379,7 +379,7 @@ Parse.Cloud.job("testTaskRejectDuplicates", (request) =>  {
     
     const object = new Parse.Object('Task');
     object.set('objectId', "112");
-    object.save({useMasterKey: true}).then((result) => {
+    object.save({ useMasterKey: true }).then((result) => {
       message("Saved task");
     })
     .catch(error => message(error));
@@ -390,7 +390,7 @@ Parse.Cloud.job("testOutcomeRejectDuplicates", (request) =>  {
     
     const object = new Parse.Object('Outcome');
     object.set('objectId', "112");
-    object.save({useMasterKey: true}).then((result) => {
+    object.save({ useMasterKey: true }).then((result) => {
       message("Saved outcome");
     })
     .catch(error => message(error));
