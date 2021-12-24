@@ -58,7 +58,7 @@ PARSE_PUBLIC_SERVER_URL # Public Server URL, default is http://localhost:${PORT}
 PARSE_SERVER_CLOUD # Path to cloud code, default is /parse/cloud/main.js
 PARSE_SERVER_MOUNT_GRAPHQL # Enable graphql, default is 'true'
 PARSE_SET_USER_CLP # Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1
-PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'.
+PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION # String value of 'false' or 'true'. Prohibits class creation on the client side. Classes can still be created using Parse Dashboard by `useMasterKey`, default 'false'
 PARSE_SERVER_ALLOW_CUSTOM_OBJECTID # Required to be true for ParseCareKit
 PARSE_SERVER_ENABLE_SCHEMA_HOOKS # Keeps the schema in sync across all instances
 PARSE_SERVER_DIRECT_ACCESS # Known to cause crashes when true on single instance of server and not behind public server

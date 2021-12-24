@@ -19,5 +19,5 @@
       "pass": "1234",
       "readOnly": true
     }],
-    "useEncryptedPasswords": true
+    "useEncryptedPasswords": false
 }
