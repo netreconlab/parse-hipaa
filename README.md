@@ -160,7 +160,7 @@ Parse-dashboard is binded to your localhost on port 4040 and can be accessed as 
 
 1. Open your browser and go to http://localhost:4040/dashboard
 2. Username: `parse` # You can use `parseRead` to login as a read only user
-3. Password: `1234`
+3. Password: `1234` # You can generate your own password hashes here: https://bcrypt-generator.com. You can also setup multi factor authentication: https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password
 4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
 
 ### Configuring

@@ -13,11 +13,11 @@
     "users": [
     {
       "user":"parse",
-      "pass": "1234"
+      "pass": "$2a$12$mw0Bulf8PzAw8u.Zb.l0dueKGSV7z8q9bw8857av2e3yTTlC4hRca"
     },{
       "user":"parseRead",
-      "pass": "1234",
+      "pass": "$2a$12$mw0Bulf8PzAw8u.Zb.l0dueKGSV7z8q9bw8857av2e3yTTlC4hRca",
       "readOnly": true
     }],
-    "useEncryptedPasswords": false
+    "useEncryptedPasswords": true
 }
