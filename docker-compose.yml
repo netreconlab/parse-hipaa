@@ -50,7 +50,7 @@ services:
         depends_on:
             - parse
     db:
-        image: netreconlab/hipaa-postgres:14-3_1
+        image: netreconlab/hipaa-postgres:14-3.2
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}
