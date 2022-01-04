@@ -139,6 +139,9 @@ Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PAR
 #### Running in production for ParseCareKit
 If you are plan on using parse-hipaa in production. You should run the additional scripts to create the rest of the indexes for optimized queries.
 
+##### Idempotency
+You most likely want to enable Idempotency. Read more about how to configure on [Parse Server](https://github.com/parse-community/parse-server#idempotency-enforcement). If you are using Postgres, look [here](https://github.com/netreconlab/parse-hipaa/tree/main/postgres/scripts/parse_idempotency_delete_expired_records) for the script.
+
 ##### Postgres
 If you are using `hipaa_postgres` or `parse-postgres` (the two images included in this repo). The `setup-parse-index.sh` is already in the container. You just have to run it. 
 
