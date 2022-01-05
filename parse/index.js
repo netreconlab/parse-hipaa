@@ -197,7 +197,6 @@ httpServer.listen(port, host, function() {
 });
 
 async function createIndexes(){
-  await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
   const adapter = api.config.databaseController.adapter;
   const indexEntityIdPostfix = '_entityId';
   const indexRemoteIdPostfix = '_remoteId';
@@ -389,6 +388,10 @@ async function createIndexes(){
   try {
     await adapter.ensureIndex('_User', schema, ['createdAt'], '_User'+indexCreatedAtPostfix, false)
   } catch(error) { console.log(error); }
+}
+
+if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+  Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
 }
 
 // If you are custimizing your own user schema, set PARSE_SET_USER_CLP to `false`
