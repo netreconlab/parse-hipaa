@@ -185,11 +185,6 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
-// If you are not using ParseCareKit, set PARSE_USING_PARSECAREKIT to 0
-if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
-  createIndexes();
-}
-
 const host = process.env.HOST || '0.0.0.0';
 const port = process.env.PORT || 1337;
 const httpServer = require('http').createServer(app);
@@ -202,15 +197,24 @@ httpServer.listen(port, host, function() {
 });
 
 async function createIndexes(){
-  await Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
   const adapter = api.config.databaseController.adapter;
   const indexEntityIdPostfix = '_entityId';
   const indexRemoteIdPostfix = '_remoteId';
   const indexEffectiveDatePostfix = '_effectiveDate';
-  
+  const indexUpdatedDatePostfix = '_updatedDate';
+  const indexCreatedAtPostfix = '_createdAt';
+  const indexLogicalClockPostfix = '_logicalClock';
+
+  const parseSchema = {
+    fields: {
+      createdAt: { type: 'Date' }
+    },
+  };
+
   const schema = {
     fields: {
-      uuid: { type: 'String' }
+      uuid: { type: 'String' },
+      createdAt: { type: 'Date' }
     },
   };
   
@@ -218,7 +222,10 @@ async function createIndexes(){
     fields: {
       entityId: { type: 'String' },
       remoteID: { type: 'String' },
-      effectiveDate: { type: 'Date' }
+      effectiveDate: { type: 'Date' },
+      updatedDate: { type: 'Date' },
+      createdAt: { type: 'Date' },
+      logicalClock: { type: 'Number' }
     },
   };
 
@@ -235,11 +242,43 @@ async function createIndexes(){
   } catch(error) { console.log(error); } 
 
   try {
+    await adapter.ensureIndex('Patient', versionedSchema, ['updatedDate'], 'Patient'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
+    await adapter.ensureIndex('Patient', versionedSchema, ['createdAt'], 'Patient'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
+    await adapter.ensureIndex('Patient', versionedSchema, ['logicalClock'], 'Patient'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Patient_Audit', schema, ['createdAt'], 'Patient_Audit'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
     await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
   } catch(error) { console.log(error); }
 
   try {
     await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Contact', versionedSchema, ['updatedDate'], 'Contact'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Contact', versionedSchema, ['createdAt'], 'Contact'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
+    await adapter.ensureIndex('Contact', versionedSchema, ['logicalClock'], 'Contact'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Contact_Audit', schema, ['createdAt'], 'Contact_Audit'+indexCreatedAtPostfix, false)
   } catch(error) { console.log(error); }
     
   try {
@@ -251,11 +290,43 @@ async function createIndexes(){
   } catch(error) { console.log(error); }
 
   try {
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['updatedDate'], 'CarePlan'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['createdAt'], 'CarePlan'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); } 
+
+  try {
+    await adapter.ensureIndex('CarePlan', versionedSchema, ['logicalClock'], 'CarePlan'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('CarePlan_Audit', schema, ['createdAt'], 'CarePlan_Audit'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
     await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
   } catch(error) { console.log(error); }
 
   try {
     await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task', versionedSchema, ['updatedDate'], 'Task'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task', versionedSchema, ['createdAt'], 'Task'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task', versionedSchema, ['logicalClock'], 'Task'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Task_Audit', schema, ['createdAt'], 'Task_Audit'+indexCreatedAtPostfix, false)
   } catch(error) { console.log(error); }
 
   try {
@@ -267,21 +338,70 @@ async function createIndexes(){
   } catch(error) { console.log(error); }
 
   try {
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['updatedDate'], 'HealthKitTask'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['createdAt'], 'HealthKitTask'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('HealthKitTask', versionedSchema, ['logicalClock'], 'HealthKitTask'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('HealthKitTask_Audit', schema, ['createdAt'], 'HealthKitTask_Audit'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
     await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Outcome', versionedSchema, ['updatedDate'], 'Outcome'+indexUpdatedDatePostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Outcome', versionedSchema, ['createdAt'], 'Outcome'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Outcome', versionedSchema, ['logicalClock'], 'Outcome'+indexLogicalClockPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Outcome_Audit', schema, ['createdAt'], 'Outcome_Audit'+indexCreatedAtPostfix, false)
   } catch(error) { console.log(error); }
 
   try {
     await adapter.ensureUniqueness('Clock', schema, ['uuid'])
   } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Clock', schema, ['createdAt'], 'Outcome'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('Clock_Audit', schema, ['createdAt'], 'Clock_Audit'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+
+  try {
+    await adapter.ensureIndex('_User', schema, ['createdAt'], '_User'+indexCreatedAtPostfix, false)
+  } catch(error) { console.log(error); }
+}
+
+if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+  Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
 }
 
 // If you are custimizing your own user schema, set PARSE_SET_USER_CLP to `false`
 if(process.env.PARSE_SET_USER_CLP == 'true'){
-    //Fire after 5 seconds to allow _User class to be created
+    //Fire after 3 seconds to allow _User class to be created
     setTimeout(async function() {
       await Parse.Cloud.run('setParseClassLevelPermissions');
       if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
-        Parse.Cloud.run('setAuditClassLevelPermissions');
+        await Parse.Cloud.run('setAuditClassLevelPermissions');
+        createIndexes();
       }
     }, 3000);
 }
