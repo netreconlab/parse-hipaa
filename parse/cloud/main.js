@@ -337,8 +337,8 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       protectedFields: { }
     };
     // Don't audit '_User' as it doesn't work when using customObjectId and signing up.
-    const modifiedClasses = ['_Role', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
-    const accessedClasses = ['_Role', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
+    const modifiedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
+    const accessedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
     ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
