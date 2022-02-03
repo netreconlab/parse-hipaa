@@ -233,6 +233,42 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
       } catch(error) { console.log(error); }
     }
+
+    const healthKitOutcomeSchema = new Parse.Schema('HealthKitOutcome');
+    try {
+      await healthKitOutcomeSchema.get();
+    } catch(error) {
+      try {
+        await healthKitOutcomeSchema
+        .addString('entityId')
+        .addDate('createdDate')
+        .addDate('updatedDate')
+        .addDate('effectiveDate')
+        .addDate('deletedDate')
+        .addNumber('logicalClock')
+        .addObject('timezone')
+        .addDate('startDate')
+        .addDate('endDate')
+        .addNumber('taskOccurrenceIndex')
+        .addArray('values')
+        .addString('taskUUID')
+        .addPointer('task', 'Task')
+        .addString('groupIdentifier')
+        .addArray('tags')
+        .addString('source')
+        .addString('asset')
+        .addArray('notes')
+        .addString('remoteID')
+        .addObject('userInfo')
+        .addBoolean('isOwnedByApp')
+        .addObject('schemaVersion')
+        .addArray('previousVersionUUIDs')
+        .addArray('nextVersionUUIDs')
+        .setCLP(clp)
+        .save();
+        console.log("***Success: Outcome class created with default fields. Ignore any previous errors about this class***");
+      } catch(error) { console.log(error); }
+    }
     
     const clockSchema = new Parse.Schema('Clock');
     try {
@@ -337,8 +373,8 @@ Parse.Cloud.define("setAuditClassLevelPermissions", async (request) =>  {
       protectedFields: { }
     };
     // Don't audit '_Role' as it doesn't work.
-    const modifiedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
-    const accessedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome'];
+    const modifiedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'HealthKitOutcome'];
+    const accessedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'HealthKitOutcome'];
     ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 });
 
