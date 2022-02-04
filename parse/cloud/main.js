@@ -252,7 +252,7 @@ Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>
         .addNumber('taskOccurrenceIndex')
         .addArray('values')
         .addString('taskUUID')
-        .addPointer('task', 'Task')
+        .addPointer('task', 'HealthKitTask')
         .addString('groupIdentifier')
         .addArray('tags')
         .addString('source')
