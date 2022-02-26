@@ -91,7 +91,7 @@ const api = new ParseServer({
    }
   },*/
   liveQuery: {
-    classNames: ["Clock", "Patient", "CarePlan", "Contact", "Task", "Outcome"] // List of classes to support for query subscriptions
+    classNames: ["Clock"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   // Setup your mail adapter
