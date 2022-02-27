@@ -93,7 +93,6 @@
         }
     },
     "addons": [
-        "openredis",
         {
             "plan": "heroku-postgresql",
             "as": "db",
