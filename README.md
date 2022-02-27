@@ -68,6 +68,12 @@ PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
+#### Remote Deployment
+
+##### Heroku
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+
 #### parseplatform/parse-dashboard
 ```bash
 PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
