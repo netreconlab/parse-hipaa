@@ -72,7 +72,7 @@ POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POST
 
 ##### Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 #### parseplatform/parse-dashboard
 ```bash
