@@ -86,7 +86,12 @@
         "value": "false"
       }
     },
-    "image": "heroku/nodejs",
+    "stack": "container",
+    "formation": {
+        "worker": {
+        "quantity": 1
+        }
+    },
     "addons": [
         "openredis",
         {
