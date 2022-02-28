@@ -21,6 +21,10 @@
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
         "value": "https://yourappname.herokuapp.com/parse"
       },
+      "PARSE_SERVER_URL": {
+        "description": "Local URL to connect to your Heroku instance (update with your app's PORT/PARSE_MOUNT)",
+        "value": "http://localhost:1337/parse" 
+      },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
         "required": false
