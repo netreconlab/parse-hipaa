@@ -103,14 +103,14 @@ const api = new ParseServer({
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
   // Setup your push adatper
-  push: pushNotifications,
-  auth: authentication,
+  // push: pushNotifications,
+  // auth: authentication,
   liveQuery: {
     classNames: ["Clock"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   // Setup your mail adapter
-  emailAdapter: emailAdapter,
+  // emailAdapter: emailAdapter,
   /*emailAdapter: {
     module: '@parse/simple-mailgun-adapter',
       /*options: {
