@@ -25,10 +25,6 @@
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
         "value": "http://parse:1337/parse"
       },
-      "PARSE_SERVER_DATABASE_URI": {
-        "description": "Configure the database url.",
-        "value": "postgres://parse:parse@db:5432/parse_hipaa"
-      },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
         "required": false
@@ -107,11 +103,6 @@
       }
     },
     "stack": "container",
-    "formation": {
-        "parse": {
-            "quantity": 1
-        }
-    },
     "addons": [
         {
             "plan": "heroku-postgresql",

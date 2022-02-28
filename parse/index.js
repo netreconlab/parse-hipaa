@@ -7,10 +7,10 @@ const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
-const databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
+const databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
 
 if (!databaseUri) {
-  console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
+  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
 }
 
 let allowNewClasses = false;

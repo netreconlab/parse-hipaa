@@ -1,7 +1,7 @@
 build: 
   docker:
-    parse: parse/Dockerfile
+    web: parse/Dockerfile
     # dashboard: dashboard/Dockerfile.heroku
 run:
-  parse: ./wait-for-postgres.sh db node index.js
+  parse: node index.js
   # dashboard: parse-dashboard --dev
