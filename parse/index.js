@@ -7,7 +7,7 @@ const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
-const databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
+let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
 
 if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
@@ -43,6 +43,11 @@ if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
 }
 
+let enableGraphQL = false;
+if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+  enableGraphQL = true
+}
+
 // Need to use local file adapter for postgres
 let filesAdapter = { };
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
@@ -61,6 +66,7 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
 } else if ("DB_URL" in process.env) {
   if (process.env.DB_URL.indexOf('postgres') !== -1) {
     filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`
   }  
 }
 
@@ -190,7 +196,7 @@ app.get('/', function(req, res) {
   res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
 });
 
-if(process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+if(enableGraphQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
     {
@@ -209,7 +215,7 @@ httpServer.listen(port, host, function() {
   console.log('parse-server running on port ' + port + '.');
   console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
   console.log('REST API running on ' + process.env.PARSE_PUBLIC_SERVER_URL);
-  if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
+  if(enableGraphQL)
     console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
 });
 
