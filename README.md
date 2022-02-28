@@ -1,5 +1,9 @@
 # parse-hipaa 
 
+[![Docker](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+[![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
+
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
 Example of how to setup and run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org) or [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), and web based apps. API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/), [REST](https://docs.parseplatform.org/rest/guide/), and [JS](https://docs.parseplatform.org/js/guide/) are also enabled in parse-hipaa and can be tested directly or via the "API Console" in parse-dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. These docker images include the necessary database auditing and logging for HIPAA compliance. 
@@ -67,12 +71,6 @@ PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 'false
 PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
-
-#### Remote Deployment
-
-##### Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 #### parseplatform/parse-dashboard
 ```bash
