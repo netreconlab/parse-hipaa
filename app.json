@@ -31,7 +31,7 @@
       },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
-        "required": "false"
+        "required": false
       },
       "PARSE_SERVER_S3_BUCKET_REGION": {
         "description": "The region for the S3 Bucket.",
