@@ -7,6 +7,7 @@ const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
+const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
 
 if (!databaseUri) {
@@ -188,7 +189,6 @@ const app = express();
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
 // Serve the Parse API on the /parse URL prefix
-const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
