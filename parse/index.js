@@ -51,8 +51,12 @@ if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   enableGraphQL = true
 }
 
+let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
+let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
+let emailAdapter = process.env.PARSE_SERVER_EMAIL_ADAPTER || {};
+
 // Need to use local file adapter for postgres
-let filesAdapter = { };
+let filesAdapter = {};
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   filesAdapter = {
     "module": "@parse/s3-files-adapter",
@@ -99,28 +103,14 @@ const api = new ParseServer({
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
   // Setup your push adatper
-  /*push: {
-    ios: [
-      {
-        pfx: '',
-        topic: '',
-        production: false
-      }
-    ]
-  },
-  auth: {
-   apple: {
-     client_id: "",
-   },
-   facebook: {
-     appIds:
-   }
-  },*/
+  push: pushNotifications,
+  auth: authentication,
   liveQuery: {
     classNames: ["Clock"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   // Setup your mail adapter
+  emailAdapter: emailAdapter,
   /*emailAdapter: {
     module: '@parse/simple-mailgun-adapter',
       /*options: {
