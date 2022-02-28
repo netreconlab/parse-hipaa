@@ -7,15 +7,15 @@
     "env": {
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
-        "value": "E036A0C5-6829-4B40-9B3B-3E05F6DF32B2"
+        "generator": "secret"
       },
       "PARSE_SERVER_PRIMARY_KEY": {
         "description": "A key that overrides all permissions. Keep this secret.",
-        "value": "E2466756-93CF-4C05-BA44-FF5D9C34E99F"
+        "generator": "secret"
       },
       "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
         "description": "A key that allows read only access. Keep this secret.",
-        "value": "367F7395-2E3A-46B1-ABA3-963A25D533C3"
+        "generator": "secret"
       },
       "PARSE_PUBLIC_SERVER_URL": {
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
@@ -29,13 +29,24 @@
         "description": "Configure the database url.",
         "value": "postgres://parse:parse@db:5432/parse_hipaa"
       },
+      "PARSE_SERVER_S3_BUCKET": {
+        "description": "The name of your S3 Bucket."
+      },
+      "PARSE_SERVER_S3_BUCKET_REGION": {
+        "description": "The region for the S3 Bucket.",
+        "value": "us-east-2"
+      },
+      "PARSE_SERVER_S3_BUCKET_ENCRYPTION": {
+        "description": "AES256 or aws:kms, or if you do not pass this, encryption won't be done.",
+        "value": "AES256"
+      },
       "PARSE_SERVER_MOUNT_PATH": {
         "description": "Configure Parse API route.",
         "value": "/parse"
       },
       "PARSE_SERVER_ENCRYPTION_KEY": {
         "description": "Unique string used for encrypting files stored by parse-hipaa.",
-        "value": "72F8F23D-FDDB-4792-94AE-72897F0688F9"
+        "generator": "secret"
       },
       "PARSE_SERVER_OBJECT_ID_SIZE": {
         "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
