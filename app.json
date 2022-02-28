@@ -1,0 +1,124 @@
+{
+    "name": "Parse HIPAA Server Example",
+    "description": "An example Parse API server using the parse-server and CareKit",
+    "repository": "https://github.com/netreconlab/parse-hipaa",
+    "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
+    "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
+    "env": {
+      "PARSE_SERVER_APPLICATION_ID": {
+        "description": "A unique identifier for your app.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_PRIMARY_KEY": {
+        "description": "A key that overrides all permissions. Keep this secret.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
+        "description": "A key that allows read only access. Keep this secret.",
+        "generator": "secret"
+      },
+      "PARSE_PUBLIC_SERVER_URL": {
+        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
+        "value": "http://yourappname.herokuapp.com/parse"
+      },
+      "PARSE_SERVER_URL": {
+        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
+        "value": "http://parse:1337/parse"
+      },
+      "PARSE_SERVER_DATABASE_URI": {
+        "description": "Configure the database url.",
+        "value": "postgres://parse:parse@db:5432/parse_hipaa"
+      },
+      "PARSE_SERVER_S3_BUCKET": {
+        "description": "The name of your S3 Bucket.",
+        "required": false
+      },
+      "PARSE_SERVER_S3_BUCKET_REGION": {
+        "description": "The region for the S3 Bucket.",
+        "value": "us-east-2"
+      },
+      "PARSE_SERVER_S3_BUCKET_ENCRYPTION": {
+        "description": "AES256 or aws:kms, or if you do not pass this, encryption won't be done.",
+        "value": "AES256"
+      },
+      "PARSE_SERVER_MOUNT_PATH": {
+        "description": "Configure Parse API route.",
+        "value": "/parse"
+      },
+      "PARSE_SERVER_ENCRYPTION_KEY": {
+        "description": "Unique string used for encrypting files stored by parse-hipaa.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_OBJECT_ID_SIZE": {
+        "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
+        "value": "32"
+      },
+      "PORT": {
+        "description": "Port for parse-hipaa, default is 1337.",
+        "value": "1337"
+      },
+      "PARSE_SERVER_CLOUD": {
+        "description": "Path to cloud code, default is /parse/cloud/main.js.",
+        "value": "/parse-server/cloud/main.js"
+      },
+      "PARSE_SET_USER_CLP": {
+        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1.",
+        "value": "true"
+      },
+      "PARSE_SERVER_MOUNT_GRAPHQL": {
+        "description": "Enable graphql, default is 'true'.",
+        "value": "false"
+      },
+      "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
+        "description": "Don't allow classes to be created on the client side..",
+        "value": "false"
+      },
+      "PARSE_SERVER_ALLOW_CUSTOM_OBJECTID": {
+        "description": "Required to be true for ParseCareKit.",
+        "value": "true"
+      },
+      "PARSE_SERVER_ENABLE_SCHEMA_HOOKS": {
+        "description": "Keeps schema up to date.",
+        "value": "true"
+      },
+      "PARSE_SERVER_DIRECT_ACCESS": {
+        "description": "Known to cause crashes when true on single instance of server and not behind public server.",
+        "value": "false"
+      },
+      "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
+        "description": "Set to 'true' if new users should be created without public read and write access.",
+        "value": "false"
+      },
+      "PARSE_USING_PARSECAREKIT": {
+        "description": "Set to 'true' when using ParseCareKit.",
+        "value": "true"
+      },
+      "PARSE_VERBOSE": {
+        "description": "Enable verbose output on the server.",
+        "value": "false"
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Should trust proxy in docker.",
+        "value": "1"
+      },
+      "MOUNT_PATH": {
+        "description": "The mount path should be the same as the docker name.",
+        "value": "/dashboard"
+      }
+    },
+    "stack": "container",
+    "formation": {
+        "parse": {
+            "quantity": 1
+        }
+    },
+    "addons": [
+        {
+            "plan": "heroku-postgresql",
+            "as": "db",
+            "options": {
+              "version": "13"
+            }
+        }
+    ]
+  }

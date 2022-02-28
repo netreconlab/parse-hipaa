@@ -45,7 +45,17 @@ if (process.env.PARSE_VERBOSE == 'true'){
 
 // Need to use local file adapter for postgres
 let filesAdapter;
-if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
+
+if ("PARSE_SERVER_S3_BUCKET" in process.env) {
+  filesAdapter = {
+    "module": "@parse/s3-files-adapter",
+    "options": {
+      "bucket": process.env.PARSE_SERVER_S3_BUCKET,
+      "region": process.env.PARSE_SERVER_S3_BUCKET_REGION || 'us-east-2',
+      "ServerSideEncryption": process.env.PARSE_SERVER_S3_BUCKET_ENCRYPTION || 'AES256', //AES256 or aws:kms, or if you do not pass this, encryption won't be done
+    }
+  }
+} else if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
   filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
 } else{
   filesAdapter = new GridFSBucketAdapter(
