@@ -30,7 +30,8 @@
         "value": "postgres://parse:parse@db:5432/parse_hipaa"
       },
       "PARSE_SERVER_S3_BUCKET": {
-        "description": "The name of your S3 Bucket."
+        "description": "The name of your S3 Bucket.",
+        "required": "false"
       },
       "PARSE_SERVER_S3_BUCKET_REGION": {
         "description": "The region for the S3 Bucket.",
@@ -66,7 +67,7 @@
       },
       "PARSE_SERVER_MOUNT_GRAPHQL": {
         "description": "Enable graphql, default is 'true'.",
-        "value": "true"
+        "value": "false"
       },
       "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
         "description": "Don't allow classes to be created on the client side..",
