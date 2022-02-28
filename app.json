@@ -17,13 +17,13 @@
         "description": "A key that allows read only access. Keep this secret.",
         "value": "367F7395-2E3A-46B1-ABA3-963A25D533C3"
       },
-      "PARSE_SERVER_URL": {
-        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "http://yourappname.herokuapp.com/parse"
-      },
       "PARSE_PUBLIC_SERVER_URL": {
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
         "value": "http://yourappname.herokuapp.com/parse"
+      },
+      "PARSE_SERVER_URL": {
+        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
+        "value": "http://parse:1337/parse"
       },
       "PARSE_SERVER_DATABASE_URI": {
         "description": "Configure the database url.",
@@ -78,18 +78,26 @@
         "value": "false"
       },
       "PARSE_USING_PARSECAREKIT": {
-        "description": "Set tp 'true' when using ParseCareKit.",
+        "description": "Set to 'true' when using ParseCareKit.",
         "value": "true"
       },
       "PARSE_VERBOSE": {
         "description": "Enable verbose output on the server.",
         "value": "false"
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Should trust proxy in docker.",
+        "value": "1"
+      },
+      "MOUNT_PATH": {
+        "description": "The mount path should be the same as the docker name.",
+        "value": "/dashboard"
       }
     },
     "stack": "container",
     "formation": {
-        "worker": {
-        "quantity": 1
+        "parse": {
+            "quantity": 1
         }
     },
     "addons": [
