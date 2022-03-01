@@ -41,6 +41,14 @@
         "description": "AES256 or aws:kms, or if you do not pass this, encryption won't be done.",
         "value": "AES256"
       },
+      "AWS_ACCESS_KEY_ID": {
+        "description": "The access key to your S3 Bucket.",
+        "required": false
+      },
+      "AWS_SECRET_ACCESS_KEY": {
+        "description": "The secret access key to your S3 Bucket.",
+        "required": false
+      },
       "PARSE_SERVER_MOUNT_PATH": {
         "description": "Configure Parse API route.",
         "value": "/parse"
