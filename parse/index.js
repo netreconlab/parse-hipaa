@@ -195,7 +195,8 @@ if(enableGraphQL){
       graphQLPath: '/graphql',
       playgroundPath: '/playground'
     }
-  ); 
+  );
+  app.use('/parse', api.app); // (Optional) Mounts the REST API 
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
