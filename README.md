@@ -2,7 +2,6 @@
 
 [![Docker](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml)
 [![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
@@ -32,7 +31,29 @@ To get started with parse-hipaa simply type:
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
-## HIPAA compliant parse-server with postgres or mongo
+## Deployment
+parse-hipaa can be easily deployed or tested remote or locally.
+
+### Remote
+
+#### Heroku with Postgres
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
+
+You can use the one-button deployment to quickly deploy to Heroko. Not that this is non-HIPAA compliant in Heroku's free services, so you need to work with Heroku to enable this. Once you click the Heroku button do the following:
+
+1. Select your **App name**
+2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
+3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you can set `PARSE_USING_PARSECAREKIT=false` under **Config vars**
+4. Scroll to the bottom of the page and press **Deploy app**
+5. When finished you can access your respective `PARSE_SERVER_URL` and `PARSE_SERVER_APPLICATION_ID` by going to `Settings->Reveal Config Vars`. Be sure to add these values to your client app
+
+#### Using your own files for Heroku deployment
+1. Fork the the parse-hipaa repo
+2. Edit `heroku.yml` in your repo by changing `parse/Dockerfile.heroku` to `parse/Dockerfile`. This will build from your respective repo instead of using the pre-built docker image
+3. You can now edit `parse/index.js` and `parse/cloud` as you wish
+4. You can then follow the 
+
+### Local: using docker with postgres or mongo
 By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:
 
 ```docker-compose -f docker-compose.mongo.yml up```
