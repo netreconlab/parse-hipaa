@@ -39,7 +39,7 @@ parse-hipaa can be easily deployed or tested remote or locally.
 #### Heroku with Postgres
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-You can use the one-button deployment to quickly deploy to Heroko. Not that this is non-HIPAA compliant in Heroku's free services, so you need to work with Heroku to enable this. Once you click the Heroku button do the following:
+You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to work with Heroku to enable this. Once you click the Heroku button do the following:
 
 1. Select your **App name**
 2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
@@ -51,7 +51,7 @@ You can use the one-button deployment to quickly deploy to Heroko. Not that this
 1. Fork the the parse-hipaa repo
 2. Edit `heroku.yml` in your repo by changing `parse/Dockerfile.heroku` to `parse/Dockerfile`. This will build from your respective repo instead of using the pre-built docker image
 3. You can now edit `parse/index.js` and `parse/cloud` as you wish
-4. You can then follow the 
+4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 ### Local: using docker with postgres or mongo
 By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:
@@ -64,12 +64,12 @@ If you would like to use a non-HIPAA compliant postgres version:
 
 A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up are online already exist.
 
-## Getting started
+#### Getting started
 parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at a time) that work together as one system. It's important to set the environment variables for your parse-hipaa server. 
 
-### Environment Variables
+##### Environment Variables
 
-#### netreconlab/parse-hipaa
+###### netreconlab/parse-hipaa
 ```bash
 PARSE_SERVER_APPLICATION_ID # Unique string value
 PARSE_SERVER_PRIMARY_KEY # Unique string value
@@ -94,14 +94,14 @@ PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
-#### parseplatform/parse-dashboard
+###### parseplatform/parse-dashboard
 ```bash
 PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
 PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
 MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
 ```
 
-#### netreconlab/hipaa-postgres
+###### netreconlab/hipaa-postgres
 ```bash
 POSTGRES_PASSWORD # Password for postgress db cluster
 PG_PARSE_USER # Username for logging into PG_PARSE_DB
@@ -109,7 +109,7 @@ PG_PARSE_PASSWORD # Password for logging into PG_PARSE_DB
 PG_PARSE_DB # Name of parse-hipaa database
 ```
 
-#### netreconlab/hipaa-mongo
+###### netreconlab/hipaa-mongo
 ```bash
 # Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
 MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Should be MONGO_PARSE_USER
@@ -120,7 +120,7 @@ MONGO_PARSE_PASSWORD # Password for logging into mongo db for parse-hipaa
 MONGO_PARSE_DB # Name of mongo db for parse-hipaa
 ```
 
-### Starting up parse-hipaa
+##### Starting up parse-hipaa
 
 - For the default HIPAA compliant postgres version: ```docker-compose up```
 - or for the HIPAA compliant mongo version: ```docker-compose -f docker-compose.mongo.yml up```
