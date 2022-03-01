@@ -23,7 +23,7 @@
       },
       "PARSE_SERVER_URL": {
         "description": "Local URL to connect to your Heroku instance (update with your app's PORT/PARSE_MOUNT)",
-        "required": false 
+        "value": "http://web:1337/parse" 
       },
       "PARSE_SERVER_PUSH": {
         "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
