@@ -103,14 +103,14 @@ const api = new ParseServer({
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
   // Setup your push adatper
-  // push: pushNotifications,
-  // auth: authentication,
+  push: pushNotifications,
+  auth: authentication,
   liveQuery: {
     classNames: ["Clock"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   // Setup your mail adapter
-  // emailAdapter: emailAdapter,
+  emailAdapter: emailAdapter,
   /*emailAdapter: {
     module: '@parse/simple-mailgun-adapter',
       /*options: {
@@ -208,7 +208,7 @@ httpServer.listen(port, host, function() {
   console.log('Public access: ' + publicServerURL + ', Local access: ' + serverURL);
   console.log('REST API running on ' + publicServerURL);
   if(enableGraphQL)
-    console.log('GraphQL API running on ' + publicServerURL + '/graphql');
+    console.log('GraphQL API running on ' + publicServerURL.replace(mountPath, 'graphql'));
 });
 
 async function createIndexes(){
