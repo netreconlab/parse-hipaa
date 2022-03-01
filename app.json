@@ -33,10 +33,6 @@
         "description": "Configuration for your authentication providers, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#oauth-and-3rd-party-authentication.",
         "required": false
       },
-      "PARSE_SERVER_EMAIL_ADAPTER": {
-        "description": "Adapter module for email sending",
-        "required": false
-      },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
         "required": false

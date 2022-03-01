@@ -53,7 +53,6 @@ if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
 
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
-let emailAdapter = process.env.PARSE_SERVER_EMAIL_ADAPTER || {};
 
 // Need to use local file adapter for postgres
 let filesAdapter = {};
@@ -110,7 +109,6 @@ const api = new ParseServer({
   },
   verifyUserEmails: false,
   // Setup your mail adapter
-  emailAdapter: emailAdapter,
   /*emailAdapter: {
     module: '@parse/simple-mailgun-adapter',
       /*options: {
