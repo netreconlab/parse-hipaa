@@ -17,17 +17,17 @@
         "description": "A key that allows read only access. Keep this secret.",
         "generator": "secret"
       },
-      "PARSE_PUBLIC_SERVER_URL": {
-        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "http://yourappname.herokuapp.com/parse"
-      },
       "PARSE_SERVER_URL": {
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "http://parse:1337/parse"
+        "value": "https://yourappname.herokuapp.com/parse"
       },
-      "PARSE_SERVER_DATABASE_URI": {
-        "description": "Configure the database url.",
-        "value": "postgres://parse:parse@db:5432/parse_hipaa"
+      "PARSE_SERVER_PUSH": {
+        "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
+        "required": false
+      },
+      "PARSE_SERVER_AUTH_PROVIDERS": {
+        "description": "Configuration for your authentication providers, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#oauth-and-3rd-party-authentication.",
+        "required": false
       },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
@@ -67,7 +67,7 @@
       },
       "PARSE_SERVER_MOUNT_GRAPHQL": {
         "description": "Enable graphql, default is 'true'.",
-        "value": "false"
+        "value": "true"
       },
       "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
         "description": "Don't allow classes to be created on the client side..",
@@ -107,11 +107,6 @@
       }
     },
     "stack": "container",
-    "formation": {
-        "parse": {
-            "quantity": 1
-        }
-    },
     "addons": [
         {
             "plan": "heroku-postgresql",

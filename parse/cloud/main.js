@@ -5,7 +5,7 @@ require('./task.js');
 require('./outcome.js');
 require('./outcomeValue.js');
 require('./note.js');
-require('./files.js');
+// require('./files.js');
 const ParseAuditor = require('../node_modules/parse-auditor/src/index.js');
 
 Parse.Cloud.define("ensureClassDefaultFieldsForParseCareKit", async (request) =>  {

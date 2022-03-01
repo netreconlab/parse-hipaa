@@ -7,10 +7,14 @@ const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
-const databaseUri = process.env.PARSE_SERVER_DATABASE_URI;
+const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
+const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
+const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
+
+let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
 
 if (!databaseUri) {
-  console.log('PARSE_SERVER_DATABASE_URI not specified, falling back to localhost.');
+  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
 }
 
 let allowNewClasses = false;
@@ -43,9 +47,16 @@ if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
 }
 
-// Need to use local file adapter for postgres
-let filesAdapter;
+let enableGraphQL = false;
+if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+  enableGraphQL = true
+}
 
+let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
+let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
+
+// Need to use local file adapter for postgres
+let filesAdapter = {};
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   filesAdapter = {
     "module": "@parse/s3-files-adapter",
@@ -55,9 +66,18 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
       "ServerSideEncryption": process.env.PARSE_SERVER_S3_BUCKET_ENCRYPTION || 'AES256', //AES256 or aws:kms, or if you do not pass this, encryption won't be done
     }
   }
-} else if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
-  filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
-} else{
+} else if ("PARSE_SERVER_DATABASE_URI" in process.env) {
+  if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1) {
+    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+  }
+} else if ("DB_URL" in process.env) {
+  if (process.env.DB_URL.indexOf('postgres') !== -1) {
+    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`
+  }  
+}
+
+if (Object.keys(filesAdapter).length === 0) {
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
     {},
@@ -69,12 +89,12 @@ const api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
-  masterKey: process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey', // Keep it secret!
+  masterKey: process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey',
   readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_PRIMARY_KEY || 'myOtherKey',
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
-  serverURL: process.env.PARSE_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',  // Don't forget to change to https if needed
-  publicServerURL: process.env.PARSE_PUBLIC_SERVER_URL || 'http://localhost:' +process.env.PORT + '/parse',
+  serverURL: serverURL,
+  publicServerURL: publicServerURL,
   verbose: verbose,
   allowClientClassCreation: allowNewClasses,
   allowCustomObjectId: allowCustomObjectId,
@@ -83,23 +103,8 @@ const api = new ParseServer({
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
   // Setup your push adatper
-  /*push: {
-    ios: [
-      {
-        pfx: '',
-        topic: '',
-        production: false
-      }
-    ]
-  },
-  auth: {
-   apple: {
-     client_id: "",
-   },
-   facebook: {
-     appIds:
-   }
-  },*/
+  push: pushNotifications,
+  auth: authentication,
   liveQuery: {
     classNames: ["Clock"] // List of classes to support for query subscriptions
   },
@@ -175,15 +180,14 @@ const app = express();
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
 // Serve the Parse API on the /parse URL prefix
-const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
-  res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
+  res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
 });
 
-if(process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+if(enableGraphQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
     {
@@ -191,7 +195,7 @@ if(process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
       playgroundPath: '/playground'
     }
   );
-  app.use('/parse', api.app); // (Optional) Mounts the REST API
+  app.use('/parse', api.app); // (Optional) Mounts the REST API 
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
@@ -199,11 +203,11 @@ const host = process.env.HOST || '0.0.0.0';
 const port = process.env.PORT || 1337;
 const httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
-  console.log('parse-server running on port ' + port + '.');
-  console.log('publicServerURL: ' + process.env.PARSE_PUBLIC_SERVER_URL + ', serverURL: ' + process.env.PARSE_SERVER_URL);
-  console.log('REST API running on ' + process.env.PARSE_PUBLIC_SERVER_URL);
-  if(process.env.PARSE_SERVER_MOUNT_GRAPHQL)
-    console.log('GraphQL API running on ' + 'http://localhost:1337/graphql');
+  console.log('parse-hipaa is running on port ' + port + '.');
+  console.log('Public access: ' + publicServerURL + ', Local access: ' + serverURL);
+  console.log('REST API running on ' + publicServerURL);
+  if(enableGraphQL)
+    console.log('GraphQL API running on ' + publicServerURL.replace(mountPath, 'graphql'));
 });
 
 async function createIndexes(){
@@ -423,12 +427,9 @@ ParseServer.createLiveQueryServer(httpServer);
 //Below is for SSL, but you should probably run this behind a proxy instead
 var fs = require('fs');
 var httpsServer = require('https').createServer({
-
   pfx: fs.readFileSync(''),
   ca: fs.readFileSync('')
-
 }, app);
-
 httpsServer.listen(port, host, function() {
     console.log('parse-server running on port ' + port + '.');
 });

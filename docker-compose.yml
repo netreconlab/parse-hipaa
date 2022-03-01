@@ -13,7 +13,7 @@ services:
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: /parse
             PARSE_SERVER_URL: http://parse:${PORT}/parse
-            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
+            PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 'true'
             PARSE_SET_USER_CLP: 'true' # Default User schema so only authenticated users can access
