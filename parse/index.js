@@ -9,7 +9,7 @@ const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
 const path = require('path');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
-const publicServerURL = process.env.PARSE_PUBLIC_SERVER_URL || serverURL;
+const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
 
 let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
 
