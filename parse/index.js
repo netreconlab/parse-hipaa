@@ -43,6 +43,11 @@ if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
 }
 
+let enableGraphQL = false;
+if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+  enableGraphQL = true
+}
+
 // Need to use local file adapter for postgres
 let filesAdapter = { };
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
