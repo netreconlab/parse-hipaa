@@ -39,13 +39,16 @@ parse-hipaa can be easily deployed or tested remote or locally.
 #### Heroku with Postgres
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to work with Heroku to enable this. Once you click the Heroku button do the following:
+You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to work with Heroku to enable this. You can [view this document for detailed instuctions](https://docs.google.com/document/d/1fniJavK_3T_SXZs2wwn-wa8nX-LzhhNgSORRK1LaZYI/edit?usp=sharing). Once you click the Heroku button do the following:
 
 1. Select your **App name**
 2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
 3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you can set `PARSE_USING_PARSECAREKIT=false` under **Config vars**
 4. Scroll to the bottom of the page and press **Deploy app**
 5. When finished you can access your respective `PARSE_SERVER_URL` and `PARSE_SERVER_APPLICATION_ID` by going to `Settings->Reveal Config Vars`. Be sure to add these values to your client app
+
+#### Dashboard on Heroku
+Follow the directions in the [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard#remote) repo for one-button deployment of dashboard.
 
 #### Using your own files for Heroku deployment
 1. Fork the the parse-hipaa repo
