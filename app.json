@@ -104,14 +104,6 @@
       "PARSE_VERBOSE": {
         "description": "Enable verbose output on the server.",
         "value": "false"
-      },
-      "PARSE_DASHBOARD_TRUST_PROXY": {
-        "description": "Should trust proxy in docker.",
-        "value": "1"
-      },
-      "MOUNT_PATH": {
-        "description": "The mount path should be the same as the docker name.",
-        "value": "/dashboard"
       }
     },
     "stack": "container",
