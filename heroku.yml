@@ -1,5 +1,5 @@
 build: 
   docker:
-    web: parse/Dockerfile.heroku
+    web: parse/Dockerfile #.heroku
 run:
   web: node index.js

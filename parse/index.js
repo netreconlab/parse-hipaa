@@ -51,6 +51,26 @@ if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   enableGraphQL = true
 }
 
+let fileUploadPublic = false;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_PUBLIC == 'true'){
+  fileUploadPublic = true
+}
+
+let fileUploadAnonymous = true;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_ANONYMOUS == 'false'){
+  fileUploadAnonymous = false
+}
+
+let fileUploadAuthenticated = true;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED == 'false'){
+  fileUploadAuthenticated = false
+}
+
+let enableAnonymousUsers = true;
+if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false'){
+  enableAnonymousUsers = false
+}
+
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
@@ -93,11 +113,6 @@ if (Object.keys(filesAdapter).length === 0) {
     process.env.PARSE_SERVER_ENCRYPTION_KEY
   );
 }
-
-const fileUploadPublic = process.env.PARSE_SERVER_FILE_UPLOAD_PUBLIC || false;
-const fileUploadAnonymous = process.env.PARSE_SERVER_FILE_UPLOAD_ANONYMOUS || true;
-const fileUploadAuthenticated = process.env.PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED || true;
-const enableAnonymousUsers = process.env.PARSE_SERVER_ENABLE_ANON_USERS || true;
 
 let configuration = {
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
