@@ -35,4 +35,8 @@ Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
       message("Saved patient");
     })
     .catch(error => message(error));
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8

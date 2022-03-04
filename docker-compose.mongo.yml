@@ -2,11 +2,20 @@ version: '3.4'
 
 services:
     parse:
+<<<<<<< HEAD
         image: parseplatform/parse-server:5.0.0-alpha.16
         environment:
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
             PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
             #PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+=======
+        image: netreconlab/parse-hipaa:5.0.0-alpha.23
+        environment:
+            PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
+            PARSE_SERVER_PRIMARY_KEY: ${PARSE_SERVER_MASTER_KEY}
+            PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
+            PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+>>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
             PORT: ${PORT}
@@ -14,12 +23,24 @@ services:
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
+<<<<<<< HEAD
             PARSE_SERVER_MOUNT_GRAPHQL: 0
             PARSE_SET_USER_CLP: 0 #Default User schema so only authenticated users can access
             PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'true'
             PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
+=======
+            PARSE_SERVER_MOUNT_GRAPHQL: 'true'
+            PARSE_SET_USER_CLP: 'false' # Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
+            PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
+            PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
+            PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
+            PARSE_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_VERBOSE: 'false'
+>>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
         ports:
             - ${PORT}:${PORT}
         volumes:
@@ -31,11 +52,15 @@ services:
         entrypoint: [""]
         command: ["node", "index.js"]
     dashboard:
+<<<<<<< HEAD
         image: parseplatform/parse-dashboard:3.3.0
+=======
+        image: parseplatform/parse-dashboard:4.0.0
+>>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F #This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard              #This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
+            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
             - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
@@ -52,7 +77,7 @@ services:
         restart: always
         ports:
             - 27017:27017
-        #Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/log/:/mongologs
