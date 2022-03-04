@@ -1,7 +1,5 @@
 build: 
   docker:
     web: parse/Dockerfile.heroku
-    # dashboard: dashboard/Dockerfile.heroku
 run:
   web: node index.js
-  # dashboard: parse-dashboard --dev

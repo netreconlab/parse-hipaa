@@ -29,6 +29,22 @@
         "description": "Configuration for your authentication providers, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#oauth-and-3rd-party-authentication.",
         "required": false
       },
+      "PARSE_SERVER_ENABLE_ANON_USERS": {
+        "description": "Enable (or disable) anonymous users, defaults to true.",
+        "value": "true"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_PUBLIC": {
+        "description": "Allow public to upload files.",
+        "value": "false"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_ANONYMOUS": {
+        "description": "Allow anonymous users to upload files.",
+        "value": "true"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED": {
+        "description": "Allow authenticated users to upload files.",
+        "value": "true"
+      },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
         "required": false
@@ -50,8 +66,12 @@
         "required": false
       },
       "PARSE_SERVER_MOUNT_PATH": {
-        "description": "Configure Parse API route.",
+        "description": "Mount path for the server, defaults to /parse.",
         "value": "/parse"
+      },
+      "PARSE_SERVER_GRAPHQL_PATH": {
+        "description": "Mount path for the GraphQL endpoint, defaults to /graphql.",
+        "value": "/graphql"
       },
       "PARSE_SERVER_ENCRYPTION_KEY": {
         "description": "Unique string used for encrypting files stored by parse-hipaa.",
@@ -97,7 +117,7 @@
         "description": "Set to 'true' if new users should be created without public read and write access.",
         "value": "false"
       },
-      "PARSE_USING_PARSECAREKIT": {
+      "PARSE_SERVER_USING_PARSECAREKIT": {
         "description": "Set to 'true' when using ParseCareKit.",
         "value": "true"
       },

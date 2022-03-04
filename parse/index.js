@@ -17,7 +17,7 @@ if (!databaseUri) {
   console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
 }
 
-let allowNewClasses = false;
+const allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
 }
@@ -85,6 +85,11 @@ if (Object.keys(filesAdapter).length === 0) {
   );
 }
 
+const fileUploadPublic = process.env.PARSE_SERVER_FILE_UPLOAD_PUBLIC || false;
+const fileUploadAnonymous = process.env.PARSE_SERVER_FILE_UPLOAD_ANONYMOUS || true;
+const fileUploadAuthenticated = process.env.PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED || true;
+const enableAnonymousUsers = process.env.PARSE_SERVER_ENABLE_ANON_USERS || true;
+
 const api = new ParseServer({
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
@@ -98,7 +103,13 @@ const api = new ParseServer({
   verbose: verbose,
   allowClientClassCreation: allowNewClasses,
   allowCustomObjectId: allowCustomObjectId,
+  enableAnonymousUsers: enableAnonymousUsers,
   filesAdapter: filesAdapter,
+  fileUpload: {
+    enableForPublic: fileUploadPublic,
+    enableForAnonymousUser: fileUploadAnonymous,
+    enableForAuthenticatedUser: fileUploadAuthenticated,
+  },
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
@@ -191,11 +202,11 @@ if(enableGraphQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
     {
-      graphQLPath: '/graphql',
+      graphQLPath: process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql',
       playgroundPath: '/playground'
     }
   );
-  app.use('/parse', api.app); // (Optional) Mounts the REST API 
+  app.use(mountPath, api.app); // (Optional) Mounts the REST API 
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
@@ -207,7 +218,7 @@ httpServer.listen(port, host, function() {
   console.log('Public access: ' + publicServerURL + ', Local access: ' + serverURL);
   console.log('REST API running on ' + publicServerURL);
   if(enableGraphQL)
-    console.log('GraphQL API running on ' + publicServerURL.replace(mountPath, 'graphql'));
+    console.log('GraphQL API running on /graphql');
 });
 
 async function createIndexes(){
@@ -404,7 +415,7 @@ async function createIndexes(){
   } catch(error) { console.log(error); }
 }
 
-if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
   Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
 }
 
@@ -413,7 +424,7 @@ if(process.env.PARSE_SET_USER_CLP == 'true'){
     //Fire after 3 seconds to allow _User class to be created
     setTimeout(async function() {
       await Parse.Cloud.run('setParseClassLevelPermissions');
-      if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+      if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
         await Parse.Cloud.run('setAuditClassLevelPermissions');
         createIndexes();
       }
