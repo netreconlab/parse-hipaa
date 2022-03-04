@@ -71,7 +71,7 @@
       },
       "PARSE_SET_USER_CLP": {
         "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1.",
-        "value": "true"
+        "value": "false"
       },
       "PARSE_SERVER_MOUNT_GRAPHQL": {
         "description": "Enable graphql, default is 'true'.",
