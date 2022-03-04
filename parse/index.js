@@ -16,7 +16,7 @@ const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
 const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
 const objectIdSize = parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10;
 
-const allowNewClasses = false;
+let allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
 }
