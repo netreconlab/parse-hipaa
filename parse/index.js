@@ -16,12 +16,6 @@ const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
 const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
 const objectIdSize = parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10;
 
-let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
-
-if (!databaseUri) {
-  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
-}
-
 const allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
@@ -60,8 +54,18 @@ if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
+let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
+if (!databaseUri) {
+  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
+}
+
 // Need to use local file adapter for postgres
 let filesAdapter = {};
+let filesFSAdapterOptions = {}
+if ("PARSE_SERVER_ENCRYPTION_KEY" in process.env) {
+   filesFSAdapterOptions.encryptionKey = process.env.PARSE_SERVER_ENCRYPTION_KEY;
+}
+
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   filesAdapter = {
     "module": "@parse/s3-files-adapter",
@@ -73,12 +77,12 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   }
 } else if ("PARSE_SERVER_DATABASE_URI" in process.env) {
   if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1) {
-    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+    filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
   }
 } else if ("DB_URL" in process.env) {
   if (process.env.DB_URL.indexOf('postgres') !== -1) {
-    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
-    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`
+    filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
+    databaseUri = `${databaseUri}?ssl=true` // &rejectUnauthorized=false`;
   }  
 }
 
