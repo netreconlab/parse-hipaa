@@ -99,6 +99,11 @@ const api = new ParseServer({
   allowClientClassCreation: allowNewClasses,
   allowCustomObjectId: allowCustomObjectId,
   filesAdapter: filesAdapter,
+  fileUpload: {
+    enableForPublic: false,
+    enableForAnonymousUser: true,
+    enableForAuthenticatedUser: true,
+  },
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,

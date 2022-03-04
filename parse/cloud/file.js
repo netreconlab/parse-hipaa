@@ -1,5 +1,6 @@
 const NodeClam = require('clamscan');
-const { Readable } = require('stream');
+const {Readable} = require('stream');
+const webRequest = require('request');
 
 Parse.Cloud.beforeSaveFile(async (request) => {
     const { file, user } = request;
@@ -15,9 +16,11 @@ Parse.Cloud.beforeSaveFile(async (request) => {
         const stream = new Readable();
         stream.push(fileData);
         stream.push(null);
-        const {isInfected, viruses} = await clamscan.scanStream(stream);
-        if (isInfected) {
+        const {is_infected, viruses} = await clamscan.scan_stream(stream);
+        if (is_infected === true) {
             throw `********* Virus or malware was detected! This file was not uploaded. Viruses detected: (${viruses.join('')})`;
+        } else if (is_infected === null) {
+            throw `Couldn't scan file for virus, not saving...`
         }
         return file;
     } catch (err) {

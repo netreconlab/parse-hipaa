@@ -1,38 +1,73 @@
-require('./patient.js');
-require('./contact.js');
-require('./carePlan.js');
-require('./task.js');
-require('./outcome.js');
-require('./outcomeValue.js');
-require('./note.js');
+require('./activity.js');
 
 // main.js
-Parse.Cloud.define('hello', async (request) => {
-  console.log('From client: ' + JSON.stringify(request));
-  return 'Hello world!';
+Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {
+
+    const clp = {
+        get: { requiresAuthentication: true },
+        find: { requiresAuthentication: true },
+        create: { requiresAuthentication: true },
+        update: { requiresAuthentication: true },
+        delete: { requiresAuthentication: true },
+        addField: {},
+        protectedFields: {}
+    };
+  
+    const postSchema = new Parse.Schema('Post');
+    await postSchema.get()
+    .catch(error => {
+        postSchema
+          .addPointer('user', '_User')
+          .addFile('image')
+          .addFile('thumbnail')
+          .addGeoPoint('location')
+          .addString('caption')
+          .setCLP(clp)
+          .save()
+          .then((result) => {
+            console.log("***Success: Post class created with default fields. Ignore any previous errors about this class***");
+          })
+          .catch(error => console.log(error))
+    });
+
+    const activitySchema = new Parse.Schema('Activity');
+    await activitySchema.get()
+    .catch(error => {
+        activitySchema
+          .addPointer('fromUser', '_User')
+          .addPointer('toUser', '_User')
+          .addPointer('activity', 'Activity')
+          .addPointer('post', 'Post')
+          .addString('type')
+          .addString('comment')
+          .setCLP(clp)
+          .save().then((result) => {
+            console.log("***Success: Activity class created with default fields. Ignore any previous errors about this class***");
+            setUserClassLevelPermissions();
+          })
+          .catch(error => console.log(error));
+    });
 });
 
-Parse.Cloud.define("testCloudCode", async(request) => {
-  console.log('From client: ' + JSON.stringify(request)); 
-  return request.params.argument1;
-});
+async function setUserClassLevelPermissions() {
+    const userSchema = new Parse.Schema('_User');
+    await userSchema.get();
+    const clp = {
+      get: { requiresAuthentication: true },
+      find: { requiresAuthentication: true },
+      create: { '*': true },
+      update: { requiresAuthentication: true },
+      delete: { requiresAuthentication: true },
+      addField: {},
+      protectedFields: {}
+    };
 
-Parse.Cloud.define("testCloudCodeError", async(request) => {
-  console.log('From client: ' + JSON.stringify(request)); 
-  throw new Parse.Error(3000, "cloud has an error on purpose.");
-});
-
-Parse.Cloud.beforeSave("GameScore", async(request) => {
-  console.log('From client context: ' + JSON.stringify(request.context)); 
-});
-
-Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
-    const { params, headers, log, message } = request;
-    
-    const object = new Parse.Object('Patient');
-    object.set('uuid', "112");
-    object.save({useMasterKey: true}).then((result) => {
-      message("Saved patient");
-    })
-    .catch(error => message(error));
-});
+    userSchema
+        .addString('name')
+        .addString('bio')
+        .addObject('link')
+        .addFile('profileImage')
+        .addFile('profileThumbnail')
+        .setCLP(clp)
+    await userSchema.update({useMasterKey: true});
+}
