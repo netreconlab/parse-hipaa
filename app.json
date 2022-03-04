@@ -1,5 +1,5 @@
 {
-    "name": "Parse HIPAA Server Example",
+    "name": "Parse HIPAA Server",
     "description": "An example Parse API server using the parse-server and CareKit",
     "repository": "https://github.com/netreconlab/parse-hipaa",
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
