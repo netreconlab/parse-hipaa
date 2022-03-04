@@ -39,7 +39,7 @@ parse-hipaa can be easily deployed or tested remote or locally.
 #### Heroku with Postgres
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
-You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to work with Heroku to enable this. You can [view this document for detailed instuctions](https://docs.google.com/document/d/1fniJavK_3T_SXZs2wwn-wa8nX-LzhhNgSORRK1LaZYI/edit?usp=sharing). Once you click the Heroku button do the following:
+You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to work with Heroku to enable this. You can [view this document for detailed instuctions](https://docs.google.com/document/d/1fniJavK_3T_SXZs2wwn-wa8nX-LzhhNgSORRK1LaZYI/edit?usp=sharing). **If you need a Parse Server Heroku deployment for non-ParseCareKit based apps, use the Heroku button on the [snapcat](https://github.com/netreconlab/parse-hipaa/tree/Snapchat#heroku-with-postgres) branch instead of this one.** Once you click the Heroku button do the following:
 
 1. Select your **App name**
 2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
