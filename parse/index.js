@@ -2,22 +2,21 @@
 // compatible API routes.
 
 const express = require('express');
-const { default: ParseServer, ParseGraphQLServer } = require('./lib/index');
+const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
 const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
+const cors = require('cors');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
+const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
+const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
+const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
+const objectIdSize = parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10;
 
-let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
-
-if (!databaseUri) {
-  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
-}
-
-let allowNewClasses = false;
+const allowNewClasses = false;
 if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
   allowNewClasses = true
 }
@@ -52,11 +51,41 @@ if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   enableGraphQL = true
 }
 
+let fileUploadPublic = false;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_PUBLIC == 'true'){
+  fileUploadPublic = true
+}
+
+let fileUploadAnonymous = true;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_ANONYMOUS == 'false'){
+  fileUploadAnonymous = false
+}
+
+let fileUploadAuthenticated = true;
+if (process.env.PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED == 'false'){
+  fileUploadAuthenticated = false
+}
+
+let enableAnonymousUsers = true;
+if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false'){
+  enableAnonymousUsers = false
+}
+
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
+let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
+if (!databaseUri) {
+  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
+}
+
 // Need to use local file adapter for postgres
 let filesAdapter = {};
+let filesFSAdapterOptions = {}
+if ("PARSE_SERVER_ENCRYPTION_KEY" in process.env) {
+   filesFSAdapterOptions.encryptionKey = process.env.PARSE_SERVER_ENCRYPTION_KEY;
+}
+
 if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   filesAdapter = {
     "module": "@parse/s3-files-adapter",
@@ -68,12 +97,12 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   }
 } else if ("PARSE_SERVER_DATABASE_URI" in process.env) {
   if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1) {
-    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
+    filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
   }
 } else if ("DB_URL" in process.env) {
   if (process.env.DB_URL.indexOf('postgres') !== -1) {
-    filesAdapter = new FSFilesAdapter({encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY});
-    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`
+    filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
+    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`;
   }  
 }
 
@@ -85,24 +114,27 @@ if (Object.keys(filesAdapter).length === 0) {
   );
 }
 
-const api = new ParseServer({
+let configuration = {
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
   masterKey: process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey',
   readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_PRIMARY_KEY || 'myOtherKey',
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
-  objectIdSize: parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10,
+  objectIdSize: objectIdSize,
   serverURL: serverURL,
   publicServerURL: publicServerURL,
+  cacheMaxSize: cacheMaxSize,
+  cacheTTL: cacheTTL,
   verbose: verbose,
   allowClientClassCreation: allowNewClasses,
   allowCustomObjectId: allowCustomObjectId,
+  enableAnonymousUsers: enableAnonymousUsers,
   filesAdapter: filesAdapter,
   fileUpload: {
-    enableForPublic: false,
-    enableForAnonymousUser: true,
-    enableForAuthenticatedUser: true,
+    enableForPublic: fileUploadPublic,
+    enableForAnonymousUser: fileUploadAnonymous,
+    enableForAuthenticatedUser: fileUploadAuthenticated,
   },
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
@@ -173,13 +205,25 @@ const api = new ParseServer({
     //optional setting to set a validity duration for password reset links (in seconds)
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
   }
-});
+};
 
-// Client-keys like the javascript key or the .NET key are not necessary with parse-server
-// If you wish you require them, you can set them as options in the initialization above:
-// javascriptKey, restAPIKey, dotNetKey, clientKey
+if ("PARSE_SERVER_REDIS_URL" in process.env) {
+  const redisOptions = { url: process.env.PARSE_SERVER_REDIS_URL };
+  configuration.cacheAdapter = new RedisCacheAdapter(redisOptions);
+  // Set LiveQuery URL
+  configuration.liveQuery.redisURL = process.env.PARSE_SERVER_REDIS_URL; 
+}
+
+if ("PARSE_SERVER_GRAPH_QLSCHEMA" in process.env) {
+  configuration.graphQLSchema = process.env.PARSE_SERVER_GRAPH_QLSCHEMA;
+}
+
+const api = new ParseServer(configuration);
 
 const app = express();
+
+// Enable All CORS Requests
+app.use(cors());
 
 // Serve static assets from the /public folder
 app.use('/public', express.static(path.join(__dirname, '/public')));
@@ -188,7 +232,7 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
-app.get('/', function(req, res) {
+app.get('/', function(_req, res) {
   res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
 });
 
@@ -196,11 +240,11 @@ if(enableGraphQL){
   const parseGraphQLServer = new ParseGraphQLServer(
     api,
     {
-      graphQLPath: '/graphql',
+      graphQLPath: graphMountPath,
       playgroundPath: '/playground'
     }
   );
-  app.use('/parse', api.app); // (Optional) Mounts the REST API 
+  app.use(mountPath, api.app); // (Optional) Mounts the REST API 
   parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
 }
 
@@ -212,7 +256,7 @@ httpServer.listen(port, host, function() {
   console.log('Public access: ' + publicServerURL + ', Local access: ' + serverURL);
   console.log('REST API running on ' + publicServerURL);
   if(enableGraphQL)
-    console.log('GraphQL API running on ' + publicServerURL.replace(mountPath, 'graphql'));
+    console.log('GraphQL API running on ' + graphMountPath);
 });
 
 async function createIndexes(){
@@ -409,7 +453,7 @@ async function createIndexes(){
   } catch(error) { console.log(error); }
 }
 
-if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
   Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
 }
 
@@ -418,7 +462,7 @@ if(process.env.PARSE_SET_USER_CLP == 'true'){
     //Fire after 3 seconds to allow _User class to be created
     setTimeout(async function() {
       await Parse.Cloud.run('setParseClassLevelPermissions');
-      if(process.env.PARSE_USING_PARSECAREKIT == 'true'){
+      if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
         await Parse.Cloud.run('setAuditClassLevelPermissions');
         createIndexes();
       }
