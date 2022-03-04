@@ -51,7 +51,7 @@ You can use the one-button deployment to quickly deploy to Heroko. **Note that t
 
 1. Select your **App name**
 2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
-3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you can set `PARSE_USING_PARSECAREKIT=false` under **Config vars**
+3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you should set `PARSE_SERVER_USING_PARSECAREKIT=false` under **Config vars**. This will ensure that ParseCareKit classes/tables are not created on the parse-hipaa server
 4. Scroll to the bottom of the page and press **Deploy app**
 5. When finished you can access your respective `PARSE_SERVER_URL` and `PARSE_SERVER_APPLICATION_ID` by going to `Settings->Reveal Config Vars`. Be sure to add these values to your client app
 
@@ -97,7 +97,7 @@ PARSE_SERVER_ALLOW_CUSTOM_OBJECTID # Required to be true for ParseCareKit
 PARSE_SERVER_ENABLE_SCHEMA_HOOKS # Keeps the schema in sync across all instances
 PARSE_SERVER_DIRECT_ACCESS # Known to cause crashes when true on single instance of server and not behind public server
 PARSE_SERVER_ENABLE_PRIVATE_USERS # Set to 'true' if new users should be created without public read and write access
-PARSE_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 'false', or else enable with 'true'. The default value is 'true'
+PARSE_SERVER_USING_PARSECAREKIT # If you are not using ParseCareKit, set this to 'false', or else enable with 'true'. The default value is 'true'
 PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```

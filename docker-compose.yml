@@ -42,7 +42,7 @@ services:
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
-            PARSE_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
 >>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
