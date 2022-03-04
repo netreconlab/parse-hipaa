@@ -7,11 +7,11 @@
     "env": {
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
-        "generator": "secret"
+        "value": "applicationId"
       },
       "PARSE_SERVER_PRIMARY_KEY": {
         "description": "A key that overrides all permissions. Keep this secret.",
-        "generator": "secret"
+        "value": "masterKey"
       },
       "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
         "description": "A key that allows read only access. Keep this secret.",
@@ -51,7 +51,7 @@
       },
       "PARSE_SERVER_MOUNT_PATH": {
         "description": "Configure Parse API route.",
-        "value": "/parse"
+        "value": "/1"
       },
       "PARSE_SERVER_ENCRYPTION_KEY": {
         "description": "Unique string used for encrypting files stored by parse-hipaa.",
@@ -79,7 +79,7 @@
       },
       "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
         "description": "Don't allow classes to be created on the client side..",
-        "value": "false"
+        "value": "true"
       },
       "PARSE_SERVER_ALLOW_CUSTOM_OBJECTID": {
         "description": "Required to be true for ParseCareKit.",
@@ -99,7 +99,7 @@
       },
       "PARSE_USING_PARSECAREKIT": {
         "description": "Set to 'true' when using ParseCareKit.",
-        "value": "true"
+        "value": "false"
       },
       "PARSE_VERBOSE": {
         "description": "Enable verbose output on the server.",

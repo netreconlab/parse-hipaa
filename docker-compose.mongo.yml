@@ -4,8 +4,8 @@ services:
     parse:
         image: netreconlab/parse-hipaa:5.0.0-alpha.23
         environment:
-            PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
-            PARSE_SERVER_PRIMARY_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
+            PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
+            PARSE_SERVER_PRIMARY_KEY: ${PARSE_SERVER_MASTER_KEY}
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 32
@@ -16,13 +16,13 @@ services:
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 'true'
-            PARSE_SET_USER_CLP: 'true' # Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SET_USER_CLP: 'false' # Default User schema so only authenticated users can access
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
-            PARSE_USING_PARSECAREKIT: 'true' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
         ports:
             - ${PORT}:${PORT}
@@ -32,6 +32,7 @@ services:
         restart: always
         depends_on:
             - db
+        entrypoint: [""]
         command: ["node", "index.js"]
     dashboard:
         image: parseplatform/parse-dashboard:4.0.0
@@ -59,6 +60,6 @@ services:
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/log/:/mongologs
-    scan:
-        image: netreconlab/clamscan:latest
-        restart: always
+    #scan:
+    #    image: netreconlab/clamscan:latest
+    #    restart: always
