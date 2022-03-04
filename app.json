@@ -7,11 +7,11 @@
     "env": {
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
-        "value": "applicationId"
+        "generator": "secret"
       },
       "PARSE_SERVER_PRIMARY_KEY": {
         "description": "A key that overrides all permissions. Keep this secret.",
-        "value": "masterKey"
+        "generator": "secret"
       },
       "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
         "description": "A key that allows read only access. Keep this secret.",
@@ -51,7 +51,7 @@
       },
       "PARSE_SERVER_MOUNT_PATH": {
         "description": "Configure Parse API route.",
-        "value": "/1"
+        "value": "/parse"
       },
       "PARSE_SERVER_ENCRYPTION_KEY": {
         "description": "Unique string used for encrypting files stored by parse-hipaa.",
