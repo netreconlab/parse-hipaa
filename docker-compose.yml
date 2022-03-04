@@ -2,36 +2,16 @@ version: '3.4'
 
 services:
     parse:
-<<<<<<< HEAD
-        image: parseplatform/parse-server:5.0.0-alpha.16
-        environment:
-            PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
-            PARSE_SERVER_MASTER_KEY: ${PARSE_SERVER_MASTER_KEY}
-            #PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
-=======
         image: netreconlab/parse-hipaa:5.0.0-alpha.23
         environment:
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
             PARSE_SERVER_PRIMARY_KEY: ${PARSE_SERVER_MASTER_KEY}
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
-<<<<<<< HEAD
-            PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
-            PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
-            PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
-            PARSE_SERVER_MOUNT_GRAPHQL: 0
-            PARSE_SET_USER_CLP: 0 #Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' #Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
-            PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
-            PARSE_SERVER_DIRECT_ACCESS: 'false' #Known to cause crashes when true on single instance of server and not behind public server
-            PARSE_USING_PARSECAREKIT: 0 #If you are not using ParseCareKit, set this to 0
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} #Needed for wait-for-postgres.sh
-=======
             PARSE_SERVER_URL: http://parse:${PORT}/parse
             PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}/parse
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
@@ -45,7 +25,6 @@ services:
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
         ports:
             - ${PORT}:${PORT}
         volumes:
@@ -59,11 +38,7 @@ services:
         depends_on:
             - db
     dashboard:
-<<<<<<< HEAD
-        image: parseplatform/parse-dashboard:3.3.0
-=======
         image: parseplatform/parse-dashboard:4.0.0
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system

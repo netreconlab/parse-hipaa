@@ -46,24 +46,6 @@ if (process.env.PARSE_VERBOSE == 'true'){
   verbose = true
 }
 
-<<<<<<< HEAD
-var enableSchemaHooks = false;
-if (process.env.PARSE_SERVER_ENABLE_SCHEMA_HOOKS == 'true'){
-  enableSchemaHooks = true
-}
-
-var useDirectAccess = false;
-if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
-  useDirectAccess = true
-}
-
-//If you want to allow your server to accept files on postgres, you need to secure the file url links yourself
-//Need to use local file adapter for postgres
-var fileAdapter;
-if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1){
-  filesAdapter = new FSFilesAdapter();
-}else{
-=======
 let enableGraphQL = false;
 if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
   enableGraphQL = true
@@ -125,7 +107,6 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
 }
 
 if (Object.keys(filesAdapter).length === 0) {
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
   filesAdapter = new GridFSBucketAdapter(
     databaseUri,
     {},
@@ -150,39 +131,11 @@ let configuration = {
   allowCustomObjectId: allowCustomObjectId,
   enableAnonymousUsers: enableAnonymousUsers,
   filesAdapter: filesAdapter,
-<<<<<<< HEAD
-<<<<<<< HEAD
-  allowCustomObjectId: true,
-  enableSchemaHooks: enableSchemaHooks,
-  directAccess: useDirectAccess,
-  //Setup your push adatper
-  /*push: {
-    ios: [
-      {
-        pfx: '',
-        topic: '',
-        production: false
-      }
-    ]
-  },
-  auth: {
-   apple: {
-     client_id: "",
-   },
-   facebook: {
-     appIds:
-   }
-  },*/
-  liveQuery: {
-    classNames: ["GameScore", "Book", "Author"] // List of classes to support for query subscriptions
-=======
-=======
   fileUpload: {
     enableForPublic: fileUploadPublic,
     enableForAnonymousUser: fileUploadAnonymous,
     enableForAuthenticatedUser: fileUploadAuthenticated,
   },
->>>>>>> 1c8d9429d818c8937c090d90d603aa673a5e98f4
   enableSchemaHooks: enableSchemaHooks,
   directAccess: useDirectAccess,
   enforcePrivateUsers: enforcePrivateUsers,
@@ -190,8 +143,7 @@ let configuration = {
   push: pushNotifications,
   auth: authentication,
   liveQuery: {
-    classNames: ["Clock"] // List of classes to support for query subscriptions
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
+    classNames: ["GameScore", "Book", "Author"] // List of classes to support for query subscriptions
   },
   verifyUserEmails: false,
   // Setup your mail adapter
@@ -252,13 +204,8 @@ let configuration = {
     maxPasswordHistory: 5, // optional setting to prevent reuse of previous n passwords. Maximum value that can be specified is 20. Not specifying it or specifying 0 will not enforce history.
     //optional setting to set a validity duration for password reset links (in seconds)
     resetTokenValidityDuration: 24*60*60, // expire after 24 hours
-<<<<<<< HEAD
   }*/
-});
-=======
-  }
 };
->>>>>>> 1c8d9429d818c8937c090d90d603aa673a5e98f4
 
 if ("PARSE_SERVER_REDIS_URL" in process.env) {
   const redisOptions = { url: process.env.PARSE_SERVER_REDIS_URL };
@@ -285,16 +232,8 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 app.use(mountPath, api.app);
 
 // Parse Server plays nicely with the rest of your web routes
-<<<<<<< HEAD
-app.get('/', function(req, res) {
-<<<<<<< HEAD
-  res.status(200).send('I dream of being a website.  Please start the parse-server repo on GitHub!');
-=======
-=======
 app.get('/', function(_req, res) {
->>>>>>> 1c8d9429d818c8937c090d90d603aa673a5e98f4
   res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
->>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
 });
 
 if(enableGraphQL){
