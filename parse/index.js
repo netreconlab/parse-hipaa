@@ -102,7 +102,7 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
 } else if ("DB_URL" in process.env) {
   if (process.env.DB_URL.indexOf('postgres') !== -1) {
     filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
-    databaseUri = `${databaseUri}?ssl=true` // &rejectUnauthorized=false`;
+    databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`;
   }  
 }
 
