@@ -1,11 +1,16 @@
 {
     "apps": [
     {
-       "serverURL": "http://localhost:1337/parse",
+       "serverURL": "http://localhost:1337/1",
        "graphQLServerURL": "http://localhost:1337/graphql",
+<<<<<<< HEAD
+         "appId": "applicationId",
+         "masterKey": "masterKey",
+=======
          "appId": "E036A0C5-6829-4B40-9B3B-3E05F6DF32B2",
          "masterKey": "E2466756-93CF-4C05-BA44-FF5D9C34E99F",
          "readOnlyMasterKey": "367F7395-2E3A-46B1-ABA3-963A25D533C3",
+>>>>>>> 47b5723f9bf8f67686dafc01312bb40a298fa9c8
          "appName": "Parse HIPAA",
          "supportedPushLocales": ["en"]
     }],
