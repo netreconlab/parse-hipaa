@@ -12,8 +12,8 @@ services:
             PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
-            PARSE_SERVER_URL: http://parse:${PORT}/parse
-            PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}/parse
+            PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
+            PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 'true'
             PARSE_SET_USER_CLP: 'false' # Default User schema so only authenticated users can access
