@@ -74,9 +74,9 @@ if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false'){
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
-let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL;
+let databaseUri = process.env.PARSE_SERVER_DATABASE_URI || process.env.DB_URL || process.env.DATABASE_URL;
 if (!databaseUri) {
-  console.log('PARSE_SERVER_DATABASE_URI or DB_URL not specified, falling back to localhost.');
+  console.log('PARSE_SERVER_DATABASE_URI, DB_URL, or DATABASE_URL not specified, falling back to localhost.');
 }
 
 // Need to use local file adapter for postgres
@@ -99,7 +99,7 @@ if ("PARSE_SERVER_S3_BUCKET" in process.env) {
   if (process.env.PARSE_SERVER_DATABASE_URI.indexOf('postgres') !== -1) {
     filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
   }
-} else if ("DB_URL" in process.env) {
+} else if (("DB_URL" in process.env) || ("DATABASE_URL" in process.env)) {
   if (process.env.DB_URL.indexOf('postgres') !== -1) {
     filesAdapter = new FSFilesAdapter(filesFSAdapterOptions);
     databaseUri = `${databaseUri}?ssl=true&rejectUnauthorized=false`;

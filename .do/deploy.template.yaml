@@ -1,0 +1,81 @@
+spec:
+ name: sample-golang
+ services:
+ - name: web
+   git:
+     branch: main
+     repo_clone_url: https://github.com/netreconlab/parse-hipaa.git
+   dockerfile_path: parse/Dockerfile.heroku
+   envs:
+   - key: DATABASE_URL
+     scope: RUN_TIME
+     value: ${db.DATABASE_URL}
+   - key: PARSE_SERVER_APPLICATION_ID 
+     scope: RUN_TIME
+   - key: PARSE_SERVER_PRIMARY_KEY
+     scope: RUN_TIME
+   - key: PARSE_SERVER_URL
+     scope: RUN_TIME
+   - key: PARSE_SERVER_ENABLE_ANON_USERS
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_FILE_UPLOAD_PUBLIC
+     value: "false"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_FILE_UPLOAD_ANONYMOUS
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_S3_BUCKET_REGION
+     value: "us-east-2"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_S3_BUCKET_ENCRYPTION
+     value: "AES256"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_MOUNT_PATH
+     value: "/parse"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_GRAPHQL_PATH
+     value: "/graphql"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_OBJECT_ID_SIZE
+     value: "32"
+     scope: RUN_TIME
+   - key: PORT
+     value: "1337"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_CLOUD
+     value: "/parse-server/cloud/main.js"
+     scope: RUN_TIME
+   - key: PARSE_SET_USER_CLP
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_MOUNT_GRAPHQL 
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION
+     value: "false"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_ALLOW_CUSTOM_OBJECTID
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_ENABLE_SCHEMA_HOOKS
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_DIRECT_ACCESS
+     value: "false"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_ENABLE_PRIVATE_USERS
+     value: "false"
+     scope: RUN_TIME
+   - key: PARSE_SERVER_USING_PARSECAREKIT
+     value: "true"
+     scope: RUN_TIME
+   - key: PARSE_VERBOSE
+     value: "false"
+     scope: RUN_TIME
+   databases:
+    - name: db
+      engine: PG
