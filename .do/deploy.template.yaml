@@ -3,7 +3,7 @@ spec:
  services:
  - name: web
    git:
-     branch: main
+     branch: deployment
      repo_clone_url: https://github.com/netreconlab/parse-hipaa.git
    dockerfile_path: parse/Dockerfile.heroku
    envs:

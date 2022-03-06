@@ -54,7 +54,7 @@ You can use the one-button deployment to quickly deploy to Heroko. **Note that t
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 #### Digital Ocean
-[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/netreconlab/parse-hipaa/tree/main&refcode=2a4f6658c228)
+[![Deploy to DO](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/netreconlab/parse-hipaa/tree/deployment&refcode=2a4f6658c228)
 
 ### Local: using docker with postgres or mongo
 By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:

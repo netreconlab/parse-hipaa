@@ -2,7 +2,7 @@ name: parse-hipaa
 services:
 - name: web
   github:
-    branch: main
+    branch: deployment
     repo: netreconlab/parse-hipaa
   dockerfile_path: parse/Dockerfile.heroku
   envs:
