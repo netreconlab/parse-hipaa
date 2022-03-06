@@ -146,10 +146,7 @@
     "addons": [
         {
             "plan": "heroku-postgresql",
-            "as": "db",
-            "options": {
-              "version": "13"
-            }
+            "as": "db"
         }
     ]
   }

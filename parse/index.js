@@ -244,8 +244,7 @@ if(enableGraphQL){
       playgroundPath: '/playground'
     }
   );
-  app.use(mountPath, api.app); // (Optional) Mounts the REST API 
-  parseGraphQLServer.applyGraphQL(app); // Mounts the GraphQL API
+  parseGraphQLServer.applyGraphQL(app);
 }
 
 const host = process.env.HOST || '0.0.0.0';
