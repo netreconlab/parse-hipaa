@@ -1,5 +1,5 @@
 spec:
- name: sample-golang
+ name: parse-hipaa
  services:
  - name: web
    git:
