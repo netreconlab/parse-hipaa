@@ -143,11 +143,6 @@
       }
     },
     "stack": "container",
-    "formation": {
-      "parse": {
-        "quantity": 1
-      }
-    },
     "addons": [
         {
           "plan": "heroku-postgresql",
