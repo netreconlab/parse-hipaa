@@ -3,7 +3,7 @@
     "description": "An example Parse API server using the parse-server and CareKit",
     "repository": "https://github.com/netreconlab/parse-hipaa",
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
-    "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
+    "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres", "nginx", "proxy"],
     "env": {
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
@@ -143,10 +143,15 @@
       }
     },
     "stack": "container",
+    "formation": {
+      "parse": {
+        "quantity": 1
+      }
+    },
     "addons": [
         {
-            "plan": "heroku-postgresql",
-            "as": "db"
+          "plan": "heroku-postgresql",
+          "as": "db"
         }
     ]
   }

@@ -1,0 +1,36 @@
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+  listen $PORT default_server;
+  server_name _;
+	keepalive_timeout 5;
+  add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+  
+  ssl_session_timeout  5m;
+  ssl_protocols  SSLv2 SSLv3 TLSv1.2 TLSv1.3;
+  ssl_ciphers  HIGH:!aNULL:!MD5;
+  ssl_prefer_server_ciphers   on;
+
+  # redirect server error pages to the static page /50x.html
+  error_page   500 502 503 504  /50x.html;
+  location = /50x.html {                  
+    root   /usr/share/nginx/html;                                   
+  }
+
+  location / {
+    #root   /usr/share/nginx/html;
+    #index  index.html index.htm;
+
+    if ($http_x_forwarded_proto != "https") {
+      return 301 https://$host$request_uri;
+    }
+
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Host $http_host;
+		proxy_redirect off;
+		proxy_pass http://parse:1337;
+  }
+}
