@@ -151,7 +151,7 @@
       "web": {
         "quantity": 1
       },
-      "parse": {
+      "worker": {
         "quantity": 1
       }
     },

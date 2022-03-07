@@ -1,9 +1,9 @@
 build: 
   docker:
-    parse: parse/Dockerfile #.heroku
     web: nginx/Dockerfile
+    worker: parse/Dockerfile #.heroku
     #dashboard: parse/Dockerfile.heroku # Uncomment if using paid services
 run:
-  parse: node index.js
   web: /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g  'daemon off;'
+  worker: node index.js
   #dashboard: node ./lib/index.js # Uncomment if using paid services
