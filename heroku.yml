@@ -1,6 +1,6 @@
 build: 
   docker:
-    web: parse/Dockerfile
+    web: nginx/Dockerfile
     parse: parse/Dockerfile.heroku
     #dashboard: parse/Dockerfile.heroku # Uncomment if using paid services
 run:
