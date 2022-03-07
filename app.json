@@ -85,7 +85,7 @@
         "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
         "value": "32"
       },
-      "PORT": {
+      "PARSE_PORT": {
         "description": "Port for parse-hipaa, default is 1337.",
         "value": "1337"
       },
@@ -148,6 +148,9 @@
     },
     "stack": "container",
     "formation": {
+      "web": {
+        "quantity": 1
+      },
       "parse": {
         "quantity": 1
       }
