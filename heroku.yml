@@ -1,7 +1,7 @@
 build: 
   docker:
     web: nginx/Dockerfile
-    parse: parse/Dockerfile.heroku
+    parse: parse/Dockerfile #.heroku
     #dashboard: parse/Dockerfile.heroku # Uncomment if using paid services
 run:
   web: /bin/bash -c "envsubst '\$PORT' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g  'daemon off;'

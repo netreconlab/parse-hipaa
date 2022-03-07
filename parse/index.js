@@ -10,7 +10,9 @@ const path = require('path');
 const cors = require('cors');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
-const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PARSE_PORT + mountPath;
+const host = process.env.HOST || '0.0.0.0';
+const port = process.env.PARSE_PORT || 1337;
+const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + port + mountPath;
 const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
 const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
 const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
@@ -247,8 +249,6 @@ if(enableGraphQL){
   parseGraphQLServer.applyGraphQL(app);
 }
 
-const host = process.env.HOST || '0.0.0.0';
-const port = process.env.PARSE_PORT || 1337;
 const httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
   console.log('parse-hipaa is running on port ' + port + '.');
