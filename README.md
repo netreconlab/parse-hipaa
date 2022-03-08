@@ -1,6 +1,5 @@
 # parse-hipaa 
 
-[![Docker](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml)
 [![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
 
 
