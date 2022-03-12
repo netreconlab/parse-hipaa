@@ -35,7 +35,7 @@ parse-hipaa can be easily deployed or tested remote or locally.
 
 ### Remote
 
-#### Heroku with Postgres
+#### Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 You can use the one-button deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to view [Heroku's compliance certifications](https://www.heroku.com/compliance), and upgrade your plans to [Shield Spaces](https://devcenter.heroku.com/articles/heroku-postgres-and-private-spaces). You can [view this document for detailed instuctions](https://docs.google.com/document/d/1fniJavK_3T_SXZs2wwn-wa8nX-LzhhNgSORRK1LaZYI/edit?usp=sharing). **If you need a Parse Server Heroku deployment for non-ParseCareKit based apps, use the Heroku button on the [snapcat](https://github.com/netreconlab/parse-hipaa/tree/Snapchat#heroku-with-postgres) branch instead of this one.** Once you click the Heroku button do the following:
