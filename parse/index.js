@@ -29,7 +29,7 @@ if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false'){
   startLiveQueryServer = false
 }
 
-let enableDashboard = true;
+let enableDashboard = false;
 if (process.env.PARSE_SERVER_ENABLE_DASHBOARD == 'true'){
   enableDashboard = true
 }
