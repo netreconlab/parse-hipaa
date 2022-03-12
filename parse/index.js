@@ -11,8 +11,24 @@ const cors = require('cors');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
-const serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
+const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
+const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
+let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
+let appName = 'myApp'; 
+if ("HEROKU_APP_NAME" in process.env) {
+  appName = process.env.HEROKU_APP_NAME;
+  if (!("PARSE_SERVER_URL" in process.env)) {
+    serverURL = `https://${appName}.herokuapp.com${mountPath}`;
+  }
+}
+
 const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
+
+const url = new URL(publicServerURL);
+let graphURL = url
+graphURL.pathname = graphMountPath;
+let dashboardURL = url
+dashboardURL.pathname = dashboardMountPath;
 
 let enableParseServer = true;
 if (process.env.PARSE_SERVER_ENABLE == 'false'){
@@ -30,7 +46,7 @@ if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false'){
 }
 
 let enableDashboard = false;
-if (process.env.PARSE_SERVER_ENABLE_DASHBOARD == 'true'){
+if (process.env.PARSE_DASHBOARD_START == 'true'){
   enableDashboard = true
 }
 
@@ -148,8 +164,8 @@ if (enableParseServer){
   let configuration = {
     databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
     cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
-    appId: process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId',
-    masterKey: process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey',
+    appId: applicationId,
+    masterKey: primaryKey,
     readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_PRIMARY_KEY || 'myOtherKey',
     encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
     objectIdSize: objectIdSize,
@@ -176,7 +192,6 @@ if (enableParseServer){
     liveQuery: {
       classNames: ["Clock"] // List of classes to support for query subscriptions
     },
-    startLiveQueryServer: startLiveQueryServer,
     verifyUserEmails: false,
     // Setup your mail adapter
     /*emailAdapter: {
@@ -493,10 +508,10 @@ if(enableDashboard){
   let configFile = null;
   let configFromCLI = null;
   const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || process.env.PARSE_SERVER_URL;
-  const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL;
+  const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
   const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || process.env.PARSE_SERVER_PRIMARY_KEY;
   const configAppId = process.env.PARSE_DASHBOARD_APP_ID || process.env.PARSE_SERVER_APPLICATION_ID;
-  const configAppName = process.env.PARSE_DASHBOARD_APP_NAME;
+  const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
   const configUserId = process.env.PARSE_DASHBOARD_USER_ID;
   const configUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD;
   const configUserPasswordEncrypted = process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED || true;
@@ -587,12 +602,33 @@ const port = process.env.PORT || 1337;
 const httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
   if(enableParseServer){
-    console.log('Public access: ' + publicServerURL + ', Local access: ' + serverURL);
-    console.log(`REST API running on  http://${httpServer.address().address}:${httpServer.address().port}${mountPath}`);
+    console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
+    console.log(`REST API running on ${url.href}`);
     if(enableGraphQL)
-      console.log(`GraphQL API running on http://${httpServer.address().address}:${httpServer.address().port}${graphMountPath}`);
+      console.log(`GraphQL API running on ${graphURL.href}`);
   }
 
+  if (startLiveQueryServer)
+    console.log(`LiveQuery server is now available at ${url.href}`);
+
   if(enableDashboard)
-    console.log(`The dashboard is now available at http://${httpServer.address().address}:${httpServer.address().port}${dashboardMountPath}`);
+    console.log(`Dashboard is now available at ${dashboardURL.href}`);
 });
+
+if (startLiveQueryServer){
+  let liveQueryConfig = {
+    appId: applicationId,
+    masterKey: primaryKey,
+    serverURL: serverURL,
+    websocketTimeout: 10 * 1000,
+    cacheTimeout: 60 * 600 * 1000,
+    verbose: true,
+  }
+
+  if ("PARSE_SERVER_REDIS_URL" in process.env) {
+    liveQueryConfig.redisURL = process.env.PARSE_SERVER_REDIS_URL; 
+  }
+
+  // This will enable the Live Query real-time server
+  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig);
+}

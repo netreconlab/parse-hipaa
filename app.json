@@ -5,6 +5,10 @@
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
     "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
     "env": {
+      "HEROKU_APP_NAME": {
+        "description": "Name of your Heroku App",
+        "required": false
+      },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
         "generator": "secret"
@@ -18,8 +22,8 @@
         "generator": "secret"
       },
       "PARSE_SERVER_URL": {
-        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "https://yourappname.herokuapp.com/parse"
+        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.heroku.com/parse (update with your app's name + PARSE_MOUNT)",
+        "required": false
       },
       "PARSE_SERVER_PUSH": {
         "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
@@ -81,9 +85,41 @@
         "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
         "value": "32"
       },
-      "PARSE_SERVER_START_LIVE_QUERY_SERVER" : {
+      "PARSE_SERVER_START_LIVE_QUERY_SERVER": {
         "description": "Starts the liveQuery server, default true.",
         "value": "true"
+      },
+      "PARSE_DASHBOARD_START": {
+        "description": "Starts the dashboard, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_USER_ID": {
+        "description": "Specify the user password to connect with.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD": {
+        "description": "Specify the user password to connect with. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
+        "description": "Specify if the user parseword should be encrypted (true) or in plaintext (false).",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
+        "description": "The constant cookie session for dashboard.",
+        "required": false
+      },
+      "PARSE_DASHBOARD_CONFIG": {
+        "description": "The config file for dashboard.",
+        "required": false 
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Should trust proxy in docker.",
+        "value": "1"
+      },
+      "PARSE_DASHBOARD_MOUNT_PATH": {
+        "description": "The mount path for the dashboard.",
+        "value": "/dashboard"
       },
       "PORT": {
         "description": "Port for parse-hipaa, default is 1337.",
