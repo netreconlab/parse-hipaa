@@ -13,11 +13,13 @@ const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
+const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_URL;
 let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 let appName = 'myApp'; 
 if ("HEROKU_APP_NAME" in process.env) {
   appName = process.env.HEROKU_APP_NAME;
-  if (!("PARSE_SERVER_URL" in process.env)) {
+  if ("PARSE_SERVER_URL" in process.env) {
+  } else {
     serverURL = `https://${appName}.herokuapp.com${mountPath}`;
   }
 }
@@ -254,11 +256,11 @@ if (enableParseServer){
     }
   };
 
-  if ("PARSE_SERVER_REDIS_URL" in process.env) {
-    const redisOptions = { url: process.env.PARSE_SERVER_REDIS_URL };
+  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+    const redisOptions = { url: redisURL };
     configuration.cacheAdapter = new RedisCacheAdapter(redisOptions);
     // Set LiveQuery URL
-    configuration.liveQuery.redisURL = process.env.PARSE_SERVER_REDIS_URL; 
+    configuration.liveQuery.redisURL = redisURL; 
   }
 
   if ("PARSE_SERVER_GRAPH_QLSCHEMA" in process.env) {
@@ -625,8 +627,8 @@ if (startLiveQueryServer){
     verbose: true,
   }
 
-  if ("PARSE_SERVER_REDIS_URL" in process.env) {
-    liveQueryConfig.redisURL = process.env.PARSE_SERVER_REDIS_URL; 
+  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+    liveQueryConfig.redisURL = redisURL; 
   }
 
   // This will enable the Live Query real-time server

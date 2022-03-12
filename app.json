@@ -6,7 +6,7 @@
     "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
     "env": {
       "HEROKU_APP_NAME": {
-        "description": "Name of your Heroku App",
+        "description": "Name of your Heroku App. Should be the same as \"App name\"",
         "required": true
       },
       "PARSE_SERVER_APPLICATION_ID": {
@@ -22,7 +22,7 @@
         "generator": "secret"
       },
       "PARSE_SERVER_URL": {
-        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.heroku.com/parse (update with your app's name + PARSE_MOUNT)",
+        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_MOUNT)",
         "required": false
       },
       "PARSE_SERVER_PUSH": {
