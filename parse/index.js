@@ -18,8 +18,7 @@ let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.en
 let appName = 'myApp'; 
 if ("HEROKU_APP_NAME" in process.env) {
   appName = process.env.HEROKU_APP_NAME;
-  if ("PARSE_SERVER_URL" in process.env) {
-  } else {
+  if (!("PARSE_SERVER_URL" in process.env)) {
     serverURL = `https://${appName}.herokuapp.com${mountPath}`;
   }
 }
