@@ -1,1 +1,1 @@
-FROM netreconlab/parse-hipaa:4.10.7
+FROM netreconlab/parse-hipaa:5.0.0-beta.8
