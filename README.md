@@ -49,7 +49,7 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 ### Local: using docker with postgres or mongo
-By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. 
+By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo). 
 
 #### Postgres
 To use the Postgres HIPAA compliant variant of parse-hipaa, simply type:
