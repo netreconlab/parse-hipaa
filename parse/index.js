@@ -508,10 +508,10 @@ if(enableDashboard){
 
   let configFile = null;
   let configFromCLI = null;
-  const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || process.env.PARSE_SERVER_URL;
+  const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || serverURL;
   const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
-  const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || process.env.PARSE_SERVER_PRIMARY_KEY;
-  const configAppId = process.env.PARSE_DASHBOARD_APP_ID || process.env.PARSE_SERVER_APPLICATION_ID;
+  const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
+  const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
   const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
   const configUserId = process.env.PARSE_DASHBOARD_USER_ID;
   const configUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD;
