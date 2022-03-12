@@ -187,6 +187,10 @@
         {
             "plan": "heroku-postgresql",
             "as": "db"
+        },
+        {
+          "plan": "heroku-redis",
+          "as": "redis"
         }
     ]
   }
