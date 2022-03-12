@@ -24,11 +24,10 @@ if ("HEROKU_APP_NAME" in process.env) {
 }
 
 const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
-
 const url = new URL(publicServerURL);
-let graphURL = url
+const graphURL = new URL(publicServerURL);
 graphURL.pathname = graphMountPath;
-let dashboardURL = url
+const dashboardURL = new URL(publicServerURL);
 dashboardURL.pathname = dashboardMountPath;
 
 let enableParseServer = true;
