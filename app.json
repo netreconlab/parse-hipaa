@@ -81,6 +81,10 @@
         "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
         "value": "32"
       },
+      "PARSE_SERVER_START_LIVE_QUERY_SERVER" : {
+        "description": "Starts the liveQuery server, default true.",
+        "value": "true"
+      },
       "PORT": {
         "description": "Port for parse-hipaa, default is 1337.",
         "value": "1337"
@@ -90,7 +94,7 @@
         "value": "/parse-server/cloud/main.js"
       },
       "PARSE_SET_USER_CLP": {
-        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1.",
+        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default true.",
         "value": "true"
       },
       "PARSE_SERVER_REDIS_URL": {
