@@ -24,10 +24,6 @@ You will still need to setup the following on your own to be fully HIPAA & GDPR 
 
 A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
 
-To get started with parse-hipaa simply type:
-
-```docker-compose up```
-
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
 
 ## Deployment
@@ -53,14 +49,24 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 ### Local: using docker with postgres or mongo
-By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. To use the mongo HIPAA compliant variant of parse-hipaa, simply type:
+By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo. 
+
+#### Postgres
+To use the Postgres HIPAA compliant variant of parse-hipaa, simply type:
+
+```docker-compose up```
+
+#### Mongo
+To use the Mongo HIPAA compliant variant of parse-hipaa, simply type:
 
 ```docker-compose -f docker-compose.mongo.yml up```
 
+#### Postgres (Non-HIPAA Compliant)
 If you would like to use a non-HIPAA compliant postgres version:
 
 ```docker-compose -f docker-compose.no.hipaa.yml up```
 
+#### Mongo (Non-HIPAA Compliant)
 A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up are online already exist.
 
 #### Getting started
