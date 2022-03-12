@@ -7,7 +7,7 @@
     "env": {
       "HEROKU_APP_NAME": {
         "description": "Name of your Heroku App",
-        "required": false
+        "required": true
       },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
