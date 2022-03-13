@@ -63,6 +63,14 @@ app.get('/', function(_req, res) {
   res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
 });
 
+// Redirect to https if on Heroku
+app.use(function(request, response, next) {
+  if (("HEROKU_APP_NAME" in process.env) && !request.secure)
+    return response.redirect("https://" + request.headers.host + request.url);
+
+  next();
+});
+
 if (enableParseServer){
   const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
   const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
