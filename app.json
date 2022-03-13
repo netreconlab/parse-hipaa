@@ -181,6 +181,10 @@
         "description": "Set to 'true' if new users should be created without public read and write access.",
         "value": "false"
       },
+      "PARSE_SERVER_ENABLE_IDEMPOTENCY": {
+        "description": "Enable idempotency on all requests. defaults to false.",
+        "value": "false"
+      },
       "PARSE_SERVER_USING_PARSECAREKIT": {
         "description": "Set to 'true' when using ParseCareKit.",
         "value": "true"
