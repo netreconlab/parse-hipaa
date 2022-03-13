@@ -5,6 +5,14 @@
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
     "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres", "nginx", "proxy"],
     "env": {
+      "HEROKU_APP_NAME": {
+        "description": "Name of your Heroku App. Should be the same as \"App name\"",
+        "required": true
+      },
+      "NODE_TLS_REJECT_UNAUTHORIZED": {
+        "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 0.",
+        "value": "0"
+      },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
         "generator": "secret"
@@ -18,12 +26,12 @@
         "generator": "secret"
       },
       "PARSE_SERVER_PUBLIC_URL": {
-        "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "https://yourappname.herokuapp.com/parse"
+        "description": "Specify URL to connect to your Heroku instance if it's not of the format: https://yourappname.herokuapp.com/parse",
+        "required": false
       },
       "PARSE_SERVER_URL": {
         "description": "URL to connect to your Heroku instance (update with your app's name + PARSE_MOUNT)",
-        "value": "http://localhost:1337/parse"
+        "required": false
       },
       "PARSE_SERVER_PUSH": {
         "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
@@ -85,6 +93,42 @@
         "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
         "value": "32"
       },
+      "PARSE_SERVER_START_LIVE_QUERY_SERVER": {
+        "description": "Starts the liveQuery server, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_START": {
+        "description": "Starts the dashboard, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_USER_ID": {
+        "description": "Specify the user password to connect with.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD": {
+        "description": "Specify the user password to connect with. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
+        "description": "Specify if the user parseword should be encrypted (true) or in plaintext (false).",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
+        "description": "The constant cookie session for dashboard.",
+        "required": false
+      },
+      "PARSE_DASHBOARD_CONFIG": {
+        "description": "The config file for dashboard.",
+        "required": false 
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Should trust proxy in docker.",
+        "value": "1"
+      },
+      "PARSE_DASHBOARD_MOUNT_PATH": {
+        "description": "The mount path for the dashboard.",
+        "value": "/dashboard"
+      },
       "PARSE_PORT": {
         "description": "Port for parse-hipaa, default is 1337.",
         "value": "1337"
@@ -94,7 +138,7 @@
         "value": "/parse-server/cloud/main.js"
       },
       "PARSE_SET_USER_CLP": {
-        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1.",
+        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default true.",
         "value": "true"
       },
       "PARSE_SERVER_REDIS_URL": {
@@ -159,6 +203,10 @@
         {
           "plan": "heroku-postgresql",
           "as": "db"
+        },
+        {
+          "plan": "heroku-redis",
+          "as": "redis"
         }
     ]
   }
