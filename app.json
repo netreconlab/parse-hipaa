@@ -117,6 +117,10 @@
         "description": "The config file for dashboard.",
         "required": false 
       },
+      "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP": {
+        "description": "Should allow insecure http.",
+        "value": "0"
+      },
       "PARSE_DASHBOARD_TRUST_PROXY": {
         "description": "Should trust proxy in docker.",
         "value": "0"
