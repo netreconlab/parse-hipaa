@@ -74,6 +74,8 @@ parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at 
 
 ##### Environment Variables
 
+For a complete list of enviroment variables, look at [app.json](https://github.com/netreconlab/parse-hipaa/blob/main/app.json).
+
 ###### netreconlab/parse-hipaa
 ```bash
 PARSE_SERVER_APPLICATION_ID # Unique string value
