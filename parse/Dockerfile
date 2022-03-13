@@ -16,6 +16,7 @@ ENV PARSE_SERVER_MOUNT_GRAPHQL true
 ENV PARSE_USING_PARSECAREKIT 0 #If you are not using ParseCareKit, set this to 0
 
 COPY ./index.js ./index.js
+COPY ./parse-dashboard-config.json ./parse-dashboard-config.json
 COPY ./cloud/ ./cloud/
 
 ENTRYPOINT []
