@@ -119,7 +119,7 @@
       },
       "PARSE_DASHBOARD_TRUST_PROXY": {
         "description": "Should trust proxy in docker.",
-        "value": "1"
+        "value": "0"
       },
       "PARSE_DASHBOARD_MOUNT_PATH": {
         "description": "The mount path for the dashboard.",
