@@ -1,13 +1,7 @@
-// Example express application adding the parse-server module to expose Parse
-// compatible API routes.
-
 const express = require('express');
-const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
-const FSFilesAdapter = require('@parse/fs-files-adapter');
-const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
-  .GridFSBucketAdapter;
 const path = require('path');
 const cors = require('cors');
+const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
@@ -66,6 +60,8 @@ app.get('/', function(_req, res) {
 });
 
 if (enableParseServer){
+  const FSFilesAdapter = require('@parse/fs-files-adapter');
+  const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter').GridFSBucketAdapter;
   const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
   const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
   const objectIdSize = parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10;
