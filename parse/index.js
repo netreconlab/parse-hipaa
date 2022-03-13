@@ -126,6 +126,11 @@ if (enableParseServer){
     enableAnonymousUsers = false
   }
 
+  let enableIdempotency = false;
+  if(process.env.PARSE_SERVER_ENABLE_IDEMPOTENCY == 'true'){
+    enableIdempotency = true
+  }
+
   let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
   let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
@@ -273,6 +278,13 @@ if (enableParseServer){
     configuration.graphQLSchema = process.env.PARSE_SERVER_GRAPH_QLSCHEMA;
   }
 
+  if (enableIdempotency) {
+    configuration.idempotencyOptions = {
+      paths: [".*"],       // enforce for all requests
+      ttl: 120             // keep request IDs for 120s
+    };
+  }
+  
   const api = new ParseServer(configuration);
   
   // Serve the Parse API on the /parse URL prefix
