@@ -6,9 +6,9 @@ RUN apk update && apk add bash && apk add postgresql-client
 RUN npm install netreconlab/parse-auditor#masterKey parse-server-any-analytics-adapter@^1.x.x @analytics/google-analytics@^0.5.x
 RUN npm install parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x @parse/s3-files-adapter@^1.x.x parse-server-api-mail-adapter@^2.x.x 
 RUN mkdir ./files
-COPY ./parse_idempotency_delete_expired_records.sh ./
-RUN chmod +x ./parse_idempotency_delete_expired_records.sh
-RUN chown node ./files ./parse_idempotency_delete_expired_records.sh
+COPY ./scripts/ ./scripts/
+RUN chmod +x ./scripts/parse_idempotency_delete_expired_records.sh ./scripts/setup-dbs.sh ./scripts/setup-parse-index.sh ./scripts/setup-pgaudit.sh
+RUN chown -R node ./files ./scripts
 
 # Complete parse-hipaa setup as node
 USER node
