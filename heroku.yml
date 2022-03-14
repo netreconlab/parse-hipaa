@@ -1,5 +1,5 @@
 build: 
   docker:
-    web: parse/Dockerfile.heroku
+    web: parse/Dockerfile #.heroku
 run:
   web: ./scripts/wait-for-postgres.sh pm2-runtime -i $CLUSTER_INSTANCES ecosystem.config.js #./scripts/wait-for-postgres.sh node index.js
