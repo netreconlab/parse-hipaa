@@ -20,4 +20,4 @@ COPY ./cloud/ ./cloud/
 
 ENTRYPOINT []
 #CMD ["./scripts/wait-for-postgres.sh", "node", "index.js"]
-CMD ["./scripts/wait-for-postgres.sh", "pm2-runtime", "ecosystem.config.js"]
+CMD ["./scripts/wait-for-postgres.sh", "pm2-runtime", "-i", "$CLUSTER_INSTANCES", "ecosystem.config.js"]

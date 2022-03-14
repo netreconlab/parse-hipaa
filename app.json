@@ -9,6 +9,10 @@
         "description": "Name of your Heroku App. Should be the same as \"App name\"",
         "required": true
       },
+      "CLUSTER_INSTANCES": {
+        "description": "The amount of pm2 clusters to deploy, defaults to 4.",
+        "value": "4"
+      },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
         "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 0.",
         "value": "0"
