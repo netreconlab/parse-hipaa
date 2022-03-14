@@ -1,5 +1,6 @@
+
 build: 
   docker:
     web: parse/Dockerfile #.heroku
-run:
-  web: ./scripts/wait-for-postgres.sh pm2-runtime process.yml #./scripts/wait-for-postgres.sh node index.js
+#run:
+#  web: ./scripts/wait-for-postgres.sh pm2-runtime process.yml #./scripts/wait-for-postgres.sh node index.js
