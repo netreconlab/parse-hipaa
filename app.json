@@ -111,7 +111,7 @@
       },
       "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
         "description": "The constant cookie session for dashboard.",
-        "required": false
+        "generator": "secret"
       },
       "PARSE_DASHBOARD_CONFIG": {
         "description": "The config file for dashboard.",
