@@ -32,7 +32,7 @@ services:
         restart: always
         depends_on:
             - db
-        command: ["node", "index.js"]
+        command: ["pm2-runtime", "ecosystem.config.js"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
         environment:
