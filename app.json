@@ -5,7 +5,7 @@
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
     "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
     "env": {
-      "APP_NAME": {
+      "NEW_RELIC_APP_NAME": {
         "description": "Name of your Heroku App. Should be the same as \"App name\"",
         "required": true
       },
