@@ -14,10 +14,13 @@ RUN chown -R node ./files ./scripts
 # Complete parse-hipaa setup as node
 USER node
 COPY ./ecosystem.config.js ./
+COPY ./process.yml ./
 COPY ./index.js ./
 COPY ./parse-dashboard-config.json ./
 COPY ./cloud/ ./cloud/
 
+ENV CLUSTER_INSTANCES=1
+
 ENTRYPOINT []
 #CMD ["./scripts/wait-for-postgres.sh", "node", "index.js"]
-CMD ["./scripts/wait-for-postgres.sh", "pm2-runtime", "-i", "$CLUSTER_INSTANCES", "ecosystem.config.js"]
+CMD ["./scripts/wait-for-postgres.sh", "pm2-runtime", "process.yml"]

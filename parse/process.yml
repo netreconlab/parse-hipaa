@@ -1,0 +1,9 @@
+apps:
+  - name          : 'parse-hipaa'
+    script        : './index.js'
+    watch         : true
+    ignore_watch  : ['node_modules', 'logs', '.pm2']
+    merge_logs    : true
+    cwd           : '/parse-server'
+    exec_mode     : 'cluster'
+    instances     : ${CLUSTER_INSTANCES}
