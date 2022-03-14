@@ -4,7 +4,7 @@ FROM parseplatform/parse-server:5.0.0-alpha.29
 USER root
 RUN apk add bash && apk add postgresql-client
 RUN npm install netreconlab/parse-auditor#masterKey parse-server-any-analytics-adapter@^1.x.x @analytics/google-analytics@^0.5.x
-RUN npm install parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x @parse/s3-files-adapter@^1.x.x parse-server-api-mail-adapter@^2.x.x 
+RUN npm install parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x @parse/s3-files-adapter@^1.x.x parse-server-api-mail-adapter@^2.x.x newrelic@^8.x.x
 RUN npm install pm2@^5.x.x -g
 RUN mkdir ./files
 COPY ./scripts/ ./scripts/

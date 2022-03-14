@@ -1,6 +1,6 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
-
+require ('newrelic');
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
 const FSFilesAdapter = require('@parse/fs-files-adapter');

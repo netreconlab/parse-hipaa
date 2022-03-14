@@ -210,6 +210,12 @@
         },
         {
           "plan": "scheduler"
+        },
+        {
+          "plan": "newrelic"
+        },
+        {
+          "plan": "papertrail"
         }
     ]
   }
