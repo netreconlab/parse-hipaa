@@ -37,10 +37,15 @@ parse-hipaa can be easily deployed or tested remote or locally.
 You can use the one-button-click deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to view [Heroku's compliance certifications](https://www.heroku.com/compliance), and upgrade your plans to [Shield Spaces](https://devcenter.heroku.com/articles/heroku-postgres-and-private-spaces). You can [view this document for detailed instuctions](https://docs.google.com/document/d/1fniJavK_3T_SXZs2wwn-wa8nX-LzhhNgSORRK1LaZYI/edit?usp=sharing). **If you need a Parse Server Heroku deployment for non-ParseCareKit based apps, use the Heroku button on the [snapcat](https://github.com/netreconlab/parse-hipaa/tree/Snapchat#heroku-with-postgres) branch instead of this one.** Once you click the Heroku button do the following:
 
 1. Select your **App name**
-2. Under the **Config vars** section, change `PARSE_SERVER_URL` to reflect your **App name** in step 1. Do this by replacing `yourappname` with **App name** You can leave all other **Config vars** as they are
+2. Under the **Config vars** section, fill in the following environment variables:
+    - Set the value for `APP_NAME` to the **App name** in step 1 
+    - Add a value for `PARSE_DASHBOARD_USER_ID` so you can log into your Parse Dashboard 
+    - Add the hash of your password as the value for `PARSE_DASHBOARD_USER_PASSWORD` so you can log into your Parse Dashboard. You can get the hash of your desired password from [bcrypt-generator.com](https://bcrypt-generator.com) 
+    - You can leave all other **Config vars** as they are or modify them as needed
 3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you should set `PARSE_SERVER_USING_PARSECAREKIT=false` under **Config vars**. This will ensure that ParseCareKit classes/tables are not created on the parse-hipaa server
 4. Scroll to the bottom of the page and press **Deploy app**
-5. When finished you can access your respective `PARSE_SERVER_URL` and `PARSE_SERVER_APPLICATION_ID` by going to `Settings->Reveal Config Vars`. Be sure to add these values to your client app
+5. When finished you can access your respective server and dashboard by visiting **https://YOUR_APP_NAME.herokuapp.com/parse** or **https://YOUR_APP_NAME.herokuapp.com/dashboard**. The mount points are based on `PARSE_SERVER_MOUNT_PATH` and `PARSE_DASHBOARD_MOUNT_PATH`
+6. Be sure to go to `Settings->Reveal Config Vars` to get your `PARSE_SERVER_APPLICATION_ID`. Add the `PARSE_SERVER_APPLICATION_ID` and **https://YOUR_APP_NAME.herokuapp.com/parse** as `applicationId` and `serverURL` respectively to your client app to connect your parse-hipaa server
 
 #### Using your own files for Heroku deployment
 1. Fork the the parse-hipaa repo

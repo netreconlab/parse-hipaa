@@ -16,8 +16,8 @@ const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
 let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 let appName = 'myApp'; 
-if ("HEROKU_APP_NAME" in process.env) {
-  appName = process.env.HEROKU_APP_NAME;
+if ("APP_NAME" in process.env) {
+  appName = process.env.APP_NAME;
   if (!("PARSE_SERVER_URL" in process.env)) {
     serverURL = `https://${appName}.herokuapp.com${mountPath}`;
   }
@@ -65,7 +65,7 @@ app.get('/', function(_req, res) {
 
 // Redirect to https if on Heroku
 app.use(function(request, response, next) {
-  if (("HEROKU_APP_NAME" in process.env) && !request.secure)
+  if (("APP_NAME" in process.env) && !request.secure)
     return response.redirect("https://" + request.headers.host + request.url);
 
   next();
