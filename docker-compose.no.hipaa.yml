@@ -35,7 +35,7 @@ services:
         restart: always
         depends_on:
             - db
-        command: ["./wait-for-postgres.sh", "db", "pm2-runtime", "ecosystem.config.js"]
+        command: ["./wait-for-postgres.sh", "db", "pm2-runtime", "-i", "4", "ecosystem.config.js"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
         environment:
