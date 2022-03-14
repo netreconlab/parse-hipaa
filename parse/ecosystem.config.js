@@ -5,6 +5,8 @@ module.exports = {
     ignore_watch: ["logs", "node_modules", ".pm2"],
     watch       : true,
     merge_logs  : true,
-    cwd         : "/parse-server"
+    cwd         : "/parse-server",
+    exec_mode   : "cluster",
+    instances   : 4 
   }]
 }
