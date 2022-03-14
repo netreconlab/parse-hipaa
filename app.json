@@ -10,7 +10,7 @@
         "required": true
       },
       "CLUSTER_INSTANCES": {
-        "description": "The amount of pm2 clusters to deploy, defaults to 4.",
+        "description": "The amount of pm2 clusters to deploy, defaults to 4. Currently doesn't work, change in ecosystem.config.js",
         "value": "4"
       },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
