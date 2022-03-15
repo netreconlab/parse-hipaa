@@ -1,6 +1,5 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
-
 const express = require('express');
 const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
@@ -8,6 +7,7 @@ const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
   .GridFSBucketAdapter;
 const path = require('path');
 const cors = require('cors');
+const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
@@ -16,8 +16,9 @@ const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
 let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 let appName = 'myApp'; 
-if ("HEROKU_APP_NAME" in process.env) {
-  appName = process.env.HEROKU_APP_NAME;
+if ("NEW_RELIC_APP_NAME" in process.env) {
+  require ('newrelic');
+  appName = process.env.NEW_RELIC_APP_NAME;
   if (!("PARSE_SERVER_URL" in process.env)) {
     serverURL = `https://${appName}.herokuapp.com${mountPath}`;
   }
@@ -65,7 +66,7 @@ app.get('/', function(_req, res) {
 
 // Redirect to https if on Heroku
 app.use(function(request, response, next) {
-  if (("HEROKU_APP_NAME" in process.env) && !request.secure)
+  if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
     return response.redirect("https://" + request.headers.host + request.url);
 
   next();
@@ -301,216 +302,28 @@ if (enableParseServer){
     parseGraphQLServer.applyGraphQL(app);
   }
   
-  async function createIndexes(){
-    const adapter = api.config.databaseController.adapter;
-    const indexEntityIdPostfix = '_entityId';
-    const indexRemoteIdPostfix = '_remoteId';
-    const indexEffectiveDatePostfix = '_effectiveDate';
-    const indexUpdatedDatePostfix = '_updatedDate';
-    const indexCreatedAtPostfix = '_createdAt';
-    const indexLogicalClockPostfix = '_logicalClock';
-  
-    const parseSchema = {
-      fields: {
-        createdAt: { type: 'Date' }
-      },
-    };
-  
-    const schema = {
-      fields: {
-        uuid: { type: 'String' },
-        createdAt: { type: 'Date' }
-      },
-    };
-    
-    const versionedSchema = {
-      fields: {
-        entityId: { type: 'String' },
-        remoteID: { type: 'String' },
-        effectiveDate: { type: 'Date' },
-        updatedDate: { type: 'Date' },
-        createdAt: { type: 'Date' },
-        logicalClock: { type: 'Number' }
-      },
-    };
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['entityId'], 'Patient'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['remoteID'], 'Patient'+indexRemoteIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['effectiveDate'], 'Patient'+indexEffectiveDatePostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['updatedDate'], 'Patient'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['createdAt'], 'Patient'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('Patient', versionedSchema, ['logicalClock'], 'Patient'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Patient_Audit', schema, ['createdAt'], 'Patient_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('Contact', versionedSchema, ['entityId'], 'Contact'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Contact', versionedSchema, ['effectiveDate'], 'Contact'+indexEffectiveDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Contact', versionedSchema, ['updatedDate'], 'Contact'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Contact', versionedSchema, ['createdAt'], 'Contact'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('Contact', versionedSchema, ['logicalClock'], 'Contact'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Contact_Audit', schema, ['createdAt'], 'Contact_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-      
-    try {
-      await adapter.ensureIndex('CarePlan', versionedSchema, ['entityId'], 'CarePlan'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('CarePlan', versionedSchema, ['effectiveDate'], 'CarePlan'+indexEffectiveDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('CarePlan', versionedSchema, ['updatedDate'], 'CarePlan'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('CarePlan', versionedSchema, ['createdAt'], 'CarePlan'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); } 
-  
-    try {
-      await adapter.ensureIndex('CarePlan', versionedSchema, ['logicalClock'], 'CarePlan'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('CarePlan_Audit', schema, ['createdAt'], 'CarePlan_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task', versionedSchema, ['entityId'], 'Task'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task', versionedSchema, ['effectiveDate'], 'Task'+indexEffectiveDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task', versionedSchema, ['updatedDate'], 'Task'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task', versionedSchema, ['createdAt'], 'Task'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task', versionedSchema, ['logicalClock'], 'Task'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Task_Audit', schema, ['createdAt'], 'Task_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask', versionedSchema, ['entityId'], 'HealthKitTask'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask', versionedSchema, ['effectiveDate'], 'HealthKitTask'+indexEffectiveDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask', versionedSchema, ['updatedDate'], 'HealthKitTask'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask', versionedSchema, ['createdAt'], 'HealthKitTask'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask', versionedSchema, ['logicalClock'], 'HealthKitTask'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('HealthKitTask_Audit', schema, ['createdAt'], 'HealthKitTask_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Outcome', versionedSchema, ['entityId'], 'Outcome'+indexEntityIdPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Outcome', versionedSchema, ['updatedDate'], 'Outcome'+indexUpdatedDatePostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Outcome', versionedSchema, ['createdAt'], 'Outcome'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Outcome', versionedSchema, ['logicalClock'], 'Outcome'+indexLogicalClockPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Outcome_Audit', schema, ['createdAt'], 'Outcome_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureUniqueness('Clock', schema, ['uuid'])
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Clock', schema, ['createdAt'], 'Outcome'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('Clock_Audit', schema, ['createdAt'], 'Clock_Audit'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  
-    try {
-      await adapter.ensureIndex('_User', schema, ['createdAt'], '_User'+indexCreatedAtPostfix, false)
-    } catch(error) { console.log(error); }
-  }
-  
-  if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
-    Parse.Cloud.run('ensureClassDefaultFieldsForParseCareKit');
-  }
-  
-  // If you are custimizing your own user schema, set PARSE_SET_USER_CLP to `false`
-  if(process.env.PARSE_SET_USER_CLP == 'true'){
-      //Fire after 3 seconds to allow _User class to be created
-      setTimeout(async function() {
-        await Parse.Cloud.run('setParseClassLevelPermissions');
-        if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true'){
-          await Parse.Cloud.run('setAuditClassLevelPermissions');
-          createIndexes();
-        }
-      }, 3000);
+  if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
+    const { init: CareKitServer } = require('parse-server-carekit');
+    CareKitServer(api);
+    setAuditClassLevelPermissions(); 
   }
 }
+
+function setAuditClassLevelPermissions() {
+  const auditCLP = {
+    get: { requiresAuthentication: true },
+    find: { requiresAuthentication: true },
+    create: { },
+    update: { requiresAuthentication: true },
+    delete: { requiresAuthentication: true },
+    addField: { },
+    protectedFields: { }
+  };
+  // Don't audit '_Role' as it doesn't work.
+  const modifiedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'HealthKitOutcome'];
+  const accessedClasses = ['_User', '_Installation', '_Audience', 'Clock', 'Patient', 'CarePlan', 'Contact', 'Task', 'HealthKitTask', 'Outcome', 'HealthKitOutcome'];
+  ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
+};
 
 if(enableDashboard){
   const fs = require('fs');
