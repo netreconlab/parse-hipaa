@@ -174,7 +174,7 @@
         "value": "true"
       },
       "PARSE_SERVER_DIRECT_ACCESS": {
-        "description": "Known to cause crashes when true on single instance of server and not behind public server.",
+        "description": "WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres.",
         "value": "false"
       },
       "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
