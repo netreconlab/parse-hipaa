@@ -4,7 +4,7 @@
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
-**Note that this branch is made specifically to test [Parse-Swift](https://github.com/parse-community/Parse-Swift) in Swift Playgrounds.** It's not HIPAA compliant and works out of the box with Parse-Swift:
+**Note that this branch is made specifically for [SnapCat](https://github.com/netreconlab/SnapCat).** It's not HIPAA compliant and can be used as a general Parse-Server:
 
 - `docker-compose up` in terminal for the postgres version
 - `docker-compose -f docker-compose.mongo.yml up` in terminal for the mongo version
