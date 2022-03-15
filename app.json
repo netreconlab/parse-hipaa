@@ -5,9 +5,13 @@
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
     "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
     "env": {
-      "HEROKU_APP_NAME": {
+      "NEW_RELIC_APP_NAME": {
         "description": "Name of your Heroku App. Should be the same as \"App name\"",
         "required": true
+      },
+      "CLUSTER_INSTANCES": {
+        "description": "The amount of pm2 clusters to deploy, defaults to 4. Currently doesn't work on Heroku, change instances in ecosystem.config.js instead",
+        "value": "4"
       },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
         "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 0.",
@@ -22,11 +26,11 @@
         "value": "masterKey"
       },
       "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
-        "description": "A key that allows read only access. Keep this secret.",
+        "description": "A key that allows read only access. Keep this secret. This is the read-only masterKey on the parse-server",
         "generator": "secret"
       },
       "PARSE_SERVER_URL": {
-        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_MOUNT)",
+        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_SERVER_MOUNT_PATH)",
         "required": false
       },
       "PARSE_SERVER_PUSH": {
@@ -111,7 +115,7 @@
       },
       "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
         "description": "The constant cookie session for dashboard.",
-        "required": false
+        "generator": "secret"
       },
       "PARSE_DASHBOARD_CONFIG": {
         "description": "The config file for dashboard.",
@@ -136,10 +140,6 @@
       "PARSE_SERVER_CLOUD": {
         "description": "Path to cloud code, default is /parse/cloud/main.js.",
         "value": "/parse-server/cloud/main.js"
-      },
-      "PARSE_SET_USER_CLP": {
-        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default 1.",
-        "value": "false"
       },
       "PARSE_SERVER_REDIS_URL": {
         "description": "Redis cache url. For details, see: https://github.com/redis/node-redis/blob/master/docs/client-configuration.md.",
@@ -179,6 +179,10 @@
       },
       "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
         "description": "Set to 'true' if new users should be created without public read and write access.",
+        "value": "true"
+      },
+      "PARSE_SERVER_ENABLE_IDEMPOTENCY": {
+        "description": "Enable idempotency on all requests. defaults to false.",
         "value": "false"
       },
       "PARSE_SERVER_USING_PARSECAREKIT": {
@@ -199,6 +203,15 @@
         {
           "plan": "heroku-redis",
           "as": "redis"
+        },
+        {
+          "plan": "scheduler"
+        },
+        {
+          "plan": "newrelic"
+        },
+        {
+          "plan": "papertrail"
         }
     ]
   }

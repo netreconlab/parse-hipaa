@@ -4,6 +4,7 @@ services:
     parse:
         image: netreconlab/parse-hipaa:latest
         environment:
+            CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
             PARSE_SERVER_PRIMARY_KEY: ${PARSE_SERVER_MASTER_KEY}
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
@@ -16,13 +17,12 @@ services:
             PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 'true'
-            PARSE_SET_USER_CLP: 'false' # Default User schema so only authenticated users can access
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # Known to cause crashes when true on single instance of server and not behind public server
-            PARSE_SERVER_ENABLE_PRIVATE_USERS: 'false'
-            PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
+            PARSE_SERVER_USING_PARSECAREKIT: 'true' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
@@ -34,7 +34,7 @@ services:
             - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
         entrypoint: [""]
-        command: ["node", "index.js"]
+        command: ["./wait-for-postgres.sh", "db", "pm2-runtime", "process.yml"]
         depends_on:
             - db
     dashboard:
