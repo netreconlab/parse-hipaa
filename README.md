@@ -38,7 +38,7 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 
 1. Select your **App name**
 2. Under the **Config vars** section, fill in the following environment variables:
-    - Set the value for `APP_NAME` to the **App name** in step 1 
+    - Set the value for `NEW_RELIC_APP_NAME` to the **App name** in step 1 
     - Add a value for `PARSE_DASHBOARD_USER_ID` so you can log into your Parse Dashboard 
     - Add the hash of your password as the value for `PARSE_DASHBOARD_USER_PASSWORD` so you can log into your Parse Dashboard. You can get the hash of your desired password from [bcrypt-generator.com](https://bcrypt-generator.com) 
     - You can leave all other **Config vars** as they are or modify them as needed

@@ -141,10 +141,6 @@
         "description": "Path to cloud code, default is /parse/cloud/main.js.",
         "value": "/parse-server/cloud/main.js"
       },
-      "PARSE_SET_USER_CLP": {
-        "description": "Set the Class Level Permissios of the _User schema so only authenticated users can access, default true.",
-        "value": "true"
-      },
       "PARSE_SERVER_REDIS_URL": {
         "description": "Redis cache url. For details, see: https://github.com/redis/node-redis/blob/master/docs/client-configuration.md.",
         "required": false
@@ -183,7 +179,7 @@
       },
       "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
         "description": "Set to 'true' if new users should be created without public read and write access.",
-        "value": "false"
+        "value": "true"
       },
       "PARSE_SERVER_ENABLE_IDEMPOTENCY": {
         "description": "Enable idempotency on all requests. defaults to false.",
