@@ -6,4 +6,4 @@ apps:
     merge_logs    : true
     cwd           : '/parse-server'
     exec_mode     : 'cluster'
-    instances     : ${CLUSTER_INSTANCES}
+    instances     : '4'
