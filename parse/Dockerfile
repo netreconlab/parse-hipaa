@@ -1,4 +1,4 @@
-FROM parseplatform/parse-server:5.0.0-beta.10
+FROM parseplatform/parse-server:latest
 
 # Install necessary dependencies and setup folders a root
 USER root
@@ -22,5 +22,4 @@ COPY ./cloud/ ./cloud/
 ENV CLUSTER_INSTANCES=1
 
 ENTRYPOINT []
-#CMD ["./scripts/wait-for-postgres.sh", "node", "index.js"]
 CMD ["./scripts/wait-for-postgres.sh", "pm2-runtime", "process.yml"]
