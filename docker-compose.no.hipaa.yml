@@ -36,7 +36,7 @@ services:
         depends_on:
             - db
         entrypoint: [""]
-        command: ["./wait-for-postgres.sh", "db", "pm2-runtime", "process.yml"]
+        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
     dashboard:
         image: parseplatform/parse-dashboard:latest
         environment:

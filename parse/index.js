@@ -13,6 +13,7 @@ const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
+const webhookKey = process.env.PARSE_SERVER_WEBHOOK_KEY || 'webhookKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
 let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 let appName = 'myApp'; 
@@ -181,6 +182,7 @@ if (enableParseServer){
     appId: applicationId,
     masterKey: primaryKey,
     readOnlyMasterKey: process.env.PARSE_SERVER_READ_ONLY_PRIMARY_KEY || 'myOtherKey',
+    webhookKey: webhookKey,
     encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
     objectIdSize: objectIdSize,
     serverURL: serverURL,
@@ -204,7 +206,7 @@ if (enableParseServer){
     push: pushNotifications,
     auth: authentication,
     liveQuery: {
-      classNames: ["Clock"] // List of classes to support for query subscriptions
+      classNames: ["GameScore"] // List of classes to support for query subscriptions
     },
     verifyUserEmails: false,
     // Setup your mail adapter
