@@ -33,6 +33,10 @@
         "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_SERVER_MOUNT_PATH)",
         "required": false
       },
+      "PARSE_SERVER_WEBHOOK_KEY": {
+        "description": "Key sent with outgoing webhook calls. Keep this secret.",
+        "value": "webhookKey"
+      },
       "PARSE_SERVER_PUSH": {
         "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
         "required": false
