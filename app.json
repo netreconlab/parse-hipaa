@@ -35,7 +35,7 @@
       },
       "PARSE_SERVER_WEBHOOK_KEY": {
         "description": "Key sent with outgoing webhook calls. Keep this secret.",
-        "value": "webhookKey"
+        "generator": "secret"
       },
       "PARSE_SERVER_PUSH": {
         "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
