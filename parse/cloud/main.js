@@ -25,14 +25,3 @@ Parse.Cloud.define("testCloudCodeError", async(request) => {
 Parse.Cloud.beforeSave("GameScore", async(request) => {
   console.log('From client context: ' + JSON.stringify(request.context)); 
 });
-
-Parse.Cloud.job("testPatientRejectDuplicates", (request) =>  {
-    const { params, headers, log, message } = request;
-    
-    const object = new Parse.Object('Patient');
-    object.set('uuid', "112");
-    object.save({useMasterKey: true}).then((result) => {
-      message("Saved patient");
-    })
-    .catch(error => message(error));
-});

@@ -2,8 +2,7 @@
 
 set -e
 
-psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER}" --dbname "${POSTGRES_DB}" <<-EOSQL
-    \c ${PG_PARSE_DB};
+psql -v ON_ERROR_STOP=1 "$DB_URL"?sslmode=require <<-EOSQL
     CREATE INDEX IF NOT EXISTS "Patient_deletedDate_is_null" ON "Patient" (("deletedDate" IS NULL)) WHERE ("deletedDate" IS NULL);
     CREATE INDEX IF NOT EXISTS "Patient_previousVersionUUIDs_array" ON "Patient" USING GIN ("previousVersionUUIDs");
     CREATE INDEX IF NOT EXISTS "Patient_nextVersionUUIDs_array" ON "Patient" USING GIN ("nextVersionUUIDs");

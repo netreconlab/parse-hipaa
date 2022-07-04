@@ -1,0 +1,1 @@
+FROM netreconlab/parse-hipaa:latest
