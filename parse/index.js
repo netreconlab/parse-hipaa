@@ -72,6 +72,7 @@ app.use(function(request, response, next) {
   next();
 });
 
+let configuration;
 if (enableParseServer){
   const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
   const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
@@ -175,7 +176,7 @@ if (enableParseServer){
     );
   }
 
-  let configuration = {
+  configuration = {
     databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
     cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
     appId: applicationId,
