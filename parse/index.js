@@ -74,7 +74,6 @@ app.use(function(request, response, next) {
 });
 
 let configuration;
-
 if (enableParseServer){
   const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
   const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
