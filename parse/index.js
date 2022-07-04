@@ -73,6 +73,8 @@ app.use(function(request, response, next) {
   next();
 });
 
+let configuration;
+
 if (enableParseServer){
   const cacheMaxSize = parseInt(process.env.PARSE_SERVER_CACHE_MAX_SIZE) || 10000;
   const cacheTTL = parseInt(process.env.PARSE_SERVER_CACHE_TTL) || 5000;
@@ -176,7 +178,7 @@ if (enableParseServer){
     );
   }
 
-  let configuration = {
+  configuration = {
     databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
     cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
     appId: applicationId,
@@ -308,24 +310,6 @@ if (enableParseServer){
     const { init: CareKitServer } = require('parse-server-carekit');
     CareKitServer(api);
     setAuditClassLevelPermissions(); 
-  }
-
-  if (startLiveQueryServer){
-    let liveQueryConfig = {
-      appId: applicationId,
-      masterKey: primaryKey,
-      serverURL: serverURL,
-      websocketTimeout: 10 * 1000,
-      cacheTimeout: 60 * 600 * 1000,
-      verbose: true,
-    }
-  
-    if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
-      liveQueryConfig.redisURL = redisURL; 
-    }
-  
-    // This will enable the Live Query real-time server
-    ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
   }
 }
 
@@ -468,3 +452,20 @@ httpServer.listen(port, host, function() {
     console.log(`Dashboard is now available at ${dashboardURL.href}`);
 });
 
+if (startLiveQueryServer){
+  let liveQueryConfig = {
+    appId: applicationId,
+    masterKey: primaryKey,
+    serverURL: serverURL,
+    websocketTimeout: 10 * 1000,
+    cacheTimeout: 60 * 600 * 1000,
+    verbose: true,
+  }
+
+  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+    liveQueryConfig.redisURL = redisURL; 
+  }
+
+  // This will enable the Live Query real-time server
+  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
+}
