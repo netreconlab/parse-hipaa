@@ -463,5 +463,5 @@ if (startLiveQueryServer){
   }
 
   // This will enable the Live Query real-time server
-  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig);
+  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
 }
