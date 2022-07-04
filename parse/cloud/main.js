@@ -1,5 +1,4 @@
 require('./activity.js');
-//require('./files.js');
 
 // main.js
 Parse.Cloud.define("ensureClassDefaultFields", async (request) =>  {

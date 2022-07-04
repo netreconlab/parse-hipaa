@@ -1,0 +1,11 @@
+.env
+/.github
+/clamscan
+/dashboard
+/mongo
+/nginx
+/no-hipaa
+/sut
+docker-compose.yml
+docker-compose.no.hipaa.yml
+docker-compose.mongo.yml

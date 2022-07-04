@@ -1,0 +1,221 @@
+{
+    "name": "Parse HIPAA Server",
+    "description": "An example Parse API server using the parse-server and CareKit",
+    "repository": "https://github.com/netreconlab/parse-hipaa",
+    "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
+    "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
+    "env": {
+      "NEW_RELIC_APP_NAME": {
+        "description": "Name of your Heroku App. Should be the same as \"App name\"",
+        "required": true
+      },
+      "CLUSTER_INSTANCES": {
+        "description": "The amount of pm2 clusters to deploy, defaults to 4. Currently doesn't work on Heroku, change instances in ecosystem.config.js instead",
+        "value": "4"
+      },
+      "NODE_TLS_REJECT_UNAUTHORIZED": {
+        "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 0.",
+        "value": "0"
+      },
+      "PARSE_SERVER_APPLICATION_ID": {
+        "description": "A unique identifier for your app.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_PRIMARY_KEY": {
+        "description": "A key that overrides all permissions. Keep this secret. This is the masterKey on the parse-server",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
+        "description": "A key that allows read only access. Keep this secret. This is the read-only masterKey on the parse-server",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_URL": {
+        "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_SERVER_MOUNT_PATH)",
+        "required": false
+      },
+      "PARSE_SERVER_WEBHOOK_KEY": {
+        "description": "Key sent with outgoing webhook calls. Keep this secret.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_PUSH": {
+        "description": "Configuration for push, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#push-notifications.",
+        "required": false
+      },
+      "PARSE_SERVER_AUTH_PROVIDERS": {
+        "description": "Configuration for your authentication providers, as stringified JSON. See http://docs.parseplatform.org/parse-server/guide/#oauth-and-3rd-party-authentication.",
+        "required": false
+      },
+      "PARSE_SERVER_ENABLE_ANON_USERS": {
+        "description": "Enable (or disable) anonymous users, defaults to true.",
+        "value": "true"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_PUBLIC": {
+        "description": "Allow public to upload files.",
+        "value": "false"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_ANONYMOUS": {
+        "description": "Allow anonymous users to upload files.",
+        "value": "true"
+      },
+      "PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED": {
+        "description": "Allow authenticated users to upload files.",
+        "value": "true"
+      },
+      "PARSE_SERVER_S3_BUCKET": {
+        "description": "The name of your S3 Bucket.",
+        "required": false
+      },
+      "PARSE_SERVER_S3_BUCKET_REGION": {
+        "description": "The region for the S3 Bucket.",
+        "value": "us-east-2"
+      },
+      "PARSE_SERVER_S3_BUCKET_ENCRYPTION": {
+        "description": "AES256 or aws:kms, or if you do not pass this, encryption won't be done.",
+        "value": "AES256"
+      },
+      "AWS_ACCESS_KEY_ID": {
+        "description": "The access key to your S3 Bucket.",
+        "required": false
+      },
+      "AWS_SECRET_ACCESS_KEY": {
+        "description": "The secret access key to your S3 Bucket.",
+        "required": false
+      },
+      "PARSE_SERVER_MOUNT_PATH": {
+        "description": "Mount path for the server, defaults to /parse.",
+        "value": "/parse"
+      },
+      "PARSE_SERVER_GRAPHQL_PATH": {
+        "description": "Mount path for the GraphQL endpoint, defaults to /graphql.",
+        "value": "/graphql"
+      },
+      "PARSE_SERVER_ENCRYPTION_KEY": {
+        "description": "Unique string used for encrypting files stored by parse-hipaa.",
+        "generator": "secret"
+      },
+      "PARSE_SERVER_OBJECT_ID_SIZE": {
+        "description": "Integer value, parse defaults to 10, 32 is probably better for medical apps and large tables.",
+        "value": "32"
+      },
+      "PARSE_SERVER_START_LIVE_QUERY_SERVER": {
+        "description": "Starts the liveQuery server, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_START": {
+        "description": "Starts the dashboard, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_USER_ID": {
+        "description": "Specify the user password to connect with.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD": {
+        "description": "Specify the user password to connect with. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
+        "description": "Specify if the user parseword should be encrypted (true) or in plaintext (false).",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
+        "description": "The constant cookie session for dashboard.",
+        "generator": "secret"
+      },
+      "PARSE_DASHBOARD_CONFIG": {
+        "description": "The config file for dashboard.",
+        "required": false
+      },
+      "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP": {
+        "description": "Should allow insecure http.",
+        "value": "0"
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Should trust proxy in docker.",
+        "required": false
+      },
+      "PARSE_DASHBOARD_MOUNT_PATH": {
+        "description": "The mount path for the dashboard.",
+        "value": "/dashboard"
+      },
+      "PORT": {
+        "description": "Port for parse-hipaa, default is 1337.",
+        "value": "1337"
+      },
+      "PARSE_SERVER_CLOUD": {
+        "description": "Path to cloud code, default is /parse/cloud/main.js.",
+        "value": "/parse-server/cloud/main.js"
+      },
+      "PARSE_SERVER_REDIS_URL": {
+        "description": "Redis cache url. For details, see: https://github.com/redis/node-redis/blob/master/docs/client-configuration.md.",
+        "required": false
+      },
+      "PARSE_SERVER_CACHE_MAX_SIZE": {
+        "description": "Sets the maximum size for the in memory cache, defaults to 10000.",
+        "required": false
+      },
+      "PARSE_SERVER_CACHE_TTL": {
+        "description": "Sets the TTL for the in memory cache (in ms), defaults to 5000 (5 seconds).",
+        "required": false
+      },      
+      "PARSE_SERVER_MOUNT_GRAPHQL": {
+        "description": "Enable graphql, default is 'true'.",
+        "value": "true"
+      },
+      "PARSE_SERVER_GRAPH_QLSCHEMA": {
+        "description": "Full path to your GraphQL custom schema.graphql file.",
+        "required": false
+      }, 
+      "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
+        "description": "Don't allow classes to be created on the client side..",
+        "value": "true"
+      },
+      "PARSE_SERVER_ALLOW_CUSTOM_OBJECTID": {
+        "description": "Required to be true for ParseCareKit.",
+        "value": "true"
+      },
+      "PARSE_SERVER_ENABLE_SCHEMA_HOOKS": {
+        "description": "Keeps schema up to date.",
+        "value": "true"
+      },
+      "PARSE_SERVER_DIRECT_ACCESS": {
+        "description": "WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres.",
+        "value": "false"
+      },
+      "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
+        "description": "Set to 'true' if new users should be created without public read and write access.",
+        "value": "true"
+      },
+      "PARSE_SERVER_ENABLE_IDEMPOTENCY": {
+        "description": "Enable idempotency on all requests. defaults to false.",
+        "value": "false"
+      },
+      "PARSE_SERVER_USING_PARSECAREKIT": {
+        "description": "Set to 'true' when using ParseCareKit.",
+        "value": "false"
+      },
+      "PARSE_VERBOSE": {
+        "description": "Enable verbose output on the server.",
+        "value": "false"
+      }
+    },
+    "stack": "container",
+    "addons": [
+        {
+          "plan": "heroku-postgresql",
+          "as": "db"
+        },
+        {
+          "plan": "heroku-redis",
+          "as": "redis"
+        },
+        {
+          "plan": "scheduler"
+        },
+        {
+          "plan": "newrelic"
+        },
+        {
+          "plan": "papertrail"
+        }
+    ]
+  }
