@@ -309,6 +309,24 @@ if (enableParseServer){
     CareKitServer(api);
     setAuditClassLevelPermissions(); 
   }
+
+  if (startLiveQueryServer){
+    let liveQueryConfig = {
+      appId: applicationId,
+      masterKey: primaryKey,
+      serverURL: serverURL,
+      websocketTimeout: 10 * 1000,
+      cacheTimeout: 60 * 600 * 1000,
+      verbose: true,
+    }
+  
+    if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+      liveQueryConfig.redisURL = redisURL; 
+    }
+  
+    // This will enable the Live Query real-time server
+    ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
+  }
 }
 
 function setAuditClassLevelPermissions() {
@@ -450,20 +468,3 @@ httpServer.listen(port, host, function() {
     console.log(`Dashboard is now available at ${dashboardURL.href}`);
 });
 
-if (startLiveQueryServer){
-  let liveQueryConfig = {
-    appId: applicationId,
-    masterKey: primaryKey,
-    serverURL: serverURL,
-    websocketTimeout: 10 * 1000,
-    cacheTimeout: 60 * 600 * 1000,
-    verbose: true,
-  }
-
-  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
-    liveQueryConfig.redisURL = redisURL; 
-  }
-
-  // This will enable the Live Query real-time server
-  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig);
-}
