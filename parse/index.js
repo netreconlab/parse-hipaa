@@ -10,6 +10,8 @@ const cors = require('cors');
 const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
+const dashboardUsername = process.env.PARSE_DASHBOARD_USERNAME || 'parse';
+const dashboardUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || '$2a$12$gGgOFs4Un5H.e6Gfs3zDGe3knBfpM0/hxxZiZCvp6bKhVPMlb1gne';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
@@ -348,8 +350,8 @@ if(enableDashboard){
   const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
   const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
   const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
-  const configUserId = process.env.PARSE_DASHBOARD_USER_ID;
-  const configUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD;
+  const configUsername = process.env.PARSE_DASHBOARD_USERNAME || dashboardUsername;
+  const configUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || dashboardUserPassword;
   const configUserPasswordEncrypted = process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED || true;
 
   if (!process.env.PARSE_DASHBOARD_CONFIG) {
@@ -369,10 +371,10 @@ if(enableDashboard){
       if (configGraphQLServerURL) {
         configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
       }
-      if (configUserId && configUserPassword) {
+      if (configUsername && configUserPassword) {
         configFromCLI.data.users = [
           {
-            user: configUserId,
+            user: configUsername,
             pass: configUserPassword,
           }
         ];
