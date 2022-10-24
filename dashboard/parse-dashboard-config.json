@@ -1,12 +1,12 @@
 {
     "apps": [
-    {
-       "serverURL": "http://localhost:1337/1",
-       "graphQLServerURL": "http://localhost:1337/graphql",
-         "appId": "applicationId",
-         "masterKey": "masterKey",
-         "appName": "Parse HIPAA",
-         "supportedPushLocales": ["en"]
+    { 
+      "serverURL": "http://localhost:1337/1",
+      "graphQLServerURL": "http://localhost:1337/graphql",
+      "appId": "applicationId",
+      "masterKey": "primaryKey",
+      "appName": "Parse HIPAA",
+      "supportedPushLocales": ["en"]
     }],
     "iconsFolder": "icons",
     "users": [
