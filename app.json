@@ -14,8 +14,8 @@
         "value": "4"
       },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
-        "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 1.",
-        "value": "1"
+        "description": "Enable (or disable) rejecting unauthorized certificates (needs to be 0 for redis), defaults to 0.",
+        "value": "0"
       },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
@@ -203,6 +203,10 @@
         {
           "plan": "heroku-postgresql",
           "as": "db"
+        },
+        {
+          "plan": "heroku-redis",
+          "as": "redis"
         },
         {
           "plan": "scheduler"
