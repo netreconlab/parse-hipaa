@@ -51,7 +51,7 @@ services:
         depends_on:
             - parse
     db:
-        image: postgis/postgis:14-3.2
+        image: postgis/postgis:latest
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}

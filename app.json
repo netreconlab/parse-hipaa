@@ -14,8 +14,8 @@
         "value": "4"
       },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
-        "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 0.",
-        "value": "0"
+        "description": "Enable (or disable) rejecting unauthorized certificates, defaults to 1.",
+        "value": "1"
       },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
@@ -105,12 +105,12 @@
         "description": "Starts the dashboard, default true.",
         "value": "true"
       },
-      "PARSE_DASHBOARD_USER_ID": {
-        "description": "Specify the user password to connect with.",
+      "PARSE_DASHBOARD_USERNAME": {
+        "description": "Specify the username to connect to the dashboard.",
         "required": true
       },
       "PARSE_DASHBOARD_USER_PASSWORD": {
-        "description": "Specify the user password to connect with. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+        "description": "Specify the user password to connect to the dashboard. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
         "required": true
       },
       "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
@@ -203,10 +203,6 @@
         {
           "plan": "heroku-postgresql",
           "as": "db"
-        },
-        {
-          "plan": "heroku-redis",
-          "as": "redis"
         },
         {
           "plan": "scheduler"
