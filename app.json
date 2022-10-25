@@ -205,6 +205,10 @@
           "as": "db"
         },
         {
+          "plan": "heroku-redis",
+          "as": "redis"
+        },
+        {
           "plan": "scheduler"
         },
         {
