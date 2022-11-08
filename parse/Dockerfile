@@ -1,4 +1,4 @@
-FROM parseplatform/parse-server:5.2.8
+FROM parseplatform/parse-server:5.3.1
 
 # Install necessary dependencies and setup folders a root
 USER root
