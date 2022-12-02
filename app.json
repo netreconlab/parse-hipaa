@@ -199,13 +199,19 @@
       }
     },
     "stack": "container",
+    "formation": {
+      "web": {
+        "quantity": 1,
+        "size": "eco"
+      }
+    },
     "addons": [
         {
-          "plan": "heroku-postgresql",
+          "plan": "heroku-postgresql:mini",
           "as": "db"
         },
         {
-          "plan": "heroku-redis",
+          "plan": "heroku-redis:mini",
           "as": "redis"
         },
         {
