@@ -201,7 +201,7 @@
     "stack": "container",
     "addons": [
         {
-          "plan": "heroku-postgresql:hobby-basic",
+          "plan": "heroku-postgresql:mini",
           "as": "db"
         },
         {
