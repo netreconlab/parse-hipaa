@@ -205,7 +205,7 @@
           "as": "db"
         },
         {
-          "plan": "heroku-redis",
+          "plan": "heroku-redis:mini",
           "as": "redis"
         },
         {
