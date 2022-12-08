@@ -61,6 +61,10 @@
         "description": "Allow authenticated users to upload files.",
         "value": "true"
       },
+      "PARSE_SERVER_MAX_UPLOAD_SIZE": {
+        "description": "Max file size for uploads, defaults to 20mb.",
+        "value": "20mb"
+      },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
         "required": false

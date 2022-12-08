@@ -16,6 +16,7 @@ const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
+const fileMaxUploadSize = process.env.PARSE_SERVER_MAX_UPLOAD_SIZE || '20mb';
 let serverURL = process.env.PARSE_SERVER_URL || 'http://localhost:' + process.env.PORT + mountPath;
 let appName = 'myApp'; 
 if ("NEW_RELIC_APP_NAME" in process.env) {
@@ -200,6 +201,7 @@ if (enableParseServer){
       enableForAnonymousUser: fileUploadAnonymous,
       enableForAuthenticatedUser: fileUploadAuthenticated,
     },
+    maxUploadSize: fileMaxUploadSize,
     enableSchemaHooks: enableSchemaHooks,
     directAccess: useDirectAccess,
     enforcePrivateUsers: enforcePrivateUsers,
