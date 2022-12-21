@@ -17,6 +17,10 @@
         "description": "Enable (or disable) rejecting unauthorized certificates (needs to be 0 for redis), defaults to 1.",
         "value": "1"
       },
+      "PARSE_SERVER_ENABLE": {
+        "description": "Enable the parse server.",
+        "value": "true"
+      },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
         "generator": "secret"
@@ -28,6 +32,10 @@
       "PARSE_SERVER_READ_ONLY_PRIMARY_KEY": {
         "description": "A key that allows read only access. Keep this secret. This is the read-only masterKey on the parse-server",
         "generator": "secret"
+      },
+      "PARSE_SERVER_PRIMARY_KEY_IPS": {
+        "description": "Restricts the use of primary key permissions to a list of IP addresses. This option accepts a list of single IP addresses, for example: 10.0.0.1, 10.0.0.2. This is the masterKeyIps on the parse-server.",
+        "value": "172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1"
       },
       "PARSE_SERVER_URL": {
         "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_SERVER_MOUNT_PATH)",
@@ -49,16 +57,16 @@
         "description": "Enable (or disable) anonymous users, defaults to true.",
         "value": "true"
       },
-      "PARSE_SERVER_FILE_UPLOAD_PUBLIC": {
-        "description": "Allow public to upload files.",
+      "PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_PUBLIC": {
+        "description": "Is true if file upload should be allowed for anyone, regardless of user authentication.",
         "value": "false"
       },
-      "PARSE_SERVER_FILE_UPLOAD_ANONYMOUS": {
-        "description": "Allow anonymous users to upload files.",
+      "PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_ANONYMOUS_USER": {
+        "description": "Is true if file upload should be allowed for anonymous users.",
         "value": "true"
       },
-      "PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED": {
-        "description": "Allow authenticated users to upload files.",
+      "PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_AUTHENTICATED_USER": {
+        "description": "Is true if file upload should be allowed for authenticated users.",
         "value": "true"
       },
       "PARSE_SERVER_MAX_UPLOAD_SIZE": {
@@ -155,11 +163,11 @@
       },
       "PARSE_SERVER_CACHE_MAX_SIZE": {
         "description": "Sets the maximum size for the in memory cache, defaults to 10000.",
-        "required": false
+        "value": "10000"
       },
       "PARSE_SERVER_CACHE_TTL": {
         "description": "Sets the TTL for the in memory cache (in ms), defaults to 5000 (5 seconds).",
-        "required": false
+        "value": "5000"
       },      
       "PARSE_SERVER_MOUNT_GRAPHQL": {
         "description": "Enable graphql, default is 'true'.",
@@ -177,21 +185,29 @@
         "description": "Required to be true for ParseCareKit.",
         "value": "true"
       },
-      "PARSE_SERVER_ENABLE_SCHEMA_HOOKS": {
-        "description": "Keeps schema up to date.",
+      "PARSE_SERVER_DATABASE_ENABLE_SCHEMA_HOOKS": {
+        "description": "Enables database real-time hooks to update single schema cache. Set to `true` if using multiple Parse Servers instances connected to the same database. Failing to do so will cause a schema change to not propagate to all instances and re-syncing will only happen when the instances restart.",
         "value": "true"
       },
       "PARSE_SERVER_DIRECT_ACCESS": {
         "description": "WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres.",
         "value": "false"
       },
-      "PARSE_SERVER_ENABLE_PRIVATE_USERS": {
+      "PARSE_SERVER_ENFORCE_PRIVATE_USERS": {
         "description": "Set to 'true' if new users should be created without public read and write access.",
         "value": "true"
       },
       "PARSE_SERVER_ENABLE_IDEMPOTENCY": {
         "description": "Enable idempotency on all requests. defaults to false.",
         "value": "false"
+      },
+      "PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_PATHS": {
+        "description": "A list of paths for which the feature should be enabled. The mount path must not be included, for example instead of `/parse/functions/myFunction` specifiy `functions/myFunction`. The entries are interpreted as regular expression, for example `functions/.*` matches all functions, `jobs/.*` matches all jobs, `classes/.*` matches all classes, `.*` matches all paths.",
+        "value": ".*"
+      },
+      "PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_TTL": {
+        "description": "The duration in seconds after which a request record is discarded from the database.",
+        "value": "300"
       },
       "PARSE_SERVER_USING_PARSECAREKIT": {
         "description": "Set to 'true' when using ParseCareKit.",
@@ -200,6 +216,130 @@
       "PARSE_VERBOSE": {
         "description": "Enable verbose output on the server.",
         "value": "false"
+      },
+      "PARSE_SERVER_ALLOW_EXPIRED_AUTH_DATA_TOKEN": {
+        "description": "Allow a user to log in even if the 3rd party authentication token that was used to sign in to their account has expired. If this is set to false, then the token will be validated every time the user signs in to their account. This refers to the token that is stored in the _User.authData field.",
+        "value": "true"
+      },
+      "PARSE_SERVER_ALLOW_HEADERS": {
+        "description": "Add headers to Access-Control-Allow-Headers.",
+        "required": false
+      },
+      "PARSE_SERVER_ALLOW_ORIGIN": {
+        "description": "Sets the origin to Access-Control-Allow-Origin.",
+        "required": false
+      },
+      "PARSE_SERVER_EMAIL_VERIFY_TOKEN_REUSE_IF_VALID": {
+        "description": "Set to true if a email verification token should be reused in case another token is requested but there is a token that is still valid, i.e. has not expired. This avoids the often observed issue that a user requests multiple emails and does not know which link contains a valid token because each newly generated token would invalidate the previous token.",
+        "value": "false"
+      },
+      "PARSE_SERVER_EXPIRE_INACTIVE_SESSIONS": {
+        "description": "Sets whether we should expire the inactive sessions, defaults to true. If false, all new sessions are created with no expiration date.",
+        "value": "true"
+      },
+      "PARSE_SERVER_HOST": {
+        "description": "The host to serve ParseServer on.",
+        "value": "0.0.0.0"
+      },
+      "JSON_LOGS": {
+        "description": "Log as structured JSON objects.",
+        "value": "false"
+      },
+      "PARSE_SERVER_LOGS_FOLDER": {
+        "description": "Folder for the logs (defaults to './logs'); set to null to disable file based logging.",
+        "value": "./logs"
+      },
+      "PARSE_SERVER_MAX_LIMIT": {
+        "description": "Max value for limit option on queries, defaults to unlimited.",
+        "required": false
+      },
+      "PARSE_SERVER_PRESERVE_FILE_NAME": {
+        "description": "Enable (or disable) the addition of a unique hash to the file names.",
+        "value": "false"
+      },
+      "PARSE_SERVER_REVOKE_SESSION_ON_PASSWORD_RESET": {
+        "description": "When a user changes their password, either through the reset password email or while logged in, all sessions are revoked if this is true. Set to false if you don't want to revoke sessions.",
+        "value": "true"
+      },
+      "PARSE_SERVER_SESSION_LENGTH": {
+        "description": "Session duration, in seconds, defaults to 1 year.",
+        "value": "31536000"
+      },
+      "PARSE_SERVER_VERIFY_USER_EMAILS": {
+        "description": "Set to true to require users to verify their email address to complete the sign-up process.",
+        "value": "false"
+      },
+      "PARSE_SERVER_EMAIL_VERIFY_TOKEN_VALIDITY_DURATION": {
+        "description": "Set the validity duration of the email verification token in seconds after which the token expires. The token is used in the link that is set in the email. If the option is not set or set to `undefined`, then the token never expires. For example, to expire the token after 2 hours, set a value of 7200 seconds (= 60 seconds * 60 minutes * 2 hours).",
+        "value": "86400"
+      },
+      "PARSE_SERVER_PREVENT_LOGIN_WITH_UNVERIFIED_EMAIL": {
+        "description": "Set to `true` to prevent a user from logging in if the email has not yet been verified and email verification is required. Requires option verifyUserEmails: true",
+        "value": "false"
+      },
+      "PARSE_SERVER_LIVEQUERY_CLASSNAMES": {
+        "description": "parse-server's LiveQuery classNames. Example: Clock, Contact.",
+        "value": "Clock"
+      },
+      "PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT": {
+        "description": "Number of milliseconds between ping/pong frames. The WebSocket server sends ping/pong frames to the clients to keep the WebSocket alive. This value defines the interval of the ping/pong frame from the server to clients.",
+        "value": "10000"
+      },
+      "PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT": {
+        "description": "Number in milliseconds. When clients provide the sessionToken to the LiveQuery server, the LiveQuery server will try to fetch its ParseUser's objectId from parse server and store it in the cache. The value defines the duration of the cache. Check the following Security section and our protocol specification for details.",
+        "value": "5000"
+      },
+      "PARSE_SERVER_ACCOUNT_LOCKOUT_DURATION": {
+        "description": "Set the duration in minutes that a locked-out account remains locked out before automatically becoming unlocked. Valid values are greater than 0 and less than 100000.",
+        "value": "5"
+      },
+      "PARSE_SERVER_ACCOUNT_LOCKOUT_THRESHOLD": {
+        "description": "Set the number of failed sign-in attempts that will cause a user account to be locked. If the account is locked. The account will unlock after the duration set in the `duration` option has passed and no further login attempts have been made. Valid values are greater than 0 and less than 1000.",
+        "value": "3"
+      },
+      "PARSE_SERVER_ACCOUNT_LOCKOUT_UNLOCK_ON_PASSWORD_RESET": {
+        "description": "Set to true if the account should be unlocked after a successful password reset. Requires options duration and threshold to be set.",
+        "value": "false"
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_DO_NOT_ALLOW_USERNAME": {
+        "description": "Set to true to disallow the username as part of the password.",
+        "value": "false"
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_MAX_PASSWORD_AGE": {
+        "description": "Set the number of days after which a password expires. Login attempts fail if the user does not reset the password before expiration.",
+        "required": false
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_MAX_PASSWORD_HISTORY": {
+        "description": "Set the number of previous password that will not be allowed to be set as new password. If the option is not set or set to 0, no previous passwords will be considered. Valid values are >= 0 and <= 20.",
+        "value": "5"
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_RESET_TOKEN_REUSE_IF_VALID": {
+        "description": "Set to true if a password reset token should be reused in case another token is requested but there is a token that is still valid, i.e. has not expired. This avoids the often observed issue that a user requests multiple emails and does not know which link contains a valid token because each newly generated token would invalidate the previous token.",
+        "value": "false"
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_RESET_TOKEN_VALIDITY_DURATION": {
+        "description": "Set the validity duration of the password reset token in seconds after which the token expires. The token is used in the link that is set in the email. After the token expires, the link becomes invalid and a new link has to be sent. If the option is not set or set to `undefined`, then the token never expires. For example, to expire the token after 2 hours, set a value of 7200 seconds (= 60 seconds * 60 minutes * 2 hours).",
+        "value": "86400"
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_VALIDATION_ERROR": {
+        "description": "Set the error message to be sent.",
+        "value": "Password must have at least 8 characters, contain at least 1 digit, 1 lower case, 1 upper case, and contain at least one special character."
+      },
+      "PARSE_SERVER_PASSWORD_POLICY_VALIDATOR_PATTERN": {
+        "description": "Set the regular expression validation pattern a password must match to be accepted. Defaults to enforcing passwords to have atleast: 8 chars with at least 1 lower case, 1 upper case and 1 digit",
+        "value": "/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/"
+      },
+      "PARSE_SERVER_LOG_LEVELS_TRIGGER_AFTER": {
+        "description": "Log level used by the Cloud Code Triggers `afterSave`, `afterDelete`, `afterSaveFile`, `afterDeleteFile`, `afterFind`, `afterLogout`.",
+        "value": "info"
+      },
+      "PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_ERROR": {
+        "description": "Log level used by the Cloud Code Triggers `beforeSave`, `beforeSaveFile`, `beforeDeleteFile`, `beforeFind`, `beforeLogin` on error.",
+        "value": "error"
+      },
+      "PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_SUCCESS": {
+        "description": "Log level used by the Cloud Code Triggers `beforeSave`, `beforeSaveFile`, `beforeDeleteFile`, `beforeFind`, `beforeLogin` on success.",
+        "value": "info"
       }
     },
     "stack": "container",
