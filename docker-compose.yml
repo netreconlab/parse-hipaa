@@ -25,7 +25,6 @@ services:
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'true' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
-            PARSE_DASHBOARD_START: 'true'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
             - 127.0.0.1:${PORT}:${PORT}
