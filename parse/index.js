@@ -499,7 +499,6 @@ if(enableDashboard){
           });
           configFromCLI.data.users = users;
           configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
-          console.log('**************** ' + JSON.stringify(users));
         } else {
           console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
           process.exit(1);
