@@ -35,22 +35,22 @@ const dashboardURL = new URL(publicServerURL);
 dashboardURL.pathname = dashboardMountPath;
 
 let enableParseServer = true;
-if (process.env.PARSE_SERVER_ENABLE == 'false'){
+if (process.env.PARSE_SERVER_ENABLE == 'false') {
   enableParseServer = false
 }
 
 let startLiveQueryServer = true;
-if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false'){
+if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false') {
   startLiveQueryServer = false
 }
 
 let enableDashboard = false;
-if (process.env.PARSE_DASHBOARD_START == 'true'){
+if (process.env.PARSE_DASHBOARD_START == 'true') {
   enableDashboard = true
 }
 
 let verbose = false;
-if (process.env.PARSE_VERBOSE == 'true'){
+if (process.env.PARSE_VERBOSE == 'true') {
   verbose = true
 }
 
@@ -99,112 +99,112 @@ let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
 classNames = classNames.split(", ");
 
 let enableGraphQL = false;
-if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
+if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true') {
   enableGraphQL = true
 }
 
 let allowNewClasses = false;
-if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true'){
+if (process.env.PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION == 'true') {
   allowNewClasses = true
 }
 
 let allowCustomObjectId = false;
-if (process.env.PARSE_SERVER_ALLOW_CUSTOM_OBJECTID == 'true'){
+if (process.env.PARSE_SERVER_ALLOW_CUSTOM_OBJECTID == 'true') {
   allowCustomObjectId = true
 }
 
 let enableSchemaHooks = false;
-if (process.env.PARSE_SERVER_DATABASE_ENABLE_SCHEMA_HOOKS == 'true'){
+if (process.env.PARSE_SERVER_DATABASE_ENABLE_SCHEMA_HOOKS == 'true') {
   enableSchemaHooks = true
 }
 
 let useDirectAccess = false;
-if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true'){
+if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true') {
   useDirectAccess = true
 }
 
 let enforcePrivateUsers = false;
-if (process.env.PARSE_SERVER_ENFORCE_PRIVATE_USERS == 'true'){
+if (process.env.PARSE_SERVER_ENFORCE_PRIVATE_USERS == 'true') {
   enforcePrivateUsers = true
 }
 
 let fileUploadPublic = false;
-if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_PUBLIC == 'true'){
+if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_PUBLIC == 'true') {
   fileUploadPublic = true
 }
 
 let fileUploadAnonymous = true;
-if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_ANONYMOUS_USER == 'false'){
+if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_ANONYMOUS_USER == 'false') {
   fileUploadAnonymous = false
 }
 
 let fileUploadAuthenticated = true;
-if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_AUTHENTICATED_USER == 'false'){
+if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_AUTHENTICATED_USER == 'false') {
   fileUploadAuthenticated = false
 }
 
 let enableAnonymousUsers = true;
-if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false'){
+if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false') {
   enableAnonymousUsers = false
 }
 
 let enableIdempotency = false;
-if(process.env.PARSE_SERVER_ENABLE_IDEMPOTENCY == 'true'){
+if (process.env.PARSE_SERVER_ENABLE_IDEMPOTENCY == 'true') {
   enableIdempotency = true
 }
 
 let allowExpiredAuthDataToken = false;
-if (process.env.PARSE_SERVER_ALLOW_EXPIRED_AUTH_DATA_TOKEN == 'true'){
+if (process.env.PARSE_SERVER_ALLOW_EXPIRED_AUTH_DATA_TOKEN == 'true') {
   allowExpiredAuthDataToken = true
 }
 
 let emailVerifyTokenReuseIfValid = false;
-if (process.env.PARSE_SERVER_EMAIL_VERIFY_TOKEN_REUSE_IF_VALID == 'true'){
+if (process.env.PARSE_SERVER_EMAIL_VERIFY_TOKEN_REUSE_IF_VALID == 'true') {
   emailVerifyTokenReuseIfValid = true
 }
 
 let expireInactiveSessions = true;
-if (process.env.PARSE_SERVER_EXPIRE_INACTIVE_SESSIONS == 'false'){
+if (process.env.PARSE_SERVER_EXPIRE_INACTIVE_SESSIONS == 'false') {
   expireInactiveSessions = false
 }
 
 let jsonLogs = false;
-if (process.env.JSON_LOGS == 'true'){
+if (process.env.JSON_LOGS == 'true') {
   jsonLogs = true
 }
 
 let preserveFileName = false;
-if (process.env.PARSE_SERVER_PRESERVE_FILE_NAME == 'true'){
+if (process.env.PARSE_SERVER_PRESERVE_FILE_NAME == 'true') {
   preserveFileName = true
 }
 
 let revokeSessionOnPasswordReset = true;
-if (process.env.PARSE_SERVER_REVOKE_SESSION_ON_PASSWORD_RESET == 'false'){
+if (process.env.PARSE_SERVER_REVOKE_SESSION_ON_PASSWORD_RESET == 'false') {
   revokeSessionOnPasswordReset = false
 }
 
 let verifyUserEmails = false;
-if (process.env.PARSE_SERVER_VERIFY_USER_EMAILS == 'true'){
+if (process.env.PARSE_SERVER_VERIFY_USER_EMAILS == 'true') {
   verifyUserEmails = true
 }
 
 let unlockOnPasswordReset = false;
-if (process.env.PARSE_SERVER_ACCOUNT_LOCKOUT_UNLOCK_ON_PASSWORD_RESET == 'true'){
+if (process.env.PARSE_SERVER_ACCOUNT_LOCKOUT_UNLOCK_ON_PASSWORD_RESET == 'true') {
   unlockOnPasswordReset = true
 }
 
 let doNotAllowUsername = false;
-if (process.env.PARSE_SERVER_PASSWORD_POLICY_DO_NOT_ALLOW_USERNAME == 'true'){
+if (process.env.PARSE_SERVER_PASSWORD_POLICY_DO_NOT_ALLOW_USERNAME == 'true') {
   doNotAllowUsername = true
 }
 
 let resetTokenReuseIfValid = false;
-if (process.env.PARSE_SERVER_PASSWORD_POLICY_RESET_TOKEN_REUSE_IF_VALID == 'true'){
+if (process.env.PARSE_SERVER_PASSWORD_POLICY_RESET_TOKEN_REUSE_IF_VALID == 'true') {
   resetTokenReuseIfValid = true
 }
 
 let preventLoginWithUnverifiedEmail = false;
-if (process.env.PARSE_SERVER_PREVENT_LOGIN_WITH_UNVERIFIED_EMAIL == 'true'){
+if (process.env.PARSE_SERVER_PREVENT_LOGIN_WITH_UNVERIFIED_EMAIL == 'true') {
   preventLoginWithUnverifiedEmail = true
 }
 
@@ -406,7 +406,7 @@ async function setupParseServer() {
   // Serve the Parse API on the /parse URL prefix
   app.use(mountPath, api.app);
 
-  if(enableGraphQL){
+  if (enableGraphQL) {
     const parseGraphQLServer = new ParseGraphQLServer(
       api,
       {
@@ -417,7 +417,7 @@ async function setupParseServer() {
     parseGraphQLServer.applyGraphQL(app);
   }
   
-  if(process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
+  if (process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
     const { init: CareKitServer } = require('parse-server-carekit');
     CareKitServer(api);
     setAuditClassLevelPermissions(); 
@@ -440,7 +440,7 @@ function setAuditClassLevelPermissions() {
   ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 };
 
-if(enableDashboard){
+if (enableDashboard) {
   const fs = require('fs');
   const ParseDashboard = require('parse-dashboard');
 
@@ -467,10 +467,10 @@ if(enableDashboard){
   let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS || dashboardUserPassword;
   configUserPasswords = configUserPasswords.split(", ");
   let configUserPasswordEncrypted = true;
-  if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false'){
+  if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
     configUserPasswordEncrypted = false;
   }
-
+   
   if (!process.env.PARSE_DASHBOARD_CONFIG) {
     if (configServerURL && configPrimaryKey && configAppId) {
       configFromCLI = {
@@ -565,21 +565,21 @@ if (enableParseServer) {
 
 const httpServer = require('http').createServer(app);
 httpServer.listen(port, host, function() {
-  if(enableParseServer){
+  if (enableParseServer) {
     console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
     console.log(`REST API running on ${url.href}`);
-    if(enableGraphQL)
+    if (enableGraphQL)
       console.log(`GraphQL API running on ${graphURL.href}`);
   }
 
   if (startLiveQueryServer)
     console.log(`LiveQuery server is now available at ${url.href}`);
 
-  if(enableDashboard)
+  if (enableDashboard)
     console.log(`Dashboard is now available at ${dashboardURL.href}`);
 });
 
-if (startLiveQueryServer){
+if (startLiveQueryServer) {
   const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
   const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
   const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || "INFO";
