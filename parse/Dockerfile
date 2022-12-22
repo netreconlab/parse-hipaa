@@ -1,4 +1,4 @@
-FROM parseplatform/parse-server:6.0.0-alpha.16
+FROM parseplatform/parse-server:6.0.0-alpha.17
 
 # Install necessary dependencies and setup folders a root
 USER root
