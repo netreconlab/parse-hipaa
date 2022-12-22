@@ -14,8 +14,8 @@
         "value": "4"
       },
       "NODE_TLS_REJECT_UNAUTHORIZED": {
-        "description": "Enable (or disable) rejecting unauthorized certificates (needs to be 0 for redis), defaults to 0.",
-        "value": "0"
+        "description": "Enable (or disable) rejecting unauthorized certificates (needs to be 0 for redis), defaults to 1.",
+        "value": "1"
       },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
@@ -60,6 +60,10 @@
       "PARSE_SERVER_FILE_UPLOAD_AUTHENTICATED": {
         "description": "Allow authenticated users to upload files.",
         "value": "true"
+      },
+      "PARSE_SERVER_MAX_UPLOAD_SIZE": {
+        "description": "Max file size for uploads, defaults to 20mb.",
+        "value": "20mb"
       },
       "PARSE_SERVER_S3_BUCKET": {
         "description": "The name of your S3 Bucket.",
@@ -199,14 +203,16 @@
       }
     },
     "stack": "container",
+    "formation": {
+      "web": {
+        "quantity": 1,
+        "size": "basic"
+      }
+    },
     "addons": [
         {
-          "plan": "heroku-postgresql",
+          "plan": "heroku-postgresql:mini",
           "as": "db"
-        },
-        {
-          "plan": "heroku-redis",
-          "as": "redis"
         },
         {
           "plan": "scheduler"
