@@ -11,7 +11,7 @@ services:
             PARSE_SERVER_WEBHOOK_KEY: 553D229E-64DF-4928-99F5-B71CCA94A44A
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 10
-            PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:5432/${PG_PARSE_DB}
+            PARSE_SERVER_DATABASE_URI: postgres://${PG_PARSE_USER}:${PG_PARSE_PASSWORD}@db:${DB_PORT}/${PG_PARSE_DB}
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
@@ -27,7 +27,7 @@ services:
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
-            - ${PORT}:${PORT}
+            - 127.0.0.1:${PORT}:${PORT}
         volumes:
             - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
             - ./parse/index.js:/parse-server/index.js
@@ -47,7 +47,7 @@ services:
         volumes:
             - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
         ports:
-            - 127.0.0.1:4040:4040
+            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
         depends_on:
             - parse
     db:
@@ -59,7 +59,7 @@ services:
             PG_PARSE_DB: ${PG_PARSE_DB}
         restart: always
         ports:
-            - 5432:5432
+            - 127.0.0.1:${DB_PORT}:${DB_PORT}
     # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
     #volumes:
     #    - ./data:/var/lib/postgresql/data
