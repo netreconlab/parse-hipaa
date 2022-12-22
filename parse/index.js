@@ -8,11 +8,10 @@ const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
 const path = require('path');
 const cors = require('cors');
 const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
+
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
-const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
-const dashboardUsername = process.env.PARSE_DASHBOARD_USERNAME || 'parse';
-const dashboardUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || '$2a$12$gGgOFs4Un5H.e6Gfs3zDGe3knBfpM0/hxxZiZCvp6bKhVPMlb1gne';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
+const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
@@ -95,9 +94,9 @@ const triggerBeforeError = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_ER
 const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_SUCCESS || 'info';
 // NEEDED For Parse Server 6.0.0+.
 let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
-primaryKeyIPs = primaryKeyIPs.replace(/\s/g, "").split(",");
+primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
-classNames = classNames.replace(/\s/g, "").split(",");
+classNames = classNames.split(", ");
 
 let enableGraphQL = false;
 if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true'){
@@ -164,9 +163,9 @@ if (process.env.PARSE_SERVER_EMAIL_VERIFY_TOKEN_REUSE_IF_VALID == 'true'){
   emailVerifyTokenReuseIfValid = true
 }
 
-let expireInactiveSessions = false;
-if (process.env.PARSE_SERVER_EXPIRE_INACTIVE_SESSIONS == 'true'){
-  expireInactiveSessions = true
+let expireInactiveSessions = true;
+if (process.env.PARSE_SERVER_EXPIRE_INACTIVE_SESSIONS == 'false'){
+  expireInactiveSessions = false
 }
 
 let jsonLogs = false;
@@ -174,15 +173,14 @@ if (process.env.JSON_LOGS == 'true'){
   jsonLogs = true
 }
 
-
 let preserveFileName = false;
 if (process.env.PARSE_SERVER_PRESERVE_FILE_NAME == 'true'){
   preserveFileName = true
 }
 
-let revokeSessionOnPasswordReset = false;
-if (process.env.PARSE_SERVER_REVOKE_SESSION_ON_PASSWORD_RESET == 'true'){
-  revokeSessionOnPasswordReset = true
+let revokeSessionOnPasswordReset = true;
+if (process.env.PARSE_SERVER_REVOKE_SESSION_ON_PASSWORD_RESET == 'false'){
+  revokeSessionOnPasswordReset = false
 }
 
 let verifyUserEmails = false;
@@ -392,7 +390,7 @@ if ("PARSE_SERVER_PASSWORD_POLICY_MAX_PASSWORD_AGE" in process.env) {
 
 if (enableIdempotency) {
   let paths = process.env.PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_PATHS || '.*';
-  paths = paths.replace(/\s/g, "").split(",");
+  paths = paths.split(", ");
   const ttl = process.env.PARSE_SERVER_EXPERIMENTAL_IDEMPOTENCY_TTL || 300;
   configuration.idempotencyOptions = {
     paths: paths,
@@ -446,13 +444,15 @@ if(enableDashboard){
   const fs = require('fs');
   const ParseDashboard = require('parse-dashboard');
 
+  const dashboardUsername = process.env.PARSE_DASHBOARD_USERNAME || 'parse';
+  const dashboardUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || '$2a$12$gGgOFs4Un5H.e6Gfs3zDGe3knBfpM0/hxxZiZCvp6bKhVPMlb1gne';
   const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
   const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
   const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
 
   if (trustProxy && allowInsecureHTTP) {
     console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
-    process.exit(-1);
+    process.exit(1);
   }
 
   let configFile = null;
@@ -462,9 +462,14 @@ if(enableDashboard){
   const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
   const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
   const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
-  const configUsername = process.env.PARSE_DASHBOARD_USERNAME || dashboardUsername;
-  const configUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || dashboardUserPassword;
-  const configUserPasswordEncrypted = process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED || true;
+  let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES || dashboardUsername;
+  configUsernames = configUsernames.split(", ");
+  let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS || dashboardUserPassword;
+  configUserPasswords = configUserPasswords.split(", ");
+  let configUserPasswordEncrypted = true;
+  if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false'){
+    configUserPasswordEncrypted = false;
+  }
 
   if (!process.env.PARSE_DASHBOARD_CONFIG) {
     if (configServerURL && configPrimaryKey && configAppId) {
@@ -483,14 +488,22 @@ if(enableDashboard){
       if (configGraphQLServerURL) {
         configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
       }
-      if (configUsername && configUserPassword) {
-        configFromCLI.data.users = [
-          {
-            user: configUsername,
-            pass: configUserPassword,
-          }
-        ];
-        configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+      if (configUsernames && configUserPasswords) {
+        if (configUsernames.length == configUserPasswords.length) {
+          let users = [];
+          configUsernames.forEach((username, index) => {
+            users.push({
+              user: username,
+              pass: configUserPasswords[index],
+            });
+          });
+          configFromCLI.data.users = users;
+          configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+          console.log('**************** ' + JSON.stringify(users));
+        } else {
+          console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
+          process.exit(1);
+        } 
       }
     } else if (!configServerURL && !configPrimaryKey && !configAppName) {
       configFile = path.join(__dirname, 'parse-dashboard-config.json');
@@ -518,7 +531,7 @@ if(enableDashboard){
         process.exit(3);
       } else {
         console.log('There was a problem with your config. Exiting.');
-        process.exit(-1);
+        process.exit(1);
       }
     }
   } else if (configFromCLI) {

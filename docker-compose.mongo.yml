@@ -11,7 +11,7 @@ services:
             PARSE_SERVER_WEBHOOK_KEY: 553D229E-64DF-4928-99F5-B71CCA94A44A
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
             PARSE_SERVER_OBJECT_ID_SIZE: 32
-            PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:27017/${MONGO_PARSE_DB}
+            PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:${DB_MONGO_PORT}/${MONGO_PARSE_DB}
             PORT: ${PORT}
             PARSE_SERVER_MOUNT_PATH: ${MOUNT_PATH}
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
@@ -26,7 +26,7 @@ services:
             PARSE_SERVER_USING_PARSECAREKIT: 'true' # If you are not using ParseCareKit, set this to 'false'
             PARSE_VERBOSE: 'false'
         ports:
-            - ${PORT}:${PORT}
+            - 127.0.0.1:${PORT}:${PORT}
         volumes:
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
@@ -44,7 +44,7 @@ services:
         volumes:
             - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
         ports:
-            - 127.0.0.1:4040:4040
+            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
         depends_on:
             - parse
     db:
@@ -55,7 +55,7 @@ services:
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
         restart: always
         ports:
-            - 27017:27017
+            - 127.0.0.1:${DB_MONGO_PORT}:${DB_MONGO_PORT}
         # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db

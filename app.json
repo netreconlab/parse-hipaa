@@ -117,12 +117,12 @@
         "description": "Starts the dashboard, default true.",
         "value": "true"
       },
-      "PARSE_DASHBOARD_USERNAME": {
-        "description": "Specify the username to connect to the dashboard.",
+      "PARSE_DASHBOARD_USERNAMES": {
+        "description": "Specify the usernames to connect to the dashboard. Multiple usernames should be a list: username1, username2, etc. The list should be the same size as PARSE_DASHBOARD_USER_PASSWORDS",
         "required": true
       },
-      "PARSE_DASHBOARD_USER_PASSWORD": {
-        "description": "Specify the user password to connect to the dashboard. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+      "PARSE_DASHBOARD_USER_PASSWORDS": {
+        "description": "Specify the user passwords to connect to the dashboard. Multiple passwords should be a list: password1, pasword2, etc. The list should be the same size as PARSE_DASHBOARD_USERNAMES. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
         "required": true
       },
       "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
