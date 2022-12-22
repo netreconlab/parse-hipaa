@@ -95,7 +95,7 @@ const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_
 // NEEDED For Parse Server 6.0.0+.
 // let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
 // primaryKeyIPs = primaryKeyIPs.split(", ");
-let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
+let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Activity, Post';
 classNames = classNames.split(", ");
 
 let enableGraphQL = false;
