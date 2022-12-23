@@ -1,12 +1,28 @@
-FROM parseplatform/parse-server:latest
+############################################################
+# Build stage
+############################################################
+FROM parseplatform/parse-server:latest AS build
 
 # Install necessary dependencies and setup folders a root
 USER root
-RUN apk --no-cache add bash postgresql-client
+RUN apk --no-cache add git
 RUN npm install --omit=dev netreconlab/parse-server-carekit#main parse-server-any-analytics-adapter@^1.x.x @analytics/google-analytics@^1.x.x @analytics/google-analytics-v3@^0.x.x
 RUN npm install --force --omit=dev @parse/s3-files-adapter@^1.x.x parse-server-api-mail-adapter@^2.x.x mailgun.js@^8.x.x
 RUN npm install --force --omit=dev parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x newrelic@^9.x.x
 RUN npm install --omit=dev pm2@^5.x.x -g
+
+############################################################
+# Release stage
+############################################################
+FROM parseplatform/parse-server:latest AS release
+
+# Start parse-hipaa setup as root
+USER root
+
+# Install apps needed for image
+RUN apk --no-cache add bash postgresql-client
+
+# Setup directories
 RUN mkdir ./files
 COPY ./scripts/ ./scripts/
 RUN chmod +x ./scripts/wait-for-postgres.sh ./scripts/parse_idempotency_delete_expired_records.sh ./scripts/setup-dbs.sh ./scripts/setup-parse-index.sh ./scripts/setup-pgaudit.sh
@@ -14,6 +30,12 @@ RUN chown -R node ./files ./scripts
 
 # Complete parse-hipaa setup as node
 USER node
+
+# Copy production node_modules
+COPY --from=build /parse-server/node_modules /parse-server/node_modules
+COPY --from=build /parse-server/package*.json /parse-server/
+
+# Copy any files/scripts needed
 COPY ./ecosystem.config.js ./
 COPY ./process.yml ./
 COPY ./index.js ./
