@@ -1,12 +1,15 @@
-name: Singularity
+name: Singularity (release)
 
 on:
-  schedule:
-    - cron: '19 17 * * *'
+#  schedule:
+#    - cron: '19 17 * * *'
+  release:
+    types: [ published ]
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,6 +37,9 @@ jobs:
             echo "keepgoing=true" >> $GITHUB_ENV
           fi          
 
+      - name: Get release version
+        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
+
       - name: Build Container
         #if: ${{ env.keepgoing == 'true' }}
         env:
@@ -44,7 +50,7 @@ jobs:
             sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
-                tag=latest
+                tag=$TAG
             fi
             # Build the container and name by tag
             echo "Tag is $tag."
