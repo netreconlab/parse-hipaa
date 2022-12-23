@@ -1,15 +1,8 @@
 name: Singularity (release)
 
 on:
-#  schedule:
-#    - cron: '19 17 * * *'
   release:
     types: [ published ]
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,7 +34,6 @@ jobs:
         run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
       - name: Build Container
-        #if: ${{ env.keepgoing == 'true' }}
         env:
           recipe: ${{ matrix.recipe }}
         run: |
