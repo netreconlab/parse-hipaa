@@ -5,7 +5,7 @@ on:
     - cron: '19 17 * * *'
   push:
     branches: [ main ]
-  pull_request: 
+  pull_request:
     branches: [ main ]
 
 concurrency:
@@ -13,85 +13,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  changes:
-    name: "Changed Singularity Recipes"
-    runs-on: ubuntu-latest
-    outputs:
-      changed_file: ${{ steps.files.outputs.added_modified }}
-    steps:
-      - id: files
-        uses: jitterbit/get-changed-files@b17fbb00bdc0c0f63fcf166580804b4d2cdc2a42
-        with:
-          format: 'json'
-  
   build-test-containers:
-    needs:
-      - changes
     runs-on: ubuntu-latest
+    container:
+      image: quay.io/singularity/singularity:v3.10.4
     strategy:
-      # Keep going on other deployments if anything bloops
       fail-fast: false
       matrix:
-        changed_file: ${{ fromJson(needs.changes.outputs.changed_file) }}
+        recipe: ["Singularity"]
 
-    name: Check ${{ matrix.changed_file }}
+    name: Check ${{ matrix.recipe }}
     steps:
-      - name: Continue if Singularity Recipe
+
+      - name: Check out code for the container build
+        uses: actions/checkout@v3
+
+      - name: Continue if Singularity Recipe Exists
         run: |
-          # Continue if we have a changed Singularity recipe
-          if [[ "${{ matrix.changed_file }}" = *Singularity* ]]; then
+          if [[ -f "${{ matrix.recipe }}" ]]; then
             echo "keepgoing=true" >> $GITHUB_ENV
           fi          
 
-      - name: Set up Go 1.13
-        if: ${{ env.keepgoing == 'true' }}
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.13
-        id: go
-
-      - name: Install Dependencies
-        if: ${{ env.keepgoing == 'true' }}
-        run: |
-          sudo apt-get update && sudo apt-get install -y \
-            build-essential \
-            libssl-dev \
-            uuid-dev \
-            libgpgme11-dev \
-            squashfs-tools \
-            libseccomp-dev \
-            pkg-config
-
-      - name: Install Singularity
-        if: ${{ env.keepgoing == 'true' }}
-        env:
-          SINGULARITY_VERSION: 3.8.1
-          GOPATH: /tmp/go
-      
-        run: |
-          mkdir -p $GOPATH
-          sudo mkdir -p /usr/local/var/singularity/mnt && \
-          mkdir -p $GOPATH/src/github.com/sylabs && \
-          cd $GOPATH/src/github.com/sylabs && \
-          wget -qO- https://github.com/sylabs/singularity/releases/download/v${SINGULARITY_VERSION}/singularity-ce-${SINGULARITY_VERSION}.tar.gz | \
-          tar xzv && \
-          cd singularity-ce-${SINGULARITY_VERSION} && \
-          ./mconfig -p /usr/local && \
-          make -C builddir && \
-          sudo make -C builddir install          
-
-      - name: Check out code for the container build
-        if: ${{ env.keepgoing == 'true' }}
-        uses: actions/checkout@v3
-
       - name: Build Container
-        if: ${{ env.keepgoing == 'true' }}
+        #if: ${{ env.keepgoing == 'true' }}
         env:
-          recipe: ${{ matrix.changed_file }}
+          recipe: ${{ matrix.recipe }}
         run: |
          ls 
-         if [ -f "${{ matrix.changed_file }}" ]; then
-            sudo -E singularity build container.sif ${{ matrix.changed_file }}
+         if [ -f "${{ matrix.recipe }}" ]; then
+            sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
                 tag=latest
@@ -100,13 +50,13 @@ jobs:
             echo "Tag is $tag."
             echo "tag=$tag" >> $GITHUB_ENV
          else
-           echo "${{ matrix.changed_file }} is not found."
+           echo "${{ matrix.recipe }} is not found."
            echo "Present working directory: $PWD"
            ls
          fi
 
       - name: Login and Deploy Container
-        if: (github.event_name != 'pull_request')
+        #if: (github.event_name != 'pull_request')
         env:
           keepgoing: ${{ env.keepgoing }}
         run: |         
