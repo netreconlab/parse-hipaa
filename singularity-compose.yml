@@ -20,7 +20,7 @@ instances:
         depends_on:
             - db
     dashboard:
-        image: oras://ghcr.io/parseplatform/parse-dashboard:latest
+        image: oras://ghcr.io/parseplatform/parse-hipaa-dashboard:latest
         start:
             - fakeroot
         exec:
