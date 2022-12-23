@@ -1,6 +1,10 @@
 # parse-hipaa 
-[![Docker](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/docker-publish.yml)
+
 [![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
+[![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml)
+[![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml)
+
+---
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
