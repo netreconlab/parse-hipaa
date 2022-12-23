@@ -2,7 +2,7 @@ version: "2.0"
 
 instances:
     parse:
-        image: netreconlab/parse-hipaa:latest
+        image: oras://ghcr.io/netreconlab/parse-hipaa:latest
         ports:
             - 1337:1337
         volumes:
@@ -20,7 +20,7 @@ instances:
         depends_on:
             - db
     dashboard:
-        image: parseplatform/parse-dashboard:latest
+        image: oras://ghcr.io/parseplatform/parse-dashboard:latest
         start:
             - fakeroot
         exec:
@@ -34,7 +34,7 @@ instances:
         depends_on:
             - parse
     db:
-        image: netreconlab/hipaa-postgres:latest
+        image: oras://ghcr.io/netreconlab/hipaa-postgres:latest
         #restart: always
         ports:
             - 5432:5432
