@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parse-server:latest AS build
+FROM parseplatform/parse-server:latest AS build
 
 # Install necessary dependencies and setup folders a root
 USER root
@@ -14,7 +14,7 @@ RUN npm install --omit=dev pm2@^5.x.x -g
 ############################################################
 # Release stage
 ############################################################
-FROM parse-server:latest AS release
+FROM parseplatform/parse-server:latest AS release
 
 # Start parse-hipaa setup as root
 USER root
@@ -35,6 +35,7 @@ USER node
 COPY --from=build /parse-server/node_modules /parse-server/node_modules
 COPY --from=build /parse-server/package*.json /parse-server/
 
+# Copy any files/scripts needed
 COPY ./ecosystem.config.js ./
 COPY ./process.yml ./
 COPY ./index.js ./
