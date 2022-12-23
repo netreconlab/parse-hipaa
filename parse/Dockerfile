@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parseplatform/parse-server:6.0.0-alpha.17 AS build
+FROM netreconlab/parse-server:docker AS build
 
 # Install necessary dependencies and setup folders a root
 USER root
@@ -14,7 +14,7 @@ RUN npm install --omit=dev pm2@^5.x.x -g
 ############################################################
 # Release stage
 ############################################################
-FROM parseplatform/parse-server:6.0.0-alpha.17 AS release
+FROM netreconlab/parse-server:docker AS release
 
 # Start parse-hipaa setup as root
 USER root
