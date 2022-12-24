@@ -60,9 +60,9 @@ services:
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
-    scan:
-        image: netreconlab/clamscan:latest
-        restart: always
+   # scan:
+   #     image: netreconlab/clamscan:latest
+   #     restart: always
     # Below is an example of how to run a seperate dashboard, parse-hipaa already has a pre-installed dashboard.
     #dashboard:
     #    image: netreconlab/parse-hipaa-dashboard:latest
