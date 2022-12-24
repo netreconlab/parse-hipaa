@@ -10,7 +10,6 @@ instances:
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
             - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
-        #restart: always
         start:
             - fakeroot
         exec:
@@ -19,23 +18,8 @@ instances:
             command: ./wait-for-postgres.sh db node index.js
         depends_on:
             - db
-    dashboard:
-        image: oras://ghcr.io/parseplatform/parse-hipaa-dashboard:latest
-        start:
-            - fakeroot
-        exec:
-            options:
-                - "env-file=dashboard.env"
-            command: parse-dashboard --dev
-        volumes:
-            - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
-        ports:
-            - 4040:4040
-        depends_on:
-            - parse
     db:
         image: oras://ghcr.io/netreconlab/hipaa-postgres:latest
-        #restart: always
         ports:
             - 5432:5432
         start:
@@ -48,6 +32,17 @@ instances:
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
-   # scan:
-   #     image: netreconlab/clamscan:latest
-   #     restart: always
+   #dashboard:
+   #     image: oras://ghcr.io/parseplatform/parse-hipaa-dashboard:latest
+   #     start:
+   #         - fakeroot
+   #     exec:
+   #         options:
+   #             - "env-file=dashboard.env"
+   #         command: node /parse-hipaa-dashboard/index.js
+   #     volumes:
+   #         - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
+   #     ports:
+   #         - 4040:4040
+   #     depends_on:
+   #         - parse
