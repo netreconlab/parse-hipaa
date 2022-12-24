@@ -3,6 +3,7 @@ name: release
 on:
   release:
     types: [ published ]
+    tags: [ '*.*.*' ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
