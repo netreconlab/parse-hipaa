@@ -2,7 +2,8 @@ name: release
 
 on:
   release:
-    types: [ published ]
+    branches: [ main ]
+    # Publish semver tags as releases.
     tags: [ '*.*.*' ]
 
 concurrency:
