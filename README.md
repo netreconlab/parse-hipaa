@@ -22,10 +22,10 @@ The parse-hipaa repo provides the following:
 - [x] Auditing & logging at server-admin level (Parse) and at the database level (postgres or mongo)
 - [x] The User class (and the ParseCareKit classes if you are using them) are locked down and doesn't allow unauthenticated access (the standard parse-server allows unauthenticated read access by default)
 - [x] The creation of new Parse Classes and the addition of adding fields from the client-side are disabled. These can be created/added on the server-side using Parse Dashboard (the standard parse-server allows Class and field creation on the client-side by default)
+- [x] Ready for encryption in transit - parse-hipaa and it's companion images are setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
 - [x] File uploads are only allowed by authenticated users (the standard parse-server allows unauthenticated uploads by default)
 - [x] File uploads are encrypted with AES-256-GCM by default (the standard parse-server doesn't encrypt files by default)
-- [x] File uploads are scanned for viruses and malware by clamscan before they are saved to parse-hipaa. If any virus or malware is detected the files won't be saved 
-- [x] Encryption in transit - parse-hipaa and it's companion images are setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
+- [x] ~~File uploads are scanned for viruses and malware by clamscan before they are saved to parse-hipaa. If any virus or malware is detected the files won't be saved~~ (this has been turned off by default. Examples of how to handle can be found in [files.js](https://github.com/netreconlab/parse-hipaa/blob/main/parse/cloud/files.js) and enabled in [main.js](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/parse/cloud/main.js#L8))
 
 You will still need to setup the following on your own to be fully HIPAA & GDPR compliant:
 
@@ -34,9 +34,28 @@ You will still need to setup the following on your own to be fully HIPAA & GDPR 
 - [ ] Be sure to do anything else HIPAA & GDPR requires
 - [ ] If you are hosting using a remote service like Heroku, you may need to pay for additional services such as [Shield Spaces](https://devcenter.heroku.com/articles/heroku-postgres-and-private-spaces)
 
-A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
+The [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
+
+## What is inside parse-hipaa?
+
+Parse-HIPAA is derived from the [parse-server image](https://hub.docker.com/r/parseplatform/parse-server) and contains the following additional packages:
+- [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)
+- [parse-server-carekit](https://github.com/netreconlab/parse-server-carekit)
+- [clamscan](https://www.npmjs.com/package/clamscan)
+- [newrelic](https://www.npmjs.com/package/newrelic) - automatically configured with Heroku deployments, needs additional configuration if you want to use elsewhere
+- [parse-server-any-analytics-adapter](https://github.com/netreconlab/parse-server-any-analytics-adapter) - needs additional configuration if you want to use
+- [@analytics/google-analytics](https://www.npmjs.com/package/@analytics/google-analytics) - needs additional configuration if you want to use
+- [@analytics/google-analytics-v3](https://www.npmjs.com/package/@analytics/google-analytics-v3) - needs additional configuration if you want to use
+- [@parse/s3-files-adapter](https://www.npmjs.com/package/@parse/s3-files-adapter) - needs additional configuration if you want to use
+- [parse-server-api-mail-adapter](https://www.npmjs.com/package/parse-server-api-mail-adapter) - needs additional configuration if you want to use
+- [mailgun.js](https://www.npmjs.com/package/mailgun.js) - needs additional configuration if you want to use
+
+## Images
+Images of parse-hipaa are automatically built for your convenience. Images can be found at the following locations:
+- [Docker - Hosted on Docker Hub](https://hub.docker.com/r/netreconlab/parse-hipaa)
+- [Singularity - Hosted on GitHub Container Registry](https://github.com/netreconlab/parse-hipaa/pkgs/container/parse-hipaa)
 
 ## Deployment
 parse-hipaa can be easily deployed or tested remote or locally.
@@ -65,8 +84,8 @@ You can use the one-button deployment to quickly deploy to Heroko. **Note that t
 3. You can now edit `parse/index.js` and `parse/cloud` as you wish
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
-### Local: using docker with postgres or mongo
-By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org) `14`. A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo). 
+### Local: Using Docker Image with Postgres or Mongo
+By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org). A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo). 
 
 #### Postgres
 To use the Postgres HIPAA compliant variant of parse-hipaa, simply type:
@@ -118,13 +137,6 @@ PARSE_VERBOSE # Enable verbose output on the server
 POSTGRES_PASSWORD: # Needed for wait-for-postgres.sh. Should be the same as POSTGRES_PASSWORD in netreconlab/hipaa-postgres
 ```
 
-###### parseplatform/parse-dashboard
-```bash
-PARSE_DASHBOARD_TRUST_PROXY: # Default is 1, this should always be left as 1 when using docker
-PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
-MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-```
-
 ###### netreconlab/hipaa-postgres
 ```bash
 POSTGRES_PASSWORD # Password for postgress db cluster
@@ -142,6 +154,22 @@ MONGO_INITDB_DATABASE # Name of mongo db. Should be MONGO_PARSE_DB
 MONGO_PARSE_USER # Username for logging into mongo db for parse-hipaa.
 MONGO_PARSE_PASSWORD # Password for logging into mongo db for parse-hipaa
 MONGO_PARSE_DB # Name of mongo db for parse-hipaa
+```
+
+###### netreconlab/parse-hipaa-dashboard
+```bash
+PARSE_DASHBOARD_TRUST_PROXY: # Set this to 1 (or anything) if the dashboard is behind a proxy. Otherwise leave empty
+PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: # Set this to 1 (or anything) if not behind proxy and using the dashboard in docker. Note that either PARSE_DASHBOARD_ALLOW_INSECURE_HTTP or PARSE_DASHBOARD_TRUST_PROXY should be set at the same time, choose one or the other. Otherwise leave empty
+PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
+PARSE_DASHBOARD_MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+```
+
+###### parseplatform/parse-dashboard
+```bash
+PARSE_DASHBOARD_TRUST_PROXY: # Set this to 1 (or anything) if the dashboard is behind a proxy. Otherwise leave empty
+PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: # Set this to 1 (or anything) if not behind proxy and using the dashboard in docker. Note that either PARSE_DASHBOARD_ALLOW_INSECURE_HTTP or PARSE_DASHBOARD_TRUST_PROXY should be set at the same time, choose one or the other. Otherwise leave empty
+PARSE_DASHBOARD_COOKIE_SESSION_SECRET: # Unique string. This should be constant across all deployments on your system
+MOUNT_PATH: # The default is "/dashboard". This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
 ```
 
 ##### Starting up parse-hipaa
@@ -178,6 +206,9 @@ db_1         | 2020-03-18 21:59:21.550 UTC [106] ERROR:  duplicate key value vio
 
 The lines above are console output from parse because they attempt to check and configure the postgres database if necessary. They doesn't hurt or slow down your parse-hipaa server.
 
+### Local: Using Singularity Image with Postgres
+There are equivalent [Singularity](https://sylabs.io/singularity/) images that can be configured in a similar fashion to Docker. The singularity images are hosted on GitHub Container Registry and can be found [here](https://github.com/netreconlab/parse-hipaa/pkgs/container/parse-hipaa). An example of of how to use this image can be found in [singularity-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/main/singularity-compose.yml).
+
 ## Parse Server
 Your parse-server is binded to all of your interfaces on port 1337/parse and be can be accessed as such, e.g. `http://localhost:1337/parse`.
 
@@ -213,8 +244,13 @@ For verfying and cleaning your data along with other added functionality, you ca
 ### Dashboard on Heroku
 Follow the directions in the [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard#remote) repo for one-button deployment of dashboard.
 
-### Local: using docker
-Parse-dashboard is binded to your localhost on port 4040 and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the password in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L14). Note that ideally the password should be hashed by using something like [bcrypt-generator](https://bcrypt-generator.com) or using [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password). You can also add more users through this method.
+### Local (Docker or Singularity)
+
+#### netreconlab/parse-hipaa-dashboard (docker-compose.yml)
+Parse-Hipaa-Dashboard is binded to your `localhost` on port `1337`, mounted to the `/dashboard` endpoint, and can be accessed as such, e.g. http://localhost:1337/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the usernames and passwords in the [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/docker-compose.yml#L30-L32) along with setting `PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'true'`. Note that the password should be hashed using a [bcrypt-generator](https://bcrypt-generator.com) or similar. Authentication can also occur through [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password).
+
+#### parseplatform/parse-dashboard (docker-compose.no.hipaa.yml and docker-compose.mongo.yml)
+Parse-Dashboard is binded to your `localhost` on port `4040` and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the usernames and passwords in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/dashboard/parse-dashboard-config.json#L13-L21). Note that the password is hashed by using [bcrypt-generator](https://bcrypt-generator.com) or similar. Authentication can also occur through [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password).
 
 1. Open your browser and go to http://localhost:4040/dashboard
 2. Username: `parse` # You can use `parseRead` to login as a read only user
@@ -222,7 +258,7 @@ Parse-dashboard is binded to your localhost on port 4040 and can be accessed as 
 4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
 
 #### Configuring
-As mentioned, the default address and port the parse-server dashboard is binded to is 127.0.0.1:4040:4040 which means it can only be accessed by your local machine. If you want to change this, you should do it [here](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml#L29). If you plan on using this image to deploy in production, it is recommended to run this behind a proxy and add the environment variable `PARSE_DASHBOARD_TRUST_PROXY=1` to the dashboard container. Note that since the parse dashboard is running in docker, the following should remain in the yml, `command: parse-dashboard --dev`.
+If you plan on using this image to deploy in production, it is recommended to run this behind a proxy and add the environment variable `PARSE_DASHBOARD_TRUST_PROXY=1` to the dashboard container.
 
 ## Postgres
 The image used is [postgis](https://hub.docker.com/r/postgis/postgis) which is an extention built on top of the [official postgres image](https://hub.docker.com/_/postgres). Note that postgres is not binded to your interfaces and is only local to the docker virtual network. This was done on purpose as the parse and parse-desktop is already exposed. 
