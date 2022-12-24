@@ -35,9 +35,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Get release version
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
@@ -55,7 +52,7 @@ jobs:
           context: parse/.
           platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.TAG }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
   singularity:
