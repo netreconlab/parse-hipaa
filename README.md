@@ -26,9 +26,28 @@ You will still need to setup the following on your own to be fully HIPAA & GDPR 
 - [ ] Be sure to do anything else HIPAA & GDPR requires
 - [ ] If you are hosting using a remote service like Heroku, you may need to pay for additional services such as [Shield Spaces](https://devcenter.heroku.com/articles/heroku-postgres-and-private-spaces)
 
-A modified example of Apple's [CareKit](https://github.com/carekit-apple/CareKit) sample app, [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
+The [CareKitSample-ParseCareKit](https://github.com/netreconlab/CareKitSample-ParseCareKit), uses parse-hipaa along with [ParseCareKit](https://github.com/netreconlab/ParseCareKit). 
 
 **Use at your own risk. There is not promise that this is HIPAA compliant and we are not responsible for any mishandling of your data**
+
+## What is inside parse-hipaa?
+
+Parse-HIPAA is derived from the [parse-server image](https://hub.docker.com/r/parseplatform/parse-server) and contains the following additional packages:
+- [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)
+- [parse-server-carekit](https://github.com/netreconlab/parse-server-carekit)
+- [clamscan](https://www.npmjs.com/package/clamscan)
+- [newrelic](https://www.npmjs.com/package/newrelic) - automatically configured with Heroku deployments, needs additional configuration if you want to use elsewhere
+- [parse-server-any-analytics-adapter](https://github.com/netreconlab/parse-server-any-analytics-adapter) - needs additional configuration if you want to use
+- [@analytics/google-analytics](https://www.npmjs.com/package/@analytics/google-analytics) - needs additional configuration if you want to use
+- [@analytics/google-analytics-v3](https://www.npmjs.com/package/@analytics/google-analytics-v3) - needs additional configuration if you want to use
+- [@parse/s3-files-adapter](https://www.npmjs.com/package/@parse/s3-files-adapter) - needs additional configuration if you want to use
+- [parse-server-api-mail-adapter](https://www.npmjs.com/package/parse-server-api-mail-adapter) - needs additional configuration if you want to use
+- [mailgun.js](https://www.npmjs.com/package/mailgun.js) - needs additional configuration if you want to use
+
+## Images
+Images of parse-hipaa are automatically built for your convenience. Images can be found at the following locations:
+- [Docker - Hosted on Docker Hub](https://hub.docker.com/r/netreconlab/parse-hipaa)
+- [Singularity - Hosted on GitHub Container Registry](https://github.com/netreconlab/parse-hipaa/pkgs/container/parse-hipaa)
 
 ## Deployment
 parse-hipaa can be easily deployed or tested remote or locally.
