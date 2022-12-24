@@ -18,12 +18,12 @@ services:
             PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
             PARSE_SERVER_MOUNT_GRAPHQL: 'true'
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
-            PARSE_SERVER_USING_PARSECAREKIT: 'true' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
             PARSE_DASHBOARD_START: 'true'
             PARSE_DASHBOARD_APP_NAME: Parse HIPAA
             PARSE_DASHBOARD_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
@@ -60,9 +60,9 @@ services:
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
-    scan:
-        image: netreconlab/clamscan:latest
-        restart: always
+   # scan:
+   #     image: netreconlab/clamscan:latest
+   #     restart: always
     # Below is an example of how to run a seperate dashboard, parse-hipaa already has a pre-installed dashboard.
     #dashboard:
     #    image: netreconlab/parse-hipaa-dashboard:latest
