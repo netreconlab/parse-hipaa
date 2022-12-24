@@ -445,8 +445,6 @@ if (enableDashboard) {
   const fs = require('fs');
   const ParseDashboard = require('parse-dashboard');
 
-  const dashboardUsername = process.env.PARSE_DASHBOARD_USERNAME || 'parse';
-  const dashboardUserPassword = process.env.PARSE_DASHBOARD_USER_PASSWORD || '$2a$12$gGgOFs4Un5H.e6Gfs3zDGe3knBfpM0/hxxZiZCvp6bKhVPMlb1gne';
   const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
   const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
   const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
@@ -463,10 +461,8 @@ if (enableDashboard) {
   const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
   const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
   const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
-  let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES || dashboardUsername;
-  configUsernames = configUsernames.split(", ");
-  let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS || dashboardUserPassword;
-  configUserPasswords = configUserPasswords.split(", ");
+  let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES;
+  let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS;
   let configUserPasswordEncrypted = true;
   if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
     configUserPasswordEncrypted = false;
@@ -490,6 +486,8 @@ if (enableDashboard) {
         configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
       }
       if (configUsernames && configUserPasswords) {
+        configUsernames = configUsernames.split(", ");
+        configUserPasswords = configUserPasswords.split(", ");
         if (configUsernames.length == configUserPasswords.length) {
           let users = [];
           configUsernames.forEach((username, index) => {
@@ -503,7 +501,7 @@ if (enableDashboard) {
         } else {
           console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
           process.exit(1);
-        } 
+        }
       }
     } else if (!configServerURL && !configPrimaryKey && !configAppName) {
       configFile = path.join(__dirname, 'parse-dashboard-config.json');
