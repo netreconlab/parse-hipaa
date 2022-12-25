@@ -93,9 +93,6 @@ const validatorPattern = process.env.PARSE_SERVER_PASSWORD_POLICY_VALIDATOR_PATT
 const triggerAfter = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_AFTER || 'info';
 const triggerBeforeError = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_ERROR || 'error';
 const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_SUCCESS || 'info';
-// NEEDED For Parse Server 6.0.0+.
-// let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
-// primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'GameScore';
 classNames = classNames.split(", ");
 
@@ -257,8 +254,6 @@ configuration = {
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: applicationId,
   masterKey: primaryKey,
-  // NEEDED For Parse Server 6.0.0+.
-  // masterKeyIps: primaryKeyIPs,
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: objectIdSize,
   serverURL: serverURL,
@@ -401,9 +396,7 @@ if (enableIdempotency) {
 
 async function setupParseServer() {
   const api = new ParseServer(configuration);
-  // NEEDED For Parse Server 6.0.0+.
-  // await api.start();
-  
+
   // Serve the Parse API on the /parse URL prefix
   app.use(mountPath, api.app);
 
@@ -419,9 +412,16 @@ async function setupParseServer() {
   }
   
   if (process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
-    const { init: CareKitServer } = require('parse-server-carekit');
-    CareKitServer(api);
-    setAuditClassLevelPermissions(); 
+    const { CareKitServer } = require('parse-server-carekit');
+    let shouldAudit = true;
+    if (process.env.PARSE_SERVER_USING_PARSECAREKIT_AUDIT === 'false') {
+      shouldAudit = false;
+    }
+    if (shouldAudit) {
+      setAuditClassLevelPermissions();
+    }
+    let careKitServer = new CareKitServer(api, shouldAudit);
+    await careKitServer.setup();
   }
 }
 

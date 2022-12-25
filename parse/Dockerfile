@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parseplatform/parse-server:latest AS build
+FROM netreconlab/parse-server:latest AS build
 
 # Install necessary dependencies and setup folders a root
 USER root
@@ -14,7 +14,7 @@ RUN npm install --force --omit=dev parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x 
 ############################################################
 # Release stage
 ############################################################
-FROM parseplatform/parse-server:latest AS release
+FROM netreconlab/parse-server:latest AS release
 
 # Start parse-hipaa setup as root
 USER root
