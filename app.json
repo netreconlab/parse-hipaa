@@ -1,9 +1,9 @@
 {
     "name": "Parse HIPAA Server",
-    "description": "An example Parse API server using the parse-server and CareKit",
+    "description": "A Parse API server designed to support ParseCareKit based apps.",
     "repository": "https://github.com/netreconlab/parse-hipaa",
     "logo": "https://avatars0.githubusercontent.com/u/1294580?v=3&s=200",
-    "keywords": ["node", "express", "parse", "carekit", "hipaa", "postgres"],
+    "keywords": ["node", "express", "parse", "parse-server", "carekit", "hipaa", "postgres"],
     "env": {
       "NEW_RELIC_APP_NAME": {
         "description": "Name of your Heroku App. Should be the same as \"App name\"",
@@ -210,7 +210,11 @@
         "value": "300"
       },
       "PARSE_SERVER_USING_PARSECAREKIT": {
-        "description": "Set to 'true' when using ParseCareKit.",
+        "description": "Set to 'true' when your app is designed for ParseCareKit. Otherwise set to 'false' to use as a general Parse Server.",
+        "value": "false"
+      },
+      "PARSE_SERVER_USING_PARSECAREKIT_AUDIT": {
+        "description": "Set to 'true' to audit ParseCareKit tables. Note that auditing takes up more space in your database.",
         "value": "false"
       },
       "PARSE_VERBOSE": {
