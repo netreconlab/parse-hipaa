@@ -420,7 +420,7 @@ async function setupParseServer() {
   if (process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
     const { init: CareKitServer } = require('parse-server-carekit');
     CareKitServer(api);
-    if (process.env.PARSE_SERVER_AUDIT_PARSECAREKIT != 'false') {
+    if (process.env.PARSE_SERVER_USING_PARSECAREKIT_AUDIT != 'false') {
       setAuditClassLevelPermissions();
     }
   }
