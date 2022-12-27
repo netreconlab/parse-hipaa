@@ -8,9 +8,9 @@
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
-Run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [postgres](https://www.postgresql.org) or [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), [Flutter](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#getting-started), and web based apps ([JS, React Native, etc](https://docs.parseplatform.org/js/guide/)). API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/) and [REST](https://docs.parseplatform.org/rest/guide/) are enabled by default in parse-hipaa and can be tested directly or via the "API Console" in the Parse Dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. parse-hipaa includes the necessary database auditing and logging for HIPAA compliance. 
+Run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [PostgreSQL](https://www.postgresql.org) or [MongoDB](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), [Flutter](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#getting-started), and web based apps ([JS, React Native, etc](https://docs.parseplatform.org/js/guide/)). API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/) and [REST](https://docs.parseplatform.org/rest/guide/) are enabled by default in parse-hipaa and can be tested directly or via the "API Console" in the Parse Dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. parse-hipaa includes the necessary database auditing and logging for HIPAA compliance. 
 
-The parse-hipaa repo provides the following:
+`parse-hipaa` provides the following:
 - [x] Auditing & logging at server-admin level (Parse) and at the database level (postgres or mongo)
 - [x] The User class (and the ParseCareKit classes if you are using them) are locked down and doesn't allow unauthenticated access (the standard parse-server allows unauthenticated read access by default)
 - [x] The creation of new Parse Classes and the addition of adding fields from the client-side are disabled. These can be created/added on the server-side using Parse Dashboard (the standard parse-server allows Class and field creation on the client-side by default)
@@ -77,7 +77,7 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 ### Local: Using Docker Image with Postgres or Mongo
-By default, the `docker-compose.yml` uses [postgres](https://www.postgresql.org). A [mongo](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml) variant (uses [percona-server-mongodb](https://www.percona.com/software/mongodb/percona-server-for-mongodb) 4 is included in this repo). 
+By default, the `docker-compose.yml` uses [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres/). The the `docker-compose.mongo.yml` uses [hipaa-mongo](https://github.com/netreconlab/hipaa-mongo/). 
 
 #### Postgres
 To use the Postgres HIPAA compliant variant of parse-hipaa, simply type:
@@ -95,7 +95,7 @@ If you would like to use a non-HIPAA compliant postgres version:
 ```docker-compose -f docker-compose.no.hipaa.yml up```
 
 #### Mongo (Non-HIPAA Compliant)
-A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up are online already exist.
+A non-HIPAA compliant mongo version isn't provided as this is the default [parse-server](https://github.com/parse-community/parse-server#inside-a-docker-container) deployment and many examples of how to set this up already exist.
 
 #### Getting started
 parse-hipaa is made up of four (4) seperate docker images (you use 3 of them at a time) that work together as one system. It's important to set the environment variables for your parse-hipaa server. 
@@ -140,12 +140,9 @@ PG_PARSE_DB # Name of parse-hipaa database
 ###### netreconlab/hipaa-mongo
 ```bash
 # Warning, if you want to make changes to the vars below they need to be changed manually in /scripts/mongo-init.js as the env vars are not passed to the script
-MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Should be MONGO_PARSE_USER
-MONGO_INITDB_ROOT_PASSWORD # Password for mongo db. Should be MONGO_PARSE_PASSWORD
-MONGO_INITDB_DATABASE # Name of mongo db. Should be MONGO_PARSE_DB
-MONGO_PARSE_USER # Username for logging into mongo db for parse-hipaa.
-MONGO_PARSE_PASSWORD # Password for logging into mongo db for parse-hipaa
-MONGO_PARSE_DB # Name of mongo db for parse-hipaa
+MONGO_INITDB_ROOT_USERNAME # Username for mongo db. Username for logging into mongo db for parse-hipaa.
+MONGO_INITDB_ROOT_PASSWORD # Password for mongo db. Password for logging into mongo db for parse-hipaa.
+MONGO_INITDB_DATABASE # Name of mongo db for parse-hipaa
 ```
 
 ###### netreconlab/parse-hipaa-dashboard
