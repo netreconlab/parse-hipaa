@@ -170,8 +170,8 @@
         "value": "5000"
       },      
       "PARSE_SERVER_MOUNT_GRAPHQL": {
-        "description": "Enable graphql, default is 'true'.",
-        "value": "true"
+        "description": "Enable graphql, default is 'false'.",
+        "value": "false"
       },
       "PARSE_SERVER_GRAPH_QLSCHEMA": {
         "description": "Full path to your GraphQL custom schema.graphql file.",
