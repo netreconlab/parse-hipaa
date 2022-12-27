@@ -16,6 +16,11 @@ RUN npm install --force --omit=dev parse-hipaa-dashboard@^1.x.x clamscan@^2.x.x 
 ############################################################
 FROM netreconlab/parse-server:latest AS release
 
+LABEL edu.uky.cs.netrecon.parse-hipaa.vendor="Network Reconnaissance Lab"
+LABEL edu.uky.cs.netrecon.parse-hipaa.authors="baker@cs.uky.edu"
+LABEL description="HIPAA & GDPR compliant ready parse-server with \
+postgres/mongo, parse-hipaa-dashboard. Compatible with ParseCareKit."
+
 # Start parse-hipaa setup as root
 USER root
 

@@ -4,7 +4,7 @@ services:
     parse:
         image: netreconlab/parse-hipaa:latest
         environment:
-            CLUSTER_INSTANCES: 4
+            CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
             PARSE_SERVER_PRIMARY_KEY: E2466756-93CF-4C05-BA44-FF5D9C34E99F
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
@@ -63,6 +63,3 @@ services:
     # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
     #volumes:
     #    - ./data:/var/lib/postgresql/data
-    #scan:
-    #    image: netreconlab/clamscan:latest
-    #    restart: always
