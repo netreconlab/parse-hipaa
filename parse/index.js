@@ -1,13 +1,13 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
+
+const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib');
+const { GridFSBucketAdapter } = require('./lib/Adapters/Files/GridFSBucketAdapter');
+const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
 const express = require('express');
-const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib/index');
-const FSFilesAdapter = require('@parse/fs-files-adapter');
-const GridFSBucketAdapter = require('./lib/Adapters/Files/GridFSBucketAdapter')
-  .GridFSBucketAdapter;
 const path = require('path');
 const cors = require('cors');
-const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
+const FSFilesAdapter = require('@parse/fs-files-adapter');
 
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';

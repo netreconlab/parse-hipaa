@@ -17,7 +17,7 @@ services:
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
             PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
-            PARSE_SERVER_MOUNT_GRAPHQL: 'true'
+            PARSE_SERVER_MOUNT_GRAPHQL: 'false'
             PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
