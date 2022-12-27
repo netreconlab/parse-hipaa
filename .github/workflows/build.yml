@@ -58,7 +58,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
-            latest=true
+            latest=false
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -87,7 +87,9 @@ jobs:
         run: |
           if [[ -f "${{ matrix.recipe }}" ]]; then
             echo "keepgoing=true" >> $GITHUB_ENV
-          fi          
+          fi
+      - name: Get Build Release version
+        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: Build Container
         if: ${{ env.keepgoing == 'true' }}
         env:
@@ -98,7 +100,7 @@ jobs:
             sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
-                tag=latest
+                tag=$TAG
             fi
             # Build the container and name by tag
             echo "Tag is $tag."
