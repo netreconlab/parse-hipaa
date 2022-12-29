@@ -5,6 +5,7 @@ on:
     tags: [ '*.*.*' ]
 
 env:
+  LATEST: '5.4.0'
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -41,7 +42,7 @@ jobs:
         run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
 
       - name: Extract Docker metadata for latest
-        if: env.BRANCH == env.LATEST
+        if: env.TAG == env.LATEST
         id: meta-latest
         uses: docker/metadata-action@v4
         with:
