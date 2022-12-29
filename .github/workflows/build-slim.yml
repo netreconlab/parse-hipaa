@@ -1,4 +1,4 @@
-name: build
+name: build-slim
 
 on:
   schedule:
@@ -48,11 +48,13 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
             latest=false
+            suffix=-slim
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: parse/.
+          file: Dockerfile.slim
           platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
@@ -77,7 +79,7 @@ jobs:
             echo "keepgoing=true" >> $GITHUB_ENV
           fi
 
-      - name: Get build release version
+      - name: Get Build Release version
         run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Create tag for Singularity
@@ -90,7 +92,7 @@ jobs:
             sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
-                tag=$TAG
+                tag=$TAG-slim
             fi
             # Build the container and name by tag
             echo "Tag is $tag."
@@ -101,7 +103,11 @@ jobs:
            ls
          fi
 
-      - name: Login and deploy container
+      - name: Update Singularity file tag
+        run: |
+          sed -i "s/latest/$tag/" ./Singularity
+
+      - name: Login and Deploy Container
         if: (github.event_name != 'pull_request')
         env:
           keepgoing: ${{ env.keepgoing }}
