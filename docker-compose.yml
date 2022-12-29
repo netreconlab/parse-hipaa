@@ -47,12 +47,14 @@ services:
         depends_on:
             - db
     db:
-        image: postgres:latest
+        image: netreconlab/hipaa-postgres:latest
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
+            PMM_USER: ${PMM_USER}
+            PMM_PASSWORD: ${PMM_PASSWORD}
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
@@ -60,6 +62,15 @@ services:
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
+    monitor:
+        image: percona/pmm-server:2
+        restart: always
+        ports:
+            - 127.0.0.1:1080:${PMM_PORT} # Unsecure connections
+            - 127.0.0.1:1443:${PMM_TLS_PORT} # Secure connections
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+    #    volumes:
+    #        - /My/Encrypted/Drive/srv:/srv
    # scan:
    #     image: netreconlab/clamscan:latest
    #     restart: always
