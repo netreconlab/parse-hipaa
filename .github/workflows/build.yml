@@ -79,6 +79,7 @@ jobs:
         run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Update Singularity file tag
+        if: github.event_name != 'pull_request'
         run: |
           sed -i "s/latest/$TAG/" ./Singularity
 
