@@ -1,8 +1,8 @@
 name: build
 
 on:
-  #schedule:
-  #   - cron: '19 17 * * *'
+  schedule:
+     - cron: '19 17 * * *'
   push:
     branches: [ 6.0.0-alpha ]
   pull_request:
