@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:latest-dashboard
+        image: netreconlab/parse-hipaa:5.4.0-dashboard
         environment:
             CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
