@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:latest
+        image: netreconlab/parse-hipaa:5.4.0-dashboard
         environment:
             CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
@@ -17,13 +17,22 @@ services:
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
             PARSE_PUBLIC_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
-            PARSE_SERVER_MOUNT_GRAPHQL: 'true'
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_MOUNT_GRAPHQL: 'false'
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_DASHBOARD_START: 'true'
+            PARSE_DASHBOARD_APP_NAME: Parse HIPAA
+            PARSE_DASHBOARD_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
+            PARSE_DASHBOARD_USERNAMES: parse, parseRead
+            PARSE_DASHBOARD_USER_PASSWORDS: 1234, 1234
+            PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'false'
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
+            PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
             PARSE_VERBOSE: 'false'
         ports:
             - 127.0.0.1:${PORT}:${PORT}
@@ -33,7 +42,6 @@ services:
         restart: always
         depends_on:
             - db
-        entrypoint: [""]
         command: ["node", "index.js"]
     db:
         image: netreconlab/hipaa-mongo:latest
@@ -48,18 +56,6 @@ services:
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/logs/:/logs
-    dashboard:
-        image: netreconlab/parse-hipaa-dashboard:latest
-        environment:
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-        volumes:
-            - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
-        ports:
-            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
-        depends_on:
-            - parse
     #scan:
     #    image: netreconlab/clamscan:latest
     #    restart: always

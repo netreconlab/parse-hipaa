@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:latest
+        image: netreconlab/parse-hipaa:5.4.0-dashboard
         environment:
             CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: ${PARSE_SERVER_APPLICATION_ID}
@@ -17,13 +17,22 @@ services:
             PARSE_SERVER_URL: http://parse:${PORT}${MOUNT_PATH}
             PARSE_SERVER_PUBLIC_URL: http://localhost:${PORT}${MOUNT_PATH}
             PARSE_SERVER_CLOUD: /parse-server/cloud/main.js
-            PARSE_SERVER_MOUNT_GRAPHQL: 'true'
-            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'true' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
+            PARSE_SERVER_MOUNT_GRAPHQL: 'false'
+            PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION: 'false' # Don't allow classes to be created on the client side. You can create classes by using ParseDashboard instead
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
+            PARSE_DASHBOARD_START: 'true'
+            PARSE_DASHBOARD_APP_NAME: Parse HIPAA
+            PARSE_DASHBOARD_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
+            PARSE_DASHBOARD_USERNAMES: parse, parseRead
+            PARSE_DASHBOARD_USER_PASSWORDS: 1234, 1234
+            PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'false'
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
+            PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
@@ -34,33 +43,34 @@ services:
             - ./parse/cloud:/parse-server/cloud
             - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
         restart: always
+        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
             - db
-        entrypoint: [""]
-        command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
-    dashboard:
-        image: parseplatform/parse-dashboard:latest
-        environment:
-            PARSE_DASHBOARD_TRUST_PROXY: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-        command: parse-dashboard --dev
-        volumes:
-            - ./dashboard/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
-        ports:
-            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
-        depends_on:
-            - parse
     db:
-        image: postgis/postgis:latest
+        image: netreconlab/hipaa-postgres:latest
         environment:
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             PG_PARSE_USER: ${PG_PARSE_USER}
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
+            PMM_USER: ${PMM_USER}
+            PMM_PASSWORD: ${PMM_PASSWORD}
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
-    # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
-    #volumes:
-    #    - ./data:/var/lib/postgresql/data
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+   #     volumes:
+   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
+   #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
+   # monitor:
+   #     image: percona/pmm-server:2
+   #     restart: always
+   #     ports:
+   #         - 127.0.0.1:1080:${PMM_PORT} # Unsecure connections
+   #         - 127.0.0.1:1443:${PMM_TLS_PORT} # Secure connections
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+    #    volumes:
+    #        - /My/Encrypted/Drive/srv:/srv
+   # scan:
+   #     image: netreconlab/clamscan:latest
+   #     restart: always
