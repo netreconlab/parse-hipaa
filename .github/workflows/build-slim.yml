@@ -4,9 +4,9 @@ on:
   schedule:
     - cron: '19 17 * * *'
   push:
-    branches: [ main ]
+    branches: [ 6.0.0-alpha ]
   pull_request:
-    branches: [ main ]
+    branches: [ 6.0.0-alpha ]
 
 env:
   REGISTRY: docker.io
