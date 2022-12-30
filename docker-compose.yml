@@ -24,15 +24,6 @@ services:
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
-            PARSE_DASHBOARD_START: 'true'
-            PARSE_DASHBOARD_APP_NAME: Parse HIPAA
-            PARSE_DASHBOARD_SERVER_URL: http://localhost:${PORT}${MOUNT_PATH}
-            PARSE_DASHBOARD_USERNAMES: parse, parseRead
-            PARSE_DASHBOARD_USER_PASSWORDS: 1234, 1234
-            PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'false'
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
             PARSE_VERBOSE: 'false'
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
@@ -53,26 +44,36 @@ services:
             PG_PARSE_USER: ${PG_PARSE_USER}
             PG_PARSE_PASSWORD: ${PG_PARSE_PASSWORD}
             PG_PARSE_DB: ${PG_PARSE_DB}
+            PMM_USER: ${PMM_USER}
+            PMM_PASSWORD: ${PMM_PASSWORD}
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
+    dashboard:
+        image: netreconlab/parse-hipaa-dashboard:latest
+        environment:
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
+            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
+            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+        volumes:
+            - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
+        ports:
+            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
+        depends_on:
+            - parse
         # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
    #     volumes:
    #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
+   # monitor:
+   #     image: percona/pmm-server:2
+   #     restart: always
+   #     ports:
+   #         - 127.0.0.1:1080:${PMM_PORT} # Unsecure connections
+   #         - 127.0.0.1:1443:${PMM_TLS_PORT} # Secure connections
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+    #    volumes:
+    #        - /My/Encrypted/Drive/srv:/srv
    # scan:
    #     image: netreconlab/clamscan:latest
    #     restart: always
-    # Below is an example of how to run a seperate dashboard, parse-hipaa already has a pre-installed dashboard.
-    #dashboard:
-    #    image: netreconlab/parse-hipaa-dashboard:latest
-    #    environment:
-    #        PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
-    #        PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-    #        MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-    #    volumes:
-    #        - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
-    #    ports:
-    #        - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
-    #    depends_on:
-    #        - parse
