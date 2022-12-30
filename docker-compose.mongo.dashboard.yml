@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
     parse:
-        image: netreconlab/parse-hipaa:5
+        image: netreconlab/parse-hipaa:5.4.0-dashboard
         environment:
             CLUSTER_INSTANCES: 1
             PARSE_SERVER_APPLICATION_ID: E036A0C5-6829-4B40-9B3B-3E05F6DF32B2
@@ -56,18 +56,6 @@ services:
         #volumes:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/logs/:/logs
-    dashboard:
-        image: netreconlab/parse-hipaa-dashboard:latest
-        environment:
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
-            PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
-        volumes:
-            - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
-        ports:
-            - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
-        depends_on:
-            - parse
     #scan:
     #    image: netreconlab/clamscan:latest
     #    restart: always
