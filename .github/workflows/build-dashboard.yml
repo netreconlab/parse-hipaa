@@ -82,7 +82,11 @@ jobs:
       - name: Get build release version
         run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
-      - name: Create tag for Singularity
+      - name: Update Singularity file tag
+        run: |
+          sed -i "s/latest/$TAG/" ./Singularity
+
+      - name: Build Singularity image
         if: ${{ env.keepgoing == 'true' }}
         env:
           recipe: ${{ matrix.recipe }}
@@ -102,10 +106,6 @@ jobs:
            echo "Present working directory: $PWD"
            ls
          fi
-
-      - name: Update Singularity file tag
-        run: |
-          sed -i "s/latest/$tag/" ./Singularity
 
       - name: Login and Deploy Container
         if: (github.event_name != 'pull_request')
