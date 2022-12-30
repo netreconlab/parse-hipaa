@@ -71,7 +71,7 @@ jobs:
       - name: Check out code for the container build
         uses: actions/checkout@v3
 
-      - name: Continue if Singularity Recipe Exists
+      - name: Continue if Singularity recipe exists
         run: |
           if [[ -f "${{ matrix.recipe }}" ]]; then
             echo "keepgoing=true" >> $GITHUB_ENV
