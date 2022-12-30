@@ -2,9 +2,9 @@ name: build
 
 on:
   push:
-    branches: [ 5 ]
+    branches: [ '5' ]
   pull_request:
-    branches: [ 5 ]
+    branches: [ '5' ]
 
 env:
   REGISTRY: docker.io
