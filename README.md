@@ -2,9 +2,9 @@
 
 [![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
 [![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml)
-[![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-slim.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-slim.yml)
+[![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-dashboard.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-dashboard.yml)
 [![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml)
-[![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-slim.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-slim.yml)
+[![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-dashboard.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-dashboard.yml)
 
 ---
 
@@ -55,20 +55,22 @@ Images of parse-hipaa are automatically built for your convenience. Images can b
 
 #### Production
 - `latest` - Points to the newest released version. This version of parse-hipaa is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
-- `x.x.x` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This version of `parse-hipaa` is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
-- `x.x.x-slim` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This is smallest possible image of `parse-hipaa` and it **does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
+- `x.x.x` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This is smallest possible image of `parse-hipaa` and it **does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
+- `x.x.x-dashboard` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This version of `parse-hipaa` is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
+
 
 #### Development
 - `main` - Points to the most up-to-date code and depends on the latest release of parse-server. This version of `parse-hipaa` is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**. This tag can contain breaking changes
 - `x.x.x-alpha/beta` - Points to most up-to-date code and depends on the respective [alha/beta releases of parse-server](https://github.com/parse-community/parse-server#flavors--branches). This version of parse-hipaa is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**. This tag can contain breaking changes
 
 ### Recommendations
-Any/all of the tagged servers can be used in combination with each other to build a [High Availability](https://en.wikipedia.org/wiki/High-availability_cluster)(HA) server-side application. For example, your HA cluster may consist of: (1) [nginx](https://www.nginx.com/resources/glossary/nginx/) reverse proxy/load balancer, (1) `x.x.x` `parse-hipaa` server, (2) `x.x.x-slim` `parse-hipaa` servers,  and (1) [Percona Monitor and Management](https://www.percona.com/software/database-tools/percona-monitoring-and-management) server.
+Any/all of the tagged servers can be used in combination with each other to build a [High Availability](https://en.wikipedia.org/wiki/High-availability_cluster)(HA) server-side application. For example, your HA cluster may consist of: (1) [nginx](https://www.nginx.com/resources/glossary/nginx/) reverse proxy/load balancer, (1) `x.x.x-dashboard` `parse-hipaa` server, (2) `x.x.x` `parse-hipaa` servers,  and (1) [Percona Monitor and Management](https://www.percona.com/software/database-tools/percona-monitoring-and-management) server.
 
-- `latest` or `x.x.x` - Use one of these images only if you plan to have one stand-alone `parse-hipaa` server or you want one of your servers to also provide [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard) ability
+#### Standard (without parse-hipaa-dashboard)
+- `latest` or `x.x.x` - Use one or more of these images if you plan to have multiple `parse-hipaa` servers working together to create [HA](https://en.wikipedia.org/wiki/High-availability_cluster) or just need a stand-alone server. Note that if all of your `parse-hipaa` servers are `x.x.x`, you may want to add a stand-alone [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard) or [parse-server-dashoard](https://github.com/parse-community/parse-dashboard)
     - See [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.yml) for an example
-- `x.x.x-slim` - Use one or more of these images if you plan to have multiple `parse-hipaa` servers working together to create [HA](https://en.wikipedia.org/wiki/High-availability_cluster). Note if all of your `parse-hipaa` servers are `x.x.x-slim`, you may want to add a stand-alone [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard) or [parse-server-dashoard](https://github.com/parse-community/parse-dashboard)
-    - See [docker-compose.slim.yml](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.slim.yml) for an example
+- `-dashboard` - Use one of these images only if you plan to have one stand-alone `parse-hipaa` server or you want one of your servers to also provide [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard) ability
+    - See [docker-compose-dashboard.yml](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose-dashboard.yml) for an example
 - `main` or `x.x.x-alpha/beta` - Use only as a development server for testing/debugging the latest features. It is recommended not to use these tags for deployed systems
 
 ## Deployment
