@@ -80,9 +80,10 @@ jobs:
           fi
 
       - name: Get build release version
-        run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: echo "TAG=${GITHUB_REF##*/}-dashboard" >> $GITHUB_ENV
 
       - name: Update Singularity file tag
+        if: github.event_name != 'pull_request'
         run: |
           sed -i "s/latest/$TAG/" ./Singularity
 
@@ -96,7 +97,7 @@ jobs:
             sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
-                tag=$TAG-dashboard
+                tag=$TAG
             fi
             # Build the container and name by tag
             echo "Tag is $tag."
