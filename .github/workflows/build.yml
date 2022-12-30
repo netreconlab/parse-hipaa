@@ -99,6 +99,10 @@ jobs:
            ls
          fi
 
+      - name: Update Singularity file tag
+        run: |
+          sed -i "s/latest/$tag/" ./Singularity
+
       - name: Login and deploy container
         if: (github.event_name != 'pull_request')
         env:
