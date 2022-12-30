@@ -5,7 +5,6 @@ on:
     tags: [ '*.*.*', '*.*.*-*' ]
 
 env:
-  LATEST: '5.4.0'
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -38,42 +37,20 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Get release version
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-
-      - name: Extract Docker metadata for latest
-        if: env.TAG == env.LATEST
-        id: meta-latest
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=true
-
       - name: Extract Docker metadata
-        if: env.TAG != env.LATEST
         id: meta
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           flavor: |
             latest=false
-
-      - name: Build and push Docker image for latest
-        if: env.TAG == env.LATEST
-        uses: docker/build-push-action@v3
-        with:
-          context: parse/.
-          platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta-latest.outputs.tags }}
-          labels: ${{ steps.meta-latest.outputs.labels }}
+            suffix=-slim
 
       - name: Build and push Docker image
-        if: env.TAG != env.LATEST
         uses: docker/build-push-action@v3
         with:
           context: parse/.
+          file: parse/Dockerfile.slim
           platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
@@ -88,7 +65,6 @@ jobs:
       fail-fast: false
       matrix:
         recipe: ["Singularity"]
-
     steps:
       - name: Check out code for the container build
         uses: actions/checkout@v3
@@ -111,7 +87,7 @@ jobs:
             sudo -E singularity build container.sif ${{ matrix.recipe }}
             tag=$(echo "${recipe/Singularity\./}")
             if [ "$tag" == "Singularity" ]; then
-                tag=$TAG
+                tag=$TAG-slim
             fi
             # Build the container and name by tag
             echo "Tag is $tag."
@@ -124,24 +100,14 @@ jobs:
 
       - name: Update Singularity file tag
         run: |
-          sed -i "s/latest/$tag/" ./Singularity
+          sed -i "s/latest/$tag/" ./Singularity 
 
-      - name: Login and deploy container
+      - name: Login and Deploy Container
         env:
           keepgoing: ${{ env.keepgoing }}
         run: |         
             if [[ "${keepgoing}" == "true" ]]; then
                 echo ${{ secrets.GITHUB_TOKEN }} | singularity remote login -u ${{ secrets.GHCR_USERNAME }} --password-stdin oras://ghcr.io
                 singularity push container.sif oras://ghcr.io/${GITHUB_REPOSITORY}:${tag}
-            fi
-
-      - name: Login and deploy latest container
-        if: env.TAG == env.LATEST
-        env:
-          keepgoing: ${{ env.keepgoing }}
-        run: |
-            if [[ "${keepgoing}" == "true" ]]; then
-                echo ${{ secrets.GITHUB_TOKEN }} | singularity remote login -u ${{ secrets.GHCR_USERNAME }} --password-stdin oras://ghcr.io
-                singularity push container.sif oras://ghcr.io/${GITHUB_REPOSITORY}:latest
             fi
 
