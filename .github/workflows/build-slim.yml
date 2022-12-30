@@ -79,7 +79,7 @@ jobs:
             echo "keepgoing=true" >> $GITHUB_ENV
           fi
 
-      - name: Get Build Release version
+      - name: Get build release version
         run: echo "TAG=${GITHUB_REF##*/}" >> $GITHUB_ENV
 
       - name: Create tag for Singularity
