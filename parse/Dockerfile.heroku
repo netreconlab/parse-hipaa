@@ -1,1 +1,1 @@
-FROM netreconlab/parse-hipaa:latest
+FROM netreconlab/parse-hipaa:latest-dashboard
