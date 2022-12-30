@@ -2,7 +2,9 @@
 
 [![](https://dockeri.co/image/netreconlab/parse-hipaa)](https://hub.docker.com/r/netreconlab/parse-hipaa)
 [![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build.yml)
+[![build](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-slim.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/build-slim.yml)
 [![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release.yml)
+[![release](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-slim.yml/badge.svg)](https://github.com/netreconlab/parse-hipaa/actions/workflows/release-slim.yml)
 
 ---
 
