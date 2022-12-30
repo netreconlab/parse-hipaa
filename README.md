@@ -54,9 +54,9 @@ Images of parse-hipaa are automatically built for your convenience. Images can b
 ### Flavors and Tags
 
 #### Production
-- `latest` - Points to the newest released version. This version of parse-hipaa **does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
-- `x.x.x` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This is smallest possible image of `parse-hipaa` and it **does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
-- `x.x.x-dashboard` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This version of `parse-hipaa` is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)** and is a larger image
+- `latest` - Points to the newest released version. **This is smallest possible image of `parse-hipaa` and it does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
+- `x.x.x` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. **This is smallest possible image of `parse-hipaa` and it does not contain [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard)**
+- `x.x.x-dashboard` - Points to a specific released version. These version numbers match their respective [parse-server](https://github.com/parse-community/parse-server#flavors--branches) released versions. This version of `parse-hipaa` is **built with [parse-hipaa-dashboard](https://github.com/netreconlab/parse-hipaa-dashboard) and is a larger image**
 
 
 #### Development
