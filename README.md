@@ -10,7 +10,7 @@
 
 ![dashboard](https://user-images.githubusercontent.com/8621344/102236202-38f32080-3ec1-11eb-88d7-24e38e95f68d.png)
 
-Run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [PostgreSQL](https://www.postgresql.org) or [MongoDB](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), [Flutter](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#getting-started), and web based apps ([JS, React Native, etc](https://docs.parseplatform.org/js/guide/)). API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/) and [REST](https://docs.parseplatform.org/rest/guide/) are enabled by default in parse-hipaa and can be tested directly or via the "API Console" in the Parse Dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. parse-hipaa includes the necessary database auditing and logging for HIPAA compliance. 
+Run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-community/parse-server) with [PostgreSQL](https://www.postgresql.org) or [MongoDB](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.mongo.yml). parse-hipaa also includes [parse-dashboard](https://github.com/parse-community/parse-dashboard) for viewing/modifying your data in the Cloud. Since [parse-hipaa](https://github.com/netreconlab/parse-hipaa) is a pare-server, it can be used for [iOS](https://docs.parseplatform.org/ios/guide/), [Android](https://docs.parseplatform.org/android/guide/), [Flutter](https://github.com/parse-community/Parse-SDK-Flutter/tree/master/packages/flutter#getting-started), and web based apps ([JS, React Native, etc](https://docs.parseplatform.org/js/guide/)). API's such as [GraphQL](https://docs.parseplatform.org/graphql/guide/) and [REST](https://docs.parseplatform.org/rest/guide/) are enabled by default in parse-hipaa and can be tested directly or via the "API Console" in the Parse Dashboard. See the [Parse SDK documentation](https://parseplatform.org/#sdks) for details and examples of how to leverage parse-hipaa for your language(s) of interest. parse-hipaa includes the necessary database auditing and logging for HIPAA compliance. 
 
 `parse-hipaa` provides the following:
 - [x] Auditing & logging at server-admin level (Parse) and at the database level (postgres or mongo)
@@ -225,10 +225,10 @@ There are equivalent [Singularity](https://sylabs.io/singularity/) images that c
 ## Parse Server
 Your parse-server is binded to all of your interfaces on port 1337/parse and be can be accessed as such, e.g. `http://localhost:1337/parse`.
 
-The standard configuration can be modified to your liking by editing [index.js](https://github.com/netreconlab/parse-hipaa/blob/master/index.js). Here you can add/modify things like push notifications, password resets, [adapters](https://github.com/parse-community/parse-server#available-adapters), etc. This file as an express app and some examples provided from parse can be found [here](https://github.com/parse-community/parse-server#using-expressjs). Note that there is no need to rebuild your image when modifying files in the "index.js" file since it is volume mounted, but you will need to restart the parse container for your changes to take effect.
+The standard configuration can be modified to your liking by editing [index.js](https://github.com/netreconlab/parse-hipaa/blob/main/index.js). Here you can add/modify things like push notifications, password resets, [adapters](https://github.com/parse-community/parse-server#available-adapters), etc. This file as an express app and some examples provided from parse can be found [here](https://github.com/parse-community/parse-server#using-expressjs). Note that there is no need to rebuild your image when modifying files in the "index.js" file since it is volume mounted, but you will need to restart the parse container for your changes to take effect.
 
 ### Configuring
-Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PARSE_SERVER_PRIMARY_KEY` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change both values. Environment variables, `PARSE_SERVER_DATABASE_URI, PARSE_SERVER_URL, PORT, PARSE_SERVER_PUBLIC_URL, PARSE_SERVER_CLOUD, and PARSE_SERVER_MOUNT_GRAPHQL` should not be changed unles you are confident with configuring parse-server or else you image may not work properly. In particular, changing `PORT` should only be done in [.env](https://github.com/netreconlab/parse-hipaa/blob/master/.env) and will also require you to change the port manually in the [parse-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json#L4) for both "serverURL" and "graphQLServerURL" to have the Parse Dashboard work correctly.
+Default values for environment variables: `PARSE_SERVER_APPLICATION_ID` and `PARSE_SERVER_PRIMARY_KEY` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change both values. Environment variables, `PARSE_SERVER_DATABASE_URI, PARSE_SERVER_URL, PORT, PARSE_SERVER_PUBLIC_URL, PARSE_SERVER_CLOUD, and PARSE_SERVER_MOUNT_GRAPHQL` should not be changed unles you are confident with configuring parse-server or else you image may not work properly. In particular, changing `PORT` should only be done in [.env](https://github.com/netreconlab/parse-hipaa/blob/main/.env) and will also require you to change the port manually in the [parse-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/main/parse/parse-dashboard-config.json#L4) for both "serverURL" and "graphQLServerURL" to have the Parse Dashboard work correctly.
 
 #### Running in production for ParseCareKit
 If you are plan on using parse-hipaa in production. You should run the additional scripts to create the rest of the indexes for optimized queries.
@@ -247,10 +247,10 @@ If you are using your own postgres image, you should copy [setup-parse-index.sh]
 ##### Mongo
 Will be created in the future...
 
-Other [parse-server environment variables](https://github.com/parse-community/parse-server/blob/master/src/Options/Definitions.js) can be set, but they require you to make additions/modifications to the [index.js](https://github.com/netreconlab/parse-hipaa/blob/master/index.js).
+Other [parse-server environment variables](https://github.com/parse-community/parse-server/blob/alpha/src/Options/Definitions.js) can be set, but they require you to make additions/modifications to the [index.js](https://github.com/netreconlab/parse-hipaa/blob/main/parse/index.js).
 
 ### Cloud Code
-For verfying and cleaning your data along with other added functionality, you can add [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to the [cloud](https://github.com/netreconlab/parse-hipaa/tree/master/cloud) folder. Note that there is no need to rebuild your image when modifying files in the "cloud" folder since this is volume mounted, but you may need to restart the parse container for your changes to take effect.
+For verfying and cleaning your data along with other added functionality, you can add [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to the [cloud](https://github.com/netreconlab/parse-hipaa/tree/main/parse/cloud) folder. Note that there is no need to rebuild your image when modifying files in the "cloud" folder since this is volume mounted, but you may need to restart the parse container for your changes to take effect.
 
 ## Viewing Your Data via Parse Dashboard
 
@@ -259,13 +259,13 @@ Follow the directions in the [parse-hipaa-dashboard](https://github.com/netrecon
 
 ### Local (Docker or Singularity)
 
-#### netreconlab/parse-hipaa-dashboard (docker-compose.yml)
+#### parseplatform/parse-dashboard (docker-compose.yml, docker-compose.no.hipaa.yml, docker-compose.mongo.yml)
+Parse-Dashboard is binded to your `localhost` on port `4040` and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the usernames and passwords in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/main/parse/parse-dashboard-config.json#L13-L21). Note that the password is hashed by using [bcrypt-generator](https://bcrypt-generator.com) or similar. Authentication can also occur through [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password).
+
+#### netreconlab/parse-hipaa-dashboard (docker-compose.dashboard.yml and docker-compose.mongo.dashboard.yml)
 Parse-Hipaa-Dashboard is binded to your `localhost` on port `1337`, mounted to the `/dashboard` endpoint, and can be accessed as such, e.g. http://localhost:1337/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the usernames and passwords in the [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/docker-compose.yml#L30-L32) along with setting `PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'true'`. Note that the password should be hashed using a [bcrypt-generator](https://bcrypt-generator.com) or similar. Authentication can also occur through [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password).
 
-#### parseplatform/parse-dashboard (docker-compose.no.hipaa.yml and docker-compose.mongo.yml)
-Parse-Dashboard is binded to your `localhost` on port `4040` and can be accessed as such, e.g. http://localhost:4040/dashboard. The default login for the parse dashboard is username: "parse", password: "1234". For production you should change the usernames and passwords in the [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/dashboard/parse-dashboard-config.json#L13-L21). Note that the password is hashed by using [bcrypt-generator](https://bcrypt-generator.com) or similar. Authentication can also occur through [multi factor authentication](https://github.com/parse-community/parse-dashboard#multi-factor-authentication-one-time-password).
-
-1. Open your browser and go to http://localhost:4040/dashboard
+1. Open your browser and and depending on how your dashboard is mounted, go to http://localhost:4040/dashboard or http://localhost:1337/dashboard
 2. Username: `parse` # You can use `parseRead` to login as a read only user
 3. Password: `1234`
 4. Be sure to refresh your browser to see new changes synched from your CareKitSample app
@@ -276,17 +276,17 @@ If you plan on using this image to deploy in production, it is recommended to ru
 ## Postgres
 The image used is [postgis](https://hub.docker.com/r/postgis/postgis) which is an extention built on top of the [official postgres image](https://hub.docker.com/_/postgres). Note that postgres is not binded to your interfaces and is only local to the docker virtual network. This was done on purpose as the parse and parse-desktop is already exposed. 
 
-If you want to persist the data in the database, you can uncomment the volume lines in [docker-compose](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml#L41)
+If you want to persist the data in the database, you can uncomment the volume lines in [docker-compose](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.yml#L41)
 
 ### Configuring
-Default values for environment variables: `POSTGRES_PASSWORD, PG_PARSE_USER, PG_PARSE_PASSWORD, PG_PARSE_DB` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/master/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change `POSTGRES_PASSWORD, PG_PARSE_USER, PG_PARSE_PASSWORD`. Note that the postgres image provides a default user of "postgres" to configure the database cluster, you can change the password for the "postgres" user by changing `POSTGRES_PASSWORD`. There are plenty of [postgres environment variables](https://hub.docker.com/_/postgres) that can be modified. Environment variables should not be changed unles you are confident with configuring postgres or else you image may not work properly. Note that changes to the aforementioned paramaters will only take effect if you do them before the first build and run of the image. Afterwards, you will need to make all changes by connecting to the image typing:
+Default values for environment variables: `POSTGRES_PASSWORD, PG_PARSE_USER, PG_PARSE_PASSWORD, PG_PARSE_DB` are provided in [docker-compose.yml](https://github.com/netreconlab/parse-hipaa/blob/main/docker-compose.yml) for quick local deployment. If you plan on using this image to deploy in production, you should definitely change `POSTGRES_PASSWORD, PG_PARSE_USER, PG_PARSE_PASSWORD`. Note that the postgres image provides a default user of "postgres" to configure the database cluster, you can change the password for the "postgres" user by changing `POSTGRES_PASSWORD`. There are plenty of [postgres environment variables](https://hub.docker.com/_/postgres) that can be modified. Environment variables should not be changed unles you are confident with configuring postgres or else you image may not work properly. Note that changes to the aforementioned paramaters will only take effect if you do them before the first build and run of the image. Afterwards, you will need to make all changes by connecting to the image typing:
 
 ```docker exec -u postgres -ti parse-hipaa_db_1 bash```
 
-You can then make modifications using [psql](http://postgresguide.com/utilities/psql.html). Through psql, you can also add multiple databases and users to support a number of parse apps. Note that you will also need to add the respecting parse-server containers (copy parse container in the .yml and rename to your new app) along with the added app in [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/master/parse-dashboard-config.json).
+You can then make modifications using [psql](http://postgresguide.com/utilities/psql.html). Through psql, you can also add multiple databases and users to support a number of parse apps. Note that you will also need to add the respecting parse-server containers (copy parse container in the .yml and rename to your new app) along with the added app in [postgres-dashboard-config.json](https://github.com/netreconlab/parse-hipaa/blob/main/parse/parse-dashboard-config.json).
 
 ## Deploying on a real system
-The docker yml's here are intended to run behind a proxy that properly has ssl configured to encrypt data in transit. To create a proxy to parse-hipaa, nginx files are provided [here](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled). Simply add the [sites-available](https://github.com/netreconlab/parse-hipaa/tree/master/nginx/sites-enabled) folder to your nginx directory and add the following to "http" in your nginx.conf:
+The docker yml's here are intended to run behind a proxy that properly has ssl configured to encrypt data in transit. To create a proxy to parse-hipaa, nginx files are provided [here](https://github.com/netreconlab/parse-hipaa/tree/main/nginx/sites-enabled). Simply add the [sites-available](https://github.com/netreconlab/parse-hipaa/tree/main/nginx/sites-enabled) folder to your nginx directory and add the following to "http" in your nginx.conf:
 
 ```bash
 http {
@@ -294,11 +294,9 @@ http {
 }
 ```
 
-Setup your free certificates using [LetsEncrypt](https://letsencrypt.org), follow the directions [here](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/). Be sure to change the certificate and key lines to point to correct location in [default-ssl.conf](https://github.com/netreconlab/parse-hipaa/blob/master/nginx/sites-enabled/default-ssl.conf).
+Setup your free certificates using [LetsEncrypt](https://letsencrypt.org), follow the directions [here](https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/). Be sure to change the certificate and key lines to point to correct location in [default-ssl.conf](https://github.com/netreconlab/parse-hipaa/blob/main/nginx/sites-enabled/default-ssl.conf).
 
 ## Is there a mongo version available?
 The mongo equivalent is available in this repo. The same steps as above. but use:
 
 ```docker-compose -f docker-compose.mongo.yml up```
-
-
