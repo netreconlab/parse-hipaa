@@ -56,7 +56,7 @@ services:
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
             MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         volumes:
-            - ./dashboard/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
+            - ./parse/parse-dashboard-config.json:/parse-hipaa-dashboard/lib/parse-dashboard-config.json
         ports:
             - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
         depends_on:
