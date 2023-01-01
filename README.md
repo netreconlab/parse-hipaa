@@ -240,7 +240,7 @@ You most likely want to enable Idempotency. Read more about how to configure on 
 If you are using `hipaa_postgres` or `parse-postgres` (the two images included in this repo). The `setup-parse-index.sh` is already in the container. You just have to run it. 
 
 1. Log into your docker container, type: ```docker exec -u postgres -ti parse-hipaa_db_1 bash```
-2. Run the script, type: ```./parseScripts/setup-parse-index.h```
+2. Run the script, type: ```/usr/local/bin/setup-parse-index.h```
 
 If you are using your own postgres image, you should copy [setup-parse-index.sh](https://github.com/netreconlab/parse-hipaa/blob/main/postgres/docker-compose.test.yml) to your container and complete the login and run steps above (be sure to switch `parse-hipaa_db_1` to your actual running container name).
 
