@@ -241,6 +241,8 @@ If you are using `hipaa_postgres`, the `setup-parse-index.sh` is already in the 
 
 If you are using your own postgres image, you should copy [setup-parse-index.sh](https://github.com/netreconlab/hipaa-postgres/blob/main/scripts/setup-parse-index.sh) to your container and complete the login and run steps above (be sure to switch `parse-hipaa_db_1` to your actual running container name on your system).
 
+More information about configuring can be found on [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres#configuring).
+
 ###### Idempotency
 You most likely want to enable Idempotency. Read more about how to configure on [Parse Server](https://github.com/parse-community/parse-server#idempotency-enforcement). For Postgres, you can setup a [cron](https://en.wikipedia.org/wiki/Cron) or scheduler to run [parse_idempotency_delete_expired_records.sh](https://github.com/netreconlab/parse-hipaa/blob/main/parse/scripts/parse_idempotency_delete_expired_records.sh) at a desired frequency to remove stale data.
 
