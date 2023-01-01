@@ -49,6 +49,10 @@ services:
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
+        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+   #     volumes:
+   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
+   #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
     dashboard:
         image: netreconlab/parse-hipaa-dashboard:latest
         environment:
@@ -61,10 +65,6 @@ services:
             - 127.0.0.1:${DASHBOARD_PORT}:${DASHBOARD_PORT}
         depends_on:
             - parse
-        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
-   #     volumes:
-   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
-   #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
    # monitor:
    #     image: percona/pmm-server:2
    #     restart: always
