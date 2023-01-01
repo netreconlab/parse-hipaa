@@ -250,7 +250,7 @@ Information about configuring can be found on [hipaa-mongo](https://github.com/n
 ###### Idempotency
 You most likely want to enable Idempotency. Read more about how to configure on [Parse Server](https://github.com/parse-community/parse-server#idempotency-enforcement). For Postgres, you can setup a [cron](https://en.wikipedia.org/wiki/Cron) or scheduler to run [parse_idempotency_delete_expired_records.sh](https://github.com/netreconlab/parse-hipaa/blob/main/parse/scripts/parse_idempotency_delete_expired_records.sh) at a desired frequency to remove stale data.
 
-### Cloud Code
+#### Cloud Code
 For verfying and cleaning your data along with other added functionality, you can add [Cloud Code](https://docs.parseplatform.org/cloudcode/guide/) to the [cloud](https://github.com/netreconlab/parse-hipaa/tree/main/parse/cloud) folder. Note that there is no need to rebuild your image when modifying files in the "cloud" folder since this is volume mounted, but you may need to restart the parse container for your changes to take effect.
 
 ## Viewing Your Data via Parse Dashboard
