@@ -410,10 +410,6 @@ async function setupParseServer() {
   // Serve the Parse API on the /parse URL prefix
   app.use(mountPath, api.app);
 
-  if (trustServerProxy) {
-    app.enable('trust proxy');
-  }
-
   if (enableGraphQL) {
     const parseGraphQLServer = new ParseGraphQLServer(
       api,
@@ -461,13 +457,7 @@ if (enableDashboard) {
 
   const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
   const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
-  let trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY || trustServerProxy;
-
-  if (trustProxy == 'true') {
-    trustProxy = true;
-  } else {
-    trustProxy = false;
-  }
+  let trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
 
   if (trustProxy && allowInsecureHTTP) {
     console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
@@ -570,9 +560,13 @@ if (enableDashboard) {
     config.data.iconsFolder = path.join(configFilePath, config.data.iconsFolder);
   }
 
-  if (allowInsecureHTTP || trustProxy) app.enable('trust proxy');
+  if (enableParseServer == false) {
+    if (allowInsecureHTTP || trustProxy) app.enable('trust proxy');
+    config.data.trustProxy = trustProxy;
+  } else {
+    config.data.trustProxy = trustServerProxy;
+  }
 
-  config.data.trustProxy = trustProxy;
   const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
   const dashboard = new ParseDashboard(config.data, dashboardOptions);
   app.use(dashboardMountPath, dashboard);
