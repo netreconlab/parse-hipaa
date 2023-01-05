@@ -457,7 +457,7 @@ if (enableDashboard) {
 
   const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
   const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
-  let trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
+  const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
 
   if (trustProxy && allowInsecureHTTP) {
     console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
@@ -561,10 +561,14 @@ if (enableDashboard) {
   }
 
   if (enableParseServer == false) {
-    if (allowInsecureHTTP || trustProxy) app.enable('trust proxy');
+    if (allowInsecureHTTP) {
+      app.enable('trust proxy');
+    } else if (trustProxy) {
+      app.enable('trust proxy', trustProxy);
+    }
     config.data.trustProxy = trustProxy;
   } else {
-    config.data.trustProxy = trustServerProxy;
+    config.data.trustProxy = configuration.trustProxy;
   }
 
   const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
