@@ -96,6 +96,11 @@ let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 
 primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
 classNames = classNames.split(", ");
+let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
+
+if (trustServerProxy == 'true') {
+  trustServerProxy = true;
+}
 
 let enableGraphQL = false;
 if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true') {
@@ -396,12 +401,18 @@ if (enableIdempotency) {
   };
 }
 
+configuration.trustProxy = trustServerProxy;
+
 async function setupParseServer() {
   const api = new ParseServer(configuration);
   await api.start();
   
   // Serve the Parse API on the /parse URL prefix
   app.use(mountPath, api.app);
+
+  if (trustServerProxy) {
+    app.enable('trust proxy');
+  }
 
   if (enableGraphQL) {
     const parseGraphQLServer = new ParseGraphQLServer(
@@ -450,7 +461,13 @@ if (enableDashboard) {
 
   const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
   const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
-  const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
+  let trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY || trustServerProxy;
+
+  if (trustProxy == 'true') {
+    trustProxy = true;
+  } else {
+    trustProxy = false;
+  }
 
   if (trustProxy && allowInsecureHTTP) {
     console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
