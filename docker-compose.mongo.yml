@@ -10,6 +10,7 @@ services:
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
             PARSE_SERVER_WEBHOOK_KEY: 553D229E-64DF-4928-99F5-B71CCA94A44A
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+            PARSE_SERVER_TRUST_PROXY: 'true'
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:${DB_MONGO_PORT}/${MONGO_PARSE_DB}
             PORT: ${PORT}
@@ -50,7 +51,7 @@ services:
     dashboard:
         image: netreconlab/parse-hipaa-dashboard:latest
         environment:
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 'true'
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
             MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         volumes:

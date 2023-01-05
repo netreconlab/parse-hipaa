@@ -143,7 +143,7 @@
       },
       "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP": {
         "description": "Should allow insecure http.",
-        "value": "0"
+        "required": false
       },
       "PARSE_DASHBOARD_TRUST_PROXY": {
         "description": "Should trust proxy in docker.",

@@ -57,7 +57,7 @@ services:
     dashboard:
         image: netreconlab/parse-hipaa-dashboard:latest
         environment:
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 'true'
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
             MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
         volumes:
