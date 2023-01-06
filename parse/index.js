@@ -76,7 +76,6 @@ primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
 classNames = classNames.split(", ");
 let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
-
 if (trustServerProxy == 'true') {
   trustServerProxy = true;
 }
