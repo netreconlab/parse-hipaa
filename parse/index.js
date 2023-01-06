@@ -453,6 +453,10 @@ function setAuditClassLevelPermissions() {
   ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 };
 
+if (enableParseServer) {
+  setupParseServer();
+}
+
 if (enableDashboard) {
   const fs = require('fs');
   const ParseDashboard = require('parse-dashboard');
@@ -572,10 +576,6 @@ if (enableDashboard) {
   const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
   const dashboard = new ParseDashboard(config.data, dashboardOptions);
   app.use(dashboardMountPath, dashboard);
-}
-
-if (enableParseServer) {
-  setupParseServer();
 }
 
 const httpServer = require('http').createServer(app);
