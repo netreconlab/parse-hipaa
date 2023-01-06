@@ -19,7 +19,7 @@ Run your own HIPAA & GDPR compliant [parse-server](https://github.com/parse-comm
 - [x] Ready for encryption in transit - parse-hipaa and it's companion images are setup to run behind a proxy with files & directions on how to [complete the process](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) with Nginx and LetsEncrypt 
 - [x] File uploads are only allowed by authenticated users (the standard parse-server allows unauthenticated uploads by default)
 - [x] File uploads are encrypted with AES-256-GCM by default (the standard parse-server doesn't encrypt files by default)
-- [x] ~~File uploads are scanned for viruses and malware by clamscan before they are saved to parse-hipaa. If any virus or malware is detected the files won't be saved~~ (this has been turned off by default. Examples of how to handle can be found in [files.js](https://github.com/netreconlab/parse-hipaa/blob/main/parse/cloud/files.js) and enabled in [main.js](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/parse/cloud/main.js#L8))
+- [x] ~~File uploads can be scanned for viruses and malware by [clamav](https://docs.clamav.net/manual/Installing/Docker.html) before they are saved to parse-hipaa local storage. If any virus or malware is detected the files won't be persisted to the file system~~ (this has been turned off by default). Examples of how to handle can be found in [files.js](https://github.com/netreconlab/parse-hipaa/blob/main/parse/cloud/files.js) and enabled in [main.js](https://github.com/netreconlab/parse-hipaa/blob/37f79bdb99781b634780b3af6a7e33e6beae44a0/parse/cloud/main.js#L8))
 
 You will still need to setup the following on your own to be fully HIPAA & GDPR compliant:
 
