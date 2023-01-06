@@ -31,6 +31,7 @@ services:
             PARSE_DASHBOARD_USERNAMES: parse, parseRead
             PARSE_DASHBOARD_USER_PASSWORDS: 1234, 1234
             PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'false'
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
             PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
             PARSE_VERBOSE: 'false'
@@ -46,7 +47,6 @@ services:
     db:
         image: netreconlab/hipaa-mongo:latest
         environment:
-            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
