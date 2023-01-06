@@ -54,27 +54,6 @@ if (process.env.PARSE_VERBOSE == 'true') {
   verbose = true
 }
 
-const app = express();
-
-// Enable All CORS Requests
-app.use(cors());
-
-// Serve static assets from the /public folder
-app.use('/public', express.static(path.join(__dirname, '/public')));
-
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function(_req, res) {
-  res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
-});
-
-// Redirect to https if on Heroku
-app.use(function(request, response, next) {
-  if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
-    return response.redirect("https://" + request.headers.host + request.url);
-
-  next();
-});
-
 let configuration;
 const logsFolder = process.env.PARSE_SERVER_LOGS_FOLDER || './logs';
 const fileMaxUploadSize = process.env.PARSE_SERVER_MAX_UPLOAD_SIZE || '20mb';
@@ -401,7 +380,30 @@ if (enableIdempotency) {
   };
 }
 
-configuration.trustProxy = trustServerProxy;
+const app = express();
+
+// Enable All CORS Requests
+app.use(cors());
+
+// Serve static assets from the /public folder
+app.use('/public', express.static(path.join(__dirname, '/public')));
+
+// Parse Server plays nicely with the rest of your web routes
+app.get('/', function(_req, res) {
+  res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
+});
+
+// Redirect to https if on Heroku
+app.use(function(request, response, next) {
+  if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
+    return response.redirect("https://" + request.headers.host + request.url);
+
+  next();
+});
+
+if (trustServerProxy) {
+  app.set('trust proxy', trustServerProxy);
+}
 
 async function setupParseServer() {
   const api = new ParseServer(configuration);
@@ -561,11 +563,7 @@ if (enableDashboard) {
   }
 
   if (enableParseServer == false) {
-    if (allowInsecureHTTP) {
-      app.enable('trust proxy');
-    } else if (trustProxy) {
-      app.enable('trust proxy', trustProxy);
-    }
+    if (allowInsecureHTTP || trustProxy) app.enable('trust proxy', trustProxy);
     config.data.trustProxy = trustProxy;
   } else {
     config.data.trustProxy = configuration.trustProxy;

@@ -46,6 +46,7 @@ services:
     db:
         image: netreconlab/hipaa-mongo:latest
         environment:
+            PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_PARSE_USER}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PARSE_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_PARSE_DB}
