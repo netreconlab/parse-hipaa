@@ -1,7 +1,7 @@
 const NodeClam = require('clamscan');
 const { Readable } = require('stream');
 
-Parse.Cloud.beforeSaveFile(async (request) => {
+Parse.Cloud.beforeSave(Parse.File, async (request) => {
     const { file, user } = request;
     try {
         const fileData = Buffer.from(await file.getData(), 'base64').toString();
