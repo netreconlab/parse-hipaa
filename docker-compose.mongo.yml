@@ -61,5 +61,5 @@ services:
         depends_on:
             - parse
     #scan:
-    #    image: netreconlab/clamscan:latest
+    #    image: clamav/clamav:latest
     #    restart: always

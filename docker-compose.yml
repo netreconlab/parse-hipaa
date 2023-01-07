@@ -76,5 +76,5 @@ services:
     #    volumes:
     #        - /My/Encrypted/Drive/srv:/srv
    # scan:
-   #     image: netreconlab/clamscan:latest
+   #     image: clamav/clamav:latest
    #     restart: always

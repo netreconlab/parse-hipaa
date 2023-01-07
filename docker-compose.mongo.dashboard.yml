@@ -58,5 +58,5 @@ services:
         #  - /My/Encrypted/Drive/db:/data/db
         #  - /My/Encrypted/Drive/logs/:/logs
     #scan:
-    #    image: netreconlab/clamscan:latest
+    #    image: clamav/clamav:latest
     #    restart: always
