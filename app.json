@@ -17,6 +17,42 @@
         "description": "Enable (or disable) rejecting unauthorized certificates (needs to be 0 for redis), defaults to 1.",
         "value": "1"
       },
+      "PARSE_DASHBOARD_START": {
+        "description": "Starts the dashboard, default true.",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_USERNAMES": {
+        "description": "Specify the usernames to connect to the dashboard. Multiple usernames should be a list: username1, username2, etc. The list should be the same size as PARSE_DASHBOARD_USER_PASSWORDS",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORDS": {
+        "description": "Specify the user passwords to connect to the dashboard. Multiple passwords should be a list: password1, pasword2, etc. The list should be the same size as PARSE_DASHBOARD_USERNAMES. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
+        "required": true
+      },
+      "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
+        "description": "Specify if the user parseword should be encrypted (true) or in plaintext (false).",
+        "value": "true"
+      },
+      "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
+        "description": "The constant cookie session for dashboard.",
+        "generator": "secret"
+      },
+      "PARSE_DASHBOARD_CONFIG": {
+        "description": "The config file for dashboard.",
+        "required": false
+      },
+      "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP": {
+        "description": "Specify if insecure http should be allowed.",
+        "value": "0"
+      },
+      "PARSE_DASHBOARD_TRUST_PROXY": {
+        "description": "Specify the trust proxy setting.",
+        "required": false
+      }, 
+      "PARSE_DASHBOARD_MOUNT_PATH": {
+        "description": "The mount path for the dashboard.",
+        "value": "/dashboard"
+      },
       "PARSE_SERVER_ENABLE": {
         "description": "Enable the parse server.",
         "value": "true"
@@ -121,38 +157,6 @@
         "description": "Starts the liveQuery server as a standalone server, default false.",
         "value": "false"
       },
-      "PARSE_DASHBOARD_START": {
-        "description": "Starts the dashboard, default true.",
-        "value": "true"
-      },
-      "PARSE_DASHBOARD_USERNAMES": {
-        "description": "Specify the usernames to connect to the dashboard. Multiple usernames should be a list: username1, username2, etc. The list should be the same size as PARSE_DASHBOARD_USER_PASSWORDS",
-        "required": true
-      },
-      "PARSE_DASHBOARD_USER_PASSWORDS": {
-        "description": "Specify the user passwords to connect to the dashboard. Multiple passwords should be a list: password1, pasword2, etc. The list should be the same size as PARSE_DASHBOARD_USERNAMES. This should be a hash of the password if PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true. Can use a hasher for generating, e.g. https://bcrypt-generator.com.",
-        "required": true
-      },
-      "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED": {
-        "description": "Specify if the user parseword should be encrypted (true) or in plaintext (false).",
-        "value": "true"
-      },
-      "PARSE_DASHBOARD_COOKIE_SESSION_SECRET": {
-        "description": "The constant cookie session for dashboard.",
-        "generator": "secret"
-      },
-      "PARSE_DASHBOARD_CONFIG": {
-        "description": "The config file for dashboard.",
-        "required": false
-      },
-      "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP": {
-        "description": "Specify if insecure http should be allowed.",
-        "value": "0"
-      },
-      "PARSE_DASHBOARD_TRUST_PROXY": {
-        "description": "Specify the trust proxy setting.",
-        "required": false
-      },
       "PARSE_SERVER_RATE_LIMIT": {
         "description": "Options to limit repeated requests to Parse Server APIs. This can be used to protect sensitive endpoints such as `/requestPasswordReset` from brute-force attacks or Server as a whole from denial-of-service (DoS) attacks. Mind the following limitations: rate limits applied per IP address; this limits protection against distributed denial-of-service (DDoS) attacks where many requests are coming from various IP addresses; if multiple Parse Server instances are behind a load balancer or ran in a cluster, each instance will calculate it's own request rates, independent from other instances; this limits the applicability of this feature when using a load balancer and another rate limiting solution that takes requests across all instances into account may be more suitable; this feature provides basic protection against DoS attacks, but a more sophisticated solution works earlier in the request flow and prevents a malicious requests to even reach a server instance; it's therefore recommended to implement a solution according to architecture and user case.",
         "value": "false"
@@ -184,10 +188,6 @@
       "PARSE_SERVER_RATE_LIMIT_REQUEST_PATH": {
         "description": "The path of the API route to be rate limited. Route paths, in combination with a request method, define the endpoints at which requests can be made. Route paths can be strings, string patterns, or regular expression. See: https://expressjs.com/en/guide/routing.html'. Defaults to '*' which is all paths.",
         "value": "*"
-      },
-      "PARSE_DASHBOARD_MOUNT_PATH": {
-        "description": "The mount path for the dashboard.",
-        "value": "/dashboard"
       },
       "PORT": {
         "description": "Port for parse-hipaa, default is 1337.",
