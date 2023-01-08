@@ -1,7 +1,7 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
 
-const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib');
+const { default: ParseServer, RedisCacheAdapter } = require('./lib');
 const { GridFSBucketAdapter } = require('./lib/Adapters/Files/GridFSBucketAdapter');
 const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
 const express = require('express');
@@ -79,7 +79,7 @@ const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_
 const playgroundPath = process.env.PARSE_SERVER_MOUNT_PLAYGROUND || '/playground';
 const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
 const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
-const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || "INFO";
+const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || 'INFO';
 let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
 primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
@@ -369,6 +369,32 @@ if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env
   configuration.cacheAdapter = new RedisCacheAdapter(redisOptions);
   // Set LiveQuery URL
   configuration.liveQuery.redisURL = redisURL; 
+}
+
+// Rate limiting
+let rateLimit = false;
+if (process.env.PARSE_SERVER_RATE_LIMIT == 'true') {
+  rateLimit = true;  
+}
+
+if (rateLimit == true) {
+  configuration.rateLimit = [];
+  const firstRateLimit = {};
+  firstRateLimit.requestPath = process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_PATH || '*';
+  firstRateLimit.errorResponseMessage = process.env.PARSE_SERVER_RATE_LIMIT_ERROR_RESPONSE_MESSAGE || 'Too many requests';
+  firstRateLimit.requestCount = parseInt(process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_COUNT) || 100;
+  firstRateLimit.requestTimeWindow = parseInt(process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_TIME_WINDOW) || 10 * 60 * 1000;
+  if (process.env.PARSE_SERVER_RATE_LIMIT_INCLUDE_INTERNAL_REQUESTS == 'true') {
+    firstRateLimit.includeInternalRequests = true;  
+  }
+  if (process.env.PARSE_SERVER_RATE_LIMIT_INCLUDE_PRIMARY_KEY == 'true') {
+    firstRateLimit.includeMasterKey = true;  
+  }
+  if ("PARSE_SERVER_RATE_LIMIT_REQUEST_METHODS" in process.env) {
+    const requestMethods = process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_METHODS.split(", ");
+    firstRateLimit.requestMethods = requestMethods;
+  }
+  configuration.rateLimit.push(firstRateLimit);
 }
 
 if ("PARSE_SERVER_GRAPH_QLSCHEMA" in process.env) {
