@@ -629,6 +629,7 @@ if (enableParseServer) {
   setupParseServer();
 } else {
   setupDashboard();
+  const httpServer = require('http').createServer(app);
 
   if (startLiveQueryServerNoParse == true) {
     let liveQueryConfig = {
@@ -649,7 +650,6 @@ if (enableParseServer) {
     ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
   }
 
-  const httpServer = require('http').createServer(app);
   httpServer.listen(port, host, function() {
     
     if (startLiveQueryServerNoParse)
