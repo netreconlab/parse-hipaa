@@ -430,6 +430,9 @@ if (enableIdempotency) {
 
 let app = express();
 
+// Enable All CORS Requests
+app.use(cors());
+
 // Redirect to https if on Heroku
 app.use(function(request, response, next) {
   if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
