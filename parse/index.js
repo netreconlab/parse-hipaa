@@ -8,6 +8,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
+const e = require('express');
 
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
@@ -458,6 +459,8 @@ async function setupParseServer() {
     next();
   });
 
+  setupDashboard();
+
   console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
   console.log(`REST API running on ${url.href}`);
   if (startLiveQueryServer)
@@ -497,141 +500,133 @@ function setAuditClassLevelPermissions() {
   ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 };
 
-if (enableParseServer) {
-  setupParseServer();
-}
+function setupDashboard() {
+  if (enableDashboard) {
+    const fs = require('fs');
+    const ParseDashboard = require('parse-dashboard');
 
-if (enableDashboard) {
-  const fs = require('fs');
-  const ParseDashboard = require('parse-dashboard');
+    const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
+    const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
+    const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
 
-  const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
-  const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
-  const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
+    if (trustProxy && allowInsecureHTTP) {
+      console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
+      process.exit(1);
+    }
 
-  if (trustProxy && allowInsecureHTTP) {
-    console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
-    process.exit(1);
-  }
-
-  let configFile = null;
-  let configFromCLI = null;
-  const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || serverURL;
-  const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
-  const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
-  const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
-  const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
-  let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES;
-  let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS;
-  let configUserPasswordEncrypted = true;
-  if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
-    configUserPasswordEncrypted = false;
-  }
-   
-  if (!process.env.PARSE_DASHBOARD_CONFIG) {
-    if (configServerURL && configPrimaryKey && configAppId) {
-      configFromCLI = {
-        data: {
-          apps: [
-            {
-              appId: configAppId,
-              serverURL: configServerURL,
-              masterKey: configPrimaryKey,
-              appName: configAppName,
-            },
-          ]
+    let configFile = null;
+    let configFromCLI = null;
+    const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || serverURL;
+    const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
+    const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
+    const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
+    const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
+    let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES;
+    let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS;
+    let configUserPasswordEncrypted = true;
+    if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
+      configUserPasswordEncrypted = false;
+    }
+    
+    if (!process.env.PARSE_DASHBOARD_CONFIG) {
+      if (configServerURL && configPrimaryKey && configAppId) {
+        configFromCLI = {
+          data: {
+            apps: [
+              {
+                appId: configAppId,
+                serverURL: configServerURL,
+                masterKey: configPrimaryKey,
+                appName: configAppName,
+              },
+            ]
+          }
+        };
+        if (configGraphQLServerURL) {
+          configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
         }
-      };
-      if (configGraphQLServerURL) {
-        configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
-      }
-      if (configUsernames && configUserPasswords) {
-        configUsernames = configUsernames.split(", ");
-        configUserPasswords = configUserPasswords.split(", ");
-        if (configUsernames.length == configUserPasswords.length) {
-          let users = [];
-          configUsernames.forEach((username, index) => {
-            users.push({
-              user: username,
-              pass: configUserPasswords[index],
+        if (configUsernames && configUserPasswords) {
+          configUsernames = configUsernames.split(", ");
+          configUserPasswords = configUserPasswords.split(", ");
+          if (configUsernames.length == configUserPasswords.length) {
+            let users = [];
+            configUsernames.forEach((username, index) => {
+              users.push({
+                user: username,
+                pass: configUserPasswords[index],
+              });
             });
-          });
-          configFromCLI.data.users = users;
-          configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+            configFromCLI.data.users = users;
+            configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+          } else {
+            console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
+            process.exit(1);
+          }
+        }
+      } else if (!configServerURL && !configPrimaryKey && !configAppName) {
+        configFile = path.join(__dirname, 'parse-dashboard-config.json');
+      }
+    } else {
+      configFromCLI = {
+        data: JSON.parse(process.env.PARSE_DASHBOARD_CONFIG)
+      };
+    }
+
+    let config = null;
+    let configFilePath = null;
+    if (configFile) {
+      try {
+        config = {
+          data: JSON.parse(fs.readFileSync(configFile, 'utf8'))
+        };
+        configFilePath = path.dirname(configFile);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.log('Your config file contains invalid JSON. Exiting.');
+          process.exit(1);
+        } else if (error.code === 'ENOENT') {
+          console.log('You must provide either a config file or required CLI options (app ID, Primary Key, and server URL); not both.');
+          process.exit(3);
         } else {
-          console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
+          console.log('There was a problem with your config. Exiting.');
           process.exit(1);
         }
       }
-    } else if (!configServerURL && !configPrimaryKey && !configAppName) {
-      configFile = path.join(__dirname, 'parse-dashboard-config.json');
+    } else if (configFromCLI) {
+      config = configFromCLI;
+    } else {
+      //Failed to load default config file.
+      console.log('You must provide either a config file or an app ID, Primary Key, and server URL. See parse-dashboard --help for details.');
+      process.exit(4);
     }
-  } else {
-    configFromCLI = {
-      data: JSON.parse(process.env.PARSE_DASHBOARD_CONFIG)
-    };
-  }
 
-  let config = null;
-  let configFilePath = null;
-  if (configFile) {
-    try {
-      config = {
-        data: JSON.parse(fs.readFileSync(configFile, 'utf8'))
-      };
-      configFilePath = path.dirname(configFile);
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.log('Your config file contains invalid JSON. Exiting.');
-        process.exit(1);
-      } else if (error.code === 'ENOENT') {
-        console.log('You must provide either a config file or required CLI options (app ID, Primary Key, and server URL); not both.');
-        process.exit(3);
-      } else {
-        console.log('There was a problem with your config. Exiting.');
-        process.exit(1);
+    config.data.apps.forEach(app => {
+      if (!app.appName) {
+        app.appName = app.appId;
       }
+    });
+
+    if (config.data.iconsFolder && configFilePath) {
+      config.data.iconsFolder = path.join(configFilePath, config.data.iconsFolder);
     }
-  } else if (configFromCLI) {
-    config = configFromCLI;
-  } else {
-    //Failed to load default config file.
-    console.log('You must provide either a config file or an app ID, Primary Key, and server URL. See parse-dashboard --help for details.');
-    process.exit(4);
-  }
 
-  config.data.apps.forEach(app => {
-    if (!app.appName) {
-      app.appName = app.appId;
+    if (enableParseServer == false) {
+      if (allowInsecureHTTP || trustProxy) app.enable('trust proxy', trustProxy);
+      config.data.trustProxy = trustProxy;
+    } else {
+      config.data.trustProxy = configuration.trustProxy;
     }
-  });
 
-  if (config.data.iconsFolder && configFilePath) {
-    config.data.iconsFolder = path.join(configFilePath, config.data.iconsFolder);
+    const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
+    const dashboard = new ParseDashboard(config.data, dashboardOptions);
+    app.use(dashboardMountPath, dashboard);
   }
-
-  if (enableParseServer == false) {
-    if (allowInsecureHTTP || trustProxy) app.enable('trust proxy', trustProxy);
-    config.data.trustProxy = trustProxy;
-  } else {
-    config.data.trustProxy = configuration.trustProxy;
-  }
-
-  const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
-  const dashboard = new ParseDashboard(config.data, dashboardOptions);
-  app.use(dashboardMountPath, dashboard);
 }
 
-if (enableParseServer == false) {
-  const httpServer = require('http').createServer(app);
-  httpServer.listen(port, host, function() {
-    
-    if (startLiveQueryServerNoParse)
-      console.log(`LiveQuery server is now available at ${url.href}`);
-
-    if (enableDashboard)
-      console.log(`Dashboard is now available at ${dashboardURL.href}`);
-  });
+if (enableParseServer) {
+  setupParseServer();
+} else {
+  setupDashboard();
 
   if (startLiveQueryServerNoParse == true) {
     let liveQueryConfig = {
@@ -651,4 +646,14 @@ if (enableParseServer == false) {
     // This will enable the Live Query real-time server
     ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
   }
+
+  const httpServer = require('http').createServer(app);
+  httpServer.listen(port, host, function() {
+    
+    if (startLiveQueryServerNoParse)
+      console.log(`LiveQuery server is now available at ${url.href}`);
+
+    if (enableDashboard)
+      console.log(`Dashboard is now available at ${dashboardURL.href}`);
+  });
 }
