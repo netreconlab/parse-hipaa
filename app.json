@@ -117,6 +117,10 @@
         "description": "Starts the liveQuery server, default true.",
         "value": "true"
       },
+      "PARSE_SERVER_START_LIVE_QUERY_SERVER_NO_PARSE": {
+        "description": "Starts the liveQuery server as a standalone server, default false.",
+        "value": "false"
+      },
       "PARSE_DASHBOARD_START": {
         "description": "Starts the dashboard, default true.",
         "value": "true"
@@ -180,7 +184,15 @@
       "PARSE_SERVER_GRAPH_QLSCHEMA": {
         "description": "Full path to your GraphQL custom schema.graphql file.",
         "required": false
-      }, 
+      },
+      "PARSE_SERVER_MOUNT_PLAYGROUND": {
+        "description": "Mounts the GraphQL Playground - never use this option in production. Default is 'false'.",
+        "value": "false"
+      },
+      "PARSE_SERVER_PLAYGROUND_PATH": {
+        "description": "Mount path for the GraphQL Playground, defaults to /playground",
+        "value": "/playground"
+      },
       "PARSE_SERVER_ALLOW_CLIENT_CLASS_CREATION": {
         "description": "Don't allow classes to be created on the client side..",
         "value": "false"

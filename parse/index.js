@@ -44,6 +44,11 @@ if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false') {
   startLiveQueryServer = false
 }
 
+let startLiveQueryServerNoParse = false;
+if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER_NO_PARSE == 'true') {
+  startLiveQueryServerNoParse = true
+}
+
 let enableDashboard = false;
 if (process.env.PARSE_DASHBOARD_START == 'true') {
   enableDashboard = true
@@ -71,6 +76,10 @@ const validatorPattern = process.env.PARSE_SERVER_PASSWORD_POLICY_VALIDATOR_PATT
 const triggerAfter = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_AFTER || 'info';
 const triggerBeforeError = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_ERROR || 'error';
 const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_SUCCESS || 'info';
+const playgroundPath = process.env.PARSE_SERVER_MOUNT_PLAYGROUND || '/playground';
+const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
+const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
+const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || "INFO";
 let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
 primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
@@ -190,6 +199,11 @@ if (process.env.PARSE_SERVER_PREVENT_LOGIN_WITH_UNVERIFIED_EMAIL == 'true') {
   preventLoginWithUnverifiedEmail = true
 }
 
+let mountPlayground = false;
+if (process.env.PARSE_SERVER_MOUNT_PLAYGROUND == 'true') {
+  mountPlayground = true;  
+}
+
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
@@ -245,6 +259,7 @@ configuration = {
   publicServerURL: publicServerURL,
   host: host,
   port: port,
+  trustProxy: trustServerProxy,
   cacheMaxSize: cacheMaxSize,
   cacheTTL: cacheTTL,
   verbose: verbose,
@@ -272,9 +287,16 @@ configuration = {
   // Setup your push adatper
   push: pushNotifications,
   auth: authentication,
+  startLiveQueryServer: startLiveQueryServer,
   liveQuery: {
-    classNames: classNames // List of classes to support for query subscriptions
+    classNames: classNames, // List of classes to support for query subscriptions
+    websocketTimeout: websocketTimeout,
+    cacheTimeout: cacheTimeout
   },
+  mountGraphQL: enableGraphQL, 
+  graphMountPath: graphMountPath,
+  mountPlayground: mountPlayground,
+  playgroundPath: playgroundPath,
   verifyUserEmails: verifyUserEmails,
   // Setup your mail adapter
   /*emailAdapter: {
@@ -379,49 +401,46 @@ if (enableIdempotency) {
   };
 }
 
-const app = express();
-
-// Enable All CORS Requests
-app.use(cors());
-
-// Serve static assets from the /public folder
-app.use('/public', express.static(path.join(__dirname, '/public')));
-
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function(_req, res) {
-  res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
-});
+let app = express();
 
 // Redirect to https if on Heroku
 app.use(function(request, response, next) {
   if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
     return response.redirect("https://" + request.headers.host + request.url);
-
   next();
 });
 
-if (trustServerProxy) {
-  app.set('trust proxy', trustServerProxy);
-}
-
 async function setupParseServer() {
-  const api = new ParseServer(configuration);
-  await api.start();
-  
-  // Serve the Parse API on the /parse URL prefix
-  app.use(mountPath, api.app);
+  const parseServer = await ParseServer.startApp(configuration);
+  app = parseServer.expressApp;
 
-  if (enableGraphQL) {
-    const parseGraphQLServer = new ParseGraphQLServer(
-      api,
-      {
-        graphQLPath: graphMountPath,
-        playgroundPath: '/playground'
-      }
-    );
-    parseGraphQLServer.applyGraphQL(app);
-  }
-  
+  // Enable All CORS Requests
+  app.use(cors());
+
+  // Serve static assets from the /public folder
+  app.use('/public', express.static(path.join(__dirname, '/public')));
+
+  // Parse Server plays nicely with the rest of your web routes
+  app.get('/', function(_req, res) {
+    res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
+  });
+
+  // Redirect to https if on Heroku
+  app.use(function(request, response, next) {
+    if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
+      return response.redirect("https://" + request.headers.host + request.url);
+    next();
+  });
+
+  console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
+  console.log(`REST API running on ${url.href}`);
+  if (startLiveQueryServer)
+      console.log(`LiveQuery server is now available at ${url.href}`);
+  if (enableGraphQL)
+    console.log(`GraphQL API running on ${graphURL.href}`);
+  if (enableDashboard)
+    console.log(`Dashboard is now available at ${dashboardURL.href}`);
+
   if (process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
     const { CareKitServer } = require('parse-server-carekit');
     let shouldAudit = true;
@@ -431,7 +450,7 @@ async function setupParseServer() {
     if (shouldAudit) {
       setAuditClassLevelPermissions();
     }
-    let careKitServer = new CareKitServer(api, shouldAudit);
+    let careKitServer = new CareKitServer(parseServer, shouldAudit);
     await careKitServer.setup();
   }
 }
@@ -577,41 +596,33 @@ if (enableDashboard) {
   app.use(dashboardMountPath, dashboard);
 }
 
-const httpServer = require('http').createServer(app);
-httpServer.listen(port, host, function() {
-  if (enableParseServer) {
-    console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
-    console.log(`REST API running on ${url.href}`);
-    if (enableGraphQL)
-      console.log(`GraphQL API running on ${graphURL.href}`);
+if (enableParseServer == false) {
+  const httpServer = require('http').createServer(app);
+  httpServer.listen(port, host, function() {
+    
+    if (startLiveQueryServerNoParse)
+      console.log(`LiveQuery server is now available at ${url.href}`);
+
+    if (enableDashboard)
+      console.log(`Dashboard is now available at ${dashboardURL.href}`);
+  });
+
+  if (startLiveQueryServerNoParse == true) {
+    let liveQueryConfig = {
+      appId: applicationId,
+      masterKey: primaryKey,
+      serverURL: serverURL,
+      websocketTimeout: websocketTimeout,
+      cacheTimeout: cacheTimeout,
+      verbose: verbose,
+      logLevel: logLevel,
+    }
+    
+    if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+      liveQueryConfig.redisURL = redisURL; 
+    }
+  
+    // This will enable the Live Query real-time server
+    ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
   }
-
-  if (startLiveQueryServer)
-    console.log(`LiveQuery server is now available at ${url.href}`);
-
-  if (enableDashboard)
-    console.log(`Dashboard is now available at ${dashboardURL.href}`);
-});
-
-if (startLiveQueryServer) {
-  const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
-  const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
-  const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || "INFO";
-
-  let liveQueryConfig = {
-    appId: applicationId,
-    masterKey: primaryKey,
-    serverURL: serverURL,
-    websocketTimeout: websocketTimeout,
-    cacheTimeout: cacheTimeout,
-    verbose: verbose,
-    logLevel: logLevel,
-  }
-
-  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
-    liveQueryConfig.redisURL = redisURL; 
-  }
-
-  // This will enable the Live Query real-time server
-  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
 }
