@@ -8,7 +8,6 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
-const e = require('express');
 
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
