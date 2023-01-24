@@ -253,6 +253,7 @@ configuration = {
   appId: applicationId,
   masterKey: primaryKey,
   masterKeyIps: primaryKeyIPs,
+  webhookKey: process.env.PARSE_SERVER_WEBHOOK_KEY,
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: objectIdSize,
   serverURL: serverURL,
