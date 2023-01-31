@@ -10,6 +10,7 @@ services:
             PARSE_SERVER_READ_ONLY_PRIMARY_KEY: 367F7395-2E3A-46B1-ABA3-963A25D533C3
             PARSE_SERVER_WEBHOOK_KEY: 553D229E-64DF-4928-99F5-B71CCA94A44A
             PARSE_SERVER_ENCRYPTION_KEY: 72F8F23D-FDDB-4792-94AE-72897F0688F9
+            PARSE_SERVER_TRUST_PROXY: 'true'
             PARSE_SERVER_OBJECT_ID_SIZE: 32
             PARSE_SERVER_DATABASE_URI: mongodb://${MONGO_PARSE_USER}:${MONGO_PARSE_PASSWORD}@db:${DB_MONGO_PORT}/${MONGO_PARSE_DB}
             PORT: ${PORT}
@@ -60,5 +61,5 @@ services:
         depends_on:
             - parse
     #scan:
-    #    image: netreconlab/clamscan:latest
+    #    image: clamav/clamav:latest
     #    restart: always

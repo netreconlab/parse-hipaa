@@ -1,7 +1,7 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
 
-const { default: ParseServer, ParseGraphQLServer, RedisCacheAdapter } = require('./lib');
+const { default: ParseServer, RedisCacheAdapter } = require('./lib');
 const { GridFSBucketAdapter } = require('./lib/Adapters/Files/GridFSBucketAdapter');
 const ParseAuditor = require('./node_modules/parse-auditor/src/index.js');
 const express = require('express');
@@ -44,6 +44,11 @@ if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER == 'false') {
   startLiveQueryServer = false
 }
 
+let startLiveQueryServerNoParse = false;
+if (process.env.PARSE_SERVER_START_LIVE_QUERY_SERVER_NO_PARSE == 'true') {
+  startLiveQueryServerNoParse = true
+}
+
 let enableDashboard = false;
 if (process.env.PARSE_DASHBOARD_START == 'true') {
   enableDashboard = true
@@ -54,27 +59,6 @@ if (process.env.PARSE_VERBOSE == 'true') {
   verbose = true
 }
 
-const app = express();
-
-// Enable All CORS Requests
-app.use(cors());
-
-// Serve static assets from the /public folder
-app.use('/public', express.static(path.join(__dirname, '/public')));
-
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function(_req, res) {
-  res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
-});
-
-// Redirect to https if on Heroku
-app.use(function(request, response, next) {
-  if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
-    return response.redirect("https://" + request.headers.host + request.url);
-
-  next();
-});
-
 let configuration;
 const logsFolder = process.env.PARSE_SERVER_LOGS_FOLDER || './logs';
 const fileMaxUploadSize = process.env.PARSE_SERVER_MAX_UPLOAD_SIZE || '20mb';
@@ -84,7 +68,7 @@ const objectIdSize = parseInt(process.env.PARSE_SERVER_OBJECT_ID_SIZE) || 10;
 const sessionLength = parseInt(process.env.PARSE_SERVER_SESSION_LENGTH) || 31536000;
 const emailVerifyTokenValidityDuration = parseInt(process.env.PARSE_SERVER_EMAIL_VERIFY_TOKEN_VALIDITY_DURATION) || 24*60*60;
 const accountLockoutDuration = parseInt(process.env.PARSE_SERVER_ACCOUNT_LOCKOUT_DURATION) || 5;
-const accountLockoutThreshold = parseInt(process.env.PARSE_SERVER_ACCOUNT_LOCKOUT_THRESHOLD) || 3;
+const accountLockoutThreshold = parseInt(process.env.PARSE_SERVER_ACCOUNT_LOCKOUT_THRESHOLD) || 5;
 const maxPasswordHistory = parseInt(process.env.PARSE_SERVER_PASSWORD_POLICY_MAX_PASSWORD_HISTORY) || 5;
 const resetTokenValidityDuration = parseInt(process.env.PARSE_SERVER_PASSWORD_POLICY_RESET_TOKEN_VALIDITY_DURATION) || 24*60*60;
 const validationError = process.env.PARSE_SERVER_PASSWORD_POLICY_VALIDATION_ERROR || 'Password must have at least 8 characters, contain at least 1 digit, 1 lower case, 1 upper case, and contain at least one special character.';
@@ -92,8 +76,18 @@ const validatorPattern = process.env.PARSE_SERVER_PASSWORD_POLICY_VALIDATOR_PATT
 const triggerAfter = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_AFTER || 'info';
 const triggerBeforeError = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_ERROR || 'error';
 const triggerBeforeSuccess = process.env.PARSE_SERVER_LOG_LEVELS_TRIGGER_BEFORE_SUCCESS || 'info';
+const playgroundPath = process.env.PARSE_SERVER_MOUNT_PLAYGROUND || '/playground';
+const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
+const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
+const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || 'INFO';
+let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
+primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
 classNames = classNames.split(", ");
+let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
+if (trustServerProxy == 'true') {
+  trustServerProxy = true;
+}
 
 let enableGraphQL = false;
 if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true') {
@@ -205,6 +199,11 @@ if (process.env.PARSE_SERVER_PREVENT_LOGIN_WITH_UNVERIFIED_EMAIL == 'true') {
   preventLoginWithUnverifiedEmail = true
 }
 
+let mountPlayground = false;
+if (process.env.PARSE_SERVER_MOUNT_PLAYGROUND == 'true') {
+  mountPlayground = true;  
+}
+
 let pushNotifications = process.env.PARSE_SERVER_PUSH || {};
 let authentication = process.env.PARSE_SERVER_AUTH_PROVIDERS || {}; 
 
@@ -253,12 +252,15 @@ configuration = {
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: applicationId,
   masterKey: primaryKey,
+  masterKeyIps: primaryKeyIPs,
+  webhookKey: process.env.PARSE_SERVER_WEBHOOK_KEY,
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: objectIdSize,
   serverURL: serverURL,
   publicServerURL: publicServerURL,
   host: host,
   port: port,
+  trustProxy: trustServerProxy,
   cacheMaxSize: cacheMaxSize,
   cacheTTL: cacheTTL,
   verbose: verbose,
@@ -286,9 +288,16 @@ configuration = {
   // Setup your push adatper
   push: pushNotifications,
   auth: authentication,
+  startLiveQueryServer: startLiveQueryServer,
   liveQuery: {
-    classNames: classNames // List of classes to support for query subscriptions
+    classNames: classNames, // List of classes to support for query subscriptions
+    websocketTimeout: websocketTimeout,
+    cacheTimeout: cacheTimeout
   },
+  mountGraphQL: enableGraphQL, 
+  graphMountPath: graphMountPath,
+  mountPlayground: mountPlayground,
+  playgroundPath: playgroundPath,
   verifyUserEmails: verifyUserEmails,
   // Setup your mail adapter
   /*emailAdapter: {
@@ -363,6 +372,32 @@ if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env
   configuration.liveQuery.redisURL = redisURL; 
 }
 
+// Rate limiting
+let rateLimit = false;
+if (process.env.PARSE_SERVER_RATE_LIMIT == 'true') {
+  rateLimit = true;  
+}
+
+if (rateLimit == true) {
+  configuration.rateLimit = [];
+  const firstRateLimit = {};
+  firstRateLimit.requestPath = process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_PATH || '*';
+  firstRateLimit.errorResponseMessage = process.env.PARSE_SERVER_RATE_LIMIT_ERROR_RESPONSE_MESSAGE || 'Too many requests';
+  firstRateLimit.requestCount = parseInt(process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_COUNT) || 100;
+  firstRateLimit.requestTimeWindow = parseInt(process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_TIME_WINDOW) || 10 * 60 * 1000;
+  if (process.env.PARSE_SERVER_RATE_LIMIT_INCLUDE_INTERNAL_REQUESTS == 'true') {
+    firstRateLimit.includeInternalRequests = true;  
+  }
+  if (process.env.PARSE_SERVER_RATE_LIMIT_INCLUDE_PRIMARY_KEY == 'true') {
+    firstRateLimit.includeMasterKey = true;  
+  }
+  if ("PARSE_SERVER_RATE_LIMIT_REQUEST_METHODS" in process.env) {
+    const requestMethods = process.env.PARSE_SERVER_RATE_LIMIT_REQUEST_METHODS.split(", ");
+    firstRateLimit.requestMethods = requestMethods;
+  }
+  configuration.rateLimit.push(firstRateLimit);
+}
+
 if ("PARSE_SERVER_GRAPH_QLSCHEMA" in process.env) {
   configuration.graphQLSchema = process.env.PARSE_SERVER_GRAPH_QLSCHEMA;
 }
@@ -393,23 +428,51 @@ if (enableIdempotency) {
   };
 }
 
+let app = express();
+
+// Enable All CORS Requests
+app.use(cors());
+
+// Redirect to https if on Heroku
+app.use(function(request, response, next) {
+  if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
+    return response.redirect("https://" + request.headers.host + request.url);
+  next();
+});
+
 async function setupParseServer() {
-  const api = new ParseServer(configuration);
+  const parseServer = await ParseServer.startApp(configuration);
+  app = parseServer.expressApp;
 
-  // Serve the Parse API on the /parse URL prefix
-  app.use(mountPath, api.app);
+  // Enable All CORS Requests
+  app.use(cors());
 
-  if (enableGraphQL) {
-    const parseGraphQLServer = new ParseGraphQLServer(
-      api,
-      {
-        graphQLPath: graphMountPath,
-        playgroundPath: '/playground'
-      }
-    );
-    parseGraphQLServer.applyGraphQL(app);
-  }
-  
+  // Serve static assets from the /public folder
+  app.use('/public', express.static(path.join(__dirname, '/public')));
+
+  // Parse Server plays nicely with the rest of your web routes
+  app.get('/', function(_req, res) {
+    res.status(200).send('I dream of being a website. Please star the parse-hipaa repo on GitHub!');
+  });
+
+  // Redirect to https if on Heroku
+  app.use(function(request, response, next) {
+    if (("NEW_RELIC_APP_NAME" in process.env) && !request.secure)
+      return response.redirect("https://" + request.headers.host + request.url);
+    next();
+  });
+
+  setupDashboard();
+
+  console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
+  console.log(`REST API running on ${url.href}`);
+  if (startLiveQueryServer)
+      console.log(`LiveQuery server is now available at ${url.href}`);
+  if (enableGraphQL)
+    console.log(`GraphQL API running on ${graphURL.href}`);
+  if (enableDashboard)
+    console.log(`Dashboard is now available at ${dashboardURL.href}`);
+
   if (process.env.PARSE_SERVER_USING_PARSECAREKIT == 'true') {
     const { CareKitServer } = require('parse-server-carekit');
     let shouldAudit = true;
@@ -419,7 +482,7 @@ async function setupParseServer() {
     if (shouldAudit) {
       setAuditClassLevelPermissions();
     }
-    let careKitServer = new CareKitServer(api, shouldAudit);
+    let careKitServer = new CareKitServer(parseServer, shouldAudit);
     await careKitServer.setup();
   }
 }
@@ -440,162 +503,160 @@ function setAuditClassLevelPermissions() {
   ParseAuditor(modifiedClasses, accessedClasses, { classPostfix: '_Audit', useMasterKey: true, clp: auditCLP });
 };
 
-if (enableDashboard) {
-  const fs = require('fs');
-  const ParseDashboard = require('parse-dashboard');
+function setupDashboard() {
+  if (enableDashboard) {
+    const fs = require('fs');
+    const ParseDashboard = require('parse-dashboard');
 
-  const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
-  const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
-  const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
+    const allowInsecureHTTP = process.env.PARSE_DASHBOARD_ALLOW_INSECURE_HTTP;
+    const cookieSessionSecret = process.env.PARSE_DASHBOARD_COOKIE_SESSION_SECRET;
+    const trustProxy = process.env.PARSE_DASHBOARD_TRUST_PROXY;
 
-  if (trustProxy && allowInsecureHTTP) {
-    console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
-    process.exit(1);
-  }
+    if (trustProxy && allowInsecureHTTP) {
+      console.log('Set only trustProxy *or* allowInsecureHTTP, not both.  Only one is needed to handle being behind a proxy.');
+      process.exit(1);
+    }
 
-  let configFile = null;
-  let configFromCLI = null;
-  const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || serverURL;
-  const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
-  const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
-  const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
-  const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
-  let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES;
-  let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS;
-  let configUserPasswordEncrypted = true;
-  if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
-    configUserPasswordEncrypted = false;
-  }
-   
-  if (!process.env.PARSE_DASHBOARD_CONFIG) {
-    if (configServerURL && configPrimaryKey && configAppId) {
-      configFromCLI = {
-        data: {
-          apps: [
-            {
-              appId: configAppId,
-              serverURL: configServerURL,
-              masterKey: configPrimaryKey,
-              appName: configAppName,
-            },
-          ]
+    let configFile = null;
+    let configFromCLI = null;
+    const configServerURL = process.env.PARSE_DASHBOARD_SERVER_URL || serverURL;
+    const configGraphQLServerURL = process.env.PARSE_DASHBOARD_GRAPHQL_SERVER_URL || graphURL.href;
+    const configPrimaryKey = process.env.PARSE_DASHBOARD_PRIMARY_KEY || primaryKey;
+    const configAppId = process.env.PARSE_DASHBOARD_APP_ID || applicationId;
+    const configAppName = process.env.PARSE_DASHBOARD_APP_NAME || appName;
+    let configUsernames = process.env.PARSE_DASHBOARD_USERNAMES;
+    let configUserPasswords = process.env.PARSE_DASHBOARD_USER_PASSWORDS;
+    let configUserPasswordEncrypted = true;
+    if (process.env.PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED == 'false') {
+      configUserPasswordEncrypted = false;
+    }
+    
+    if (!process.env.PARSE_DASHBOARD_CONFIG) {
+      if (configServerURL && configPrimaryKey && configAppId) {
+        configFromCLI = {
+          data: {
+            apps: [
+              {
+                appId: configAppId,
+                serverURL: configServerURL,
+                masterKey: configPrimaryKey,
+                appName: configAppName,
+              },
+            ]
+          }
+        };
+        if (configGraphQLServerURL) {
+          configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
         }
-      };
-      if (configGraphQLServerURL) {
-        configFromCLI.data.apps[0].graphQLServerURL = configGraphQLServerURL;
-      }
-      if (configUsernames && configUserPasswords) {
-        configUsernames = configUsernames.split(", ");
-        configUserPasswords = configUserPasswords.split(", ");
-        if (configUsernames.length == configUserPasswords.length) {
-          let users = [];
-          configUsernames.forEach((username, index) => {
-            users.push({
-              user: username,
-              pass: configUserPasswords[index],
+        if (configUsernames && configUserPasswords) {
+          configUsernames = configUsernames.split(", ");
+          configUserPasswords = configUserPasswords.split(", ");
+          if (configUsernames.length == configUserPasswords.length) {
+            let users = [];
+            configUsernames.forEach((username, index) => {
+              users.push({
+                user: username,
+                pass: configUserPasswords[index],
+              });
             });
-          });
-          configFromCLI.data.users = users;
-          configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+            configFromCLI.data.users = users;
+            configFromCLI.data.useEncryptedPasswords = configUserPasswordEncrypted;
+          } else {
+            console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
+            process.exit(1);
+          }
+        }
+      } else if (!configServerURL && !configPrimaryKey && !configAppName) {
+        configFile = path.join(__dirname, 'parse-dashboard-config.json');
+      }
+    } else {
+      configFromCLI = {
+        data: JSON.parse(process.env.PARSE_DASHBOARD_CONFIG)
+      };
+    }
+
+    let config = null;
+    let configFilePath = null;
+    if (configFile) {
+      try {
+        config = {
+          data: JSON.parse(fs.readFileSync(configFile, 'utf8'))
+        };
+        configFilePath = path.dirname(configFile);
+      } catch (error) {
+        if (error instanceof SyntaxError) {
+          console.log('Your config file contains invalid JSON. Exiting.');
+          process.exit(1);
+        } else if (error.code === 'ENOENT') {
+          console.log('You must provide either a config file or required CLI options (app ID, Primary Key, and server URL); not both.');
+          process.exit(3);
         } else {
-          console.log('Dashboard usernames(' + configUsernames.length + ') ' + 'and passwords(' + configUserPasswords.length + ') must be the same size.');
+          console.log('There was a problem with your config. Exiting.');
           process.exit(1);
         }
       }
-    } else if (!configServerURL && !configPrimaryKey && !configAppName) {
-      configFile = path.join(__dirname, 'parse-dashboard-config.json');
+    } else if (configFromCLI) {
+      config = configFromCLI;
+    } else {
+      //Failed to load default config file.
+      console.log('You must provide either a config file or an app ID, Primary Key, and server URL. See parse-dashboard --help for details.');
+      process.exit(4);
     }
-  } else {
-    configFromCLI = {
-      data: JSON.parse(process.env.PARSE_DASHBOARD_CONFIG)
-    };
-  }
 
-  let config = null;
-  let configFilePath = null;
-  if (configFile) {
-    try {
-      config = {
-        data: JSON.parse(fs.readFileSync(configFile, 'utf8'))
-      };
-      configFilePath = path.dirname(configFile);
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        console.log('Your config file contains invalid JSON. Exiting.');
-        process.exit(1);
-      } else if (error.code === 'ENOENT') {
-        console.log('You must provide either a config file or required CLI options (app ID, Primary Key, and server URL); not both.');
-        process.exit(3);
-      } else {
-        console.log('There was a problem with your config. Exiting.');
-        process.exit(1);
+    config.data.apps.forEach(app => {
+      if (!app.appName) {
+        app.appName = app.appId;
       }
+    });
+
+    if (config.data.iconsFolder && configFilePath) {
+      config.data.iconsFolder = path.join(configFilePath, config.data.iconsFolder);
     }
-  } else if (configFromCLI) {
-    config = configFromCLI;
-  } else {
-    //Failed to load default config file.
-    console.log('You must provide either a config file or an app ID, Primary Key, and server URL. See parse-dashboard --help for details.');
-    process.exit(4);
-  }
 
-  config.data.apps.forEach(app => {
-    if (!app.appName) {
-      app.appName = app.appId;
+    if (enableParseServer == false) {
+      if (allowInsecureHTTP || trustProxy) app.enable('trust proxy', trustProxy);
+      config.data.trustProxy = trustProxy;
+    } else {
+      config.data.trustProxy = configuration.trustProxy;
     }
-  });
 
-  if (config.data.iconsFolder && configFilePath) {
-    config.data.iconsFolder = path.join(configFilePath, config.data.iconsFolder);
+    const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
+    const dashboard = new ParseDashboard(config.data, dashboardOptions);
+    app.use(dashboardMountPath, dashboard);
   }
-
-  if (allowInsecureHTTP || trustProxy) app.enable('trust proxy');
-
-  config.data.trustProxy = trustProxy;
-  const dashboardOptions = { allowInsecureHTTP, cookieSessionSecret };
-  const dashboard = new ParseDashboard(config.data, dashboardOptions);
-  app.use(dashboardMountPath, dashboard);
 }
 
 if (enableParseServer) {
   setupParseServer();
-}
+} else {
+  setupDashboard();
+  const httpServer = require('http').createServer(app);
 
-const httpServer = require('http').createServer(app);
-httpServer.listen(port, host, function() {
-  if (enableParseServer) {
-    console.log('Public access: ' + url.hostname + ', Local access: ' + serverURL);
-    console.log(`REST API running on ${url.href}`);
-    if (enableGraphQL)
-      console.log(`GraphQL API running on ${graphURL.href}`);
+  if (startLiveQueryServerNoParse == true) {
+    let liveQueryConfig = {
+      appId: applicationId,
+      masterKey: primaryKey,
+      serverURL: serverURL,
+      websocketTimeout: websocketTimeout,
+      cacheTimeout: cacheTimeout,
+      verbose: verbose,
+      logLevel: logLevel,
+    }
+    
+    if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
+      liveQueryConfig.redisURL = redisURL; 
+    }
+  
+    // This will enable the Live Query real-time server
+    ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
   }
 
-  if (startLiveQueryServer)
-    console.log(`LiveQuery server is now available at ${url.href}`);
+  httpServer.listen(port, host, function() {
+    
+    if (startLiveQueryServerNoParse)
+      console.log(`LiveQuery server is now available at ${url.href}`);
 
-  if (enableDashboard)
-    console.log(`Dashboard is now available at ${dashboardURL.href}`);
-});
-
-if (startLiveQueryServer) {
-  const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
-  const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
-  const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || "INFO";
-
-  let liveQueryConfig = {
-    appId: applicationId,
-    masterKey: primaryKey,
-    serverURL: serverURL,
-    websocketTimeout: websocketTimeout,
-    cacheTimeout: cacheTimeout,
-    verbose: verbose,
-    logLevel: logLevel,
-  }
-
-  if (("PARSE_SERVER_REDIS_URL" in process.env) || ("REDIS_TLS_URL" in process.env) || ("REDIS_URL" in process.env)) {
-    liveQueryConfig.redisURL = redisURL; 
-  }
-
-  // This will enable the Live Query real-time server
-  ParseServer.createLiveQueryServer(httpServer, liveQueryConfig, configuration);
+    if (enableDashboard)
+      console.log(`Dashboard is now available at ${dashboardURL.href}`);
+  });
 }
