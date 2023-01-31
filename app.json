@@ -159,7 +159,7 @@
       },
       "PARSE_SERVER_RATE_LIMIT": {
         "description": "Options to limit repeated requests to Parse Server APIs. This can be used to protect sensitive endpoints such as `/requestPasswordReset` from brute-force attacks or Server as a whole from denial-of-service (DoS) attacks. Mind the following limitations: rate limits applied per IP address; this limits protection against distributed denial-of-service (DDoS) attacks where many requests are coming from various IP addresses; if multiple Parse Server instances are behind a load balancer or ran in a cluster, each instance will calculate it's own request rates, independent from other instances; this limits the applicability of this feature when using a load balancer and another rate limiting solution that takes requests across all instances into account may be more suitable; this feature provides basic protection against DoS attacks, but a more sophisticated solution works earlier in the request flow and prevents a malicious requests to even reach a server instance; it's therefore recommended to implement a solution according to architecture and user case.",
-        "value": "false"
+        "value": "true"
       },
       "PARSE_SERVER_RATE_LIMIT_ERROR_RESPONSE_MESSAGE": {
         "description": "The error message that should be returned in the body of the HTTP 429 response when the rate limit is hit. Default is `Too many requests.`",
