@@ -1,7 +1,7 @@
 {
     "apps": [
     {
-       "serverURL": "http://localhost:1337/1",
+       "serverURL": "http://localhost:1337/parse",
        "graphQLServerURL": "http://localhost:1337/graphql",
          "appId": "applicationId",
          "masterKey": "primaryKey",
