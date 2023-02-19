@@ -84,10 +84,7 @@ let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 
 primaryKeyIPs = primaryKeyIPs.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
 classNames = classNames.split(", ");
-let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
-if (trustServerProxy == 'true') {
-  trustServerProxy = true;
-}
+const trustServerProxy = parseInt(process.env.PARSE_SERVER_TRUST_PROXY) || 0;
 
 let enableGraphQL = false;
 if (process.env.PARSE_SERVER_MOUNT_GRAPHQL == 'true') {

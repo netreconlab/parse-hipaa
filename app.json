@@ -59,7 +59,7 @@
       },
       "PARSE_SERVER_TRUST_PROXY": {
         "description": "The trust proxy settings. It is important to understand the exact setup of the reverse proxy, since this setting will trust values provided in the Parse Server API request. See the 'https://expressjs.com/en/guide/behind-proxies.html', express trust proxy settings documentation. Defaults to `true`.",
-        "value": "true"
+        "value": "0"
       },
       "PARSE_SERVER_APPLICATION_ID": {
         "description": "A unique identifier for your app.",
