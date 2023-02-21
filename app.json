@@ -75,7 +75,7 @@
       },
       "PARSE_SERVER_PRIMARY_KEY_IPS": {
         "description": "Restricts the use of primary key permissions to a list of IP addresses. This option accepts a list of single IP addresses, for example: 10.0.0.1, 10.0.0.2. This is the masterKeyIps on the parse-server.",
-        "value": "172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1"
+        "value": "0.0.0.0/0, ::1"
       },
       "PARSE_SERVER_URL": {
         "description": "Specify URL to connect to your Heroku instance if not https://yourappname.herokuapp.com/parse (update with your app's name + PARSE_SERVER_MOUNT_PATH)",
