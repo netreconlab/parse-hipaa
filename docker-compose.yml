@@ -29,7 +29,8 @@ services:
             PARSE_SERVER_RATE_LIMIT_REQUEST_COUNT: '100'
             PARSE_SERVER_RATE_LIMIT_INCLUDE_PRIMARY_KEY: 'false'
             PARSE_SERVER_RATE_LIMIT_INCLUDE_INTERNAL_REQUESTS: 'false'
-            PARSE_VERBOSE: 'false' 
+            PARSE_VERBOSE: 'false'
+            POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
         ports:
             - 127.0.0.1:${PORT}:${PORT}
@@ -38,7 +39,6 @@ services:
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
             - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
-        restart: always
         entrypoint: [""]
         command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
