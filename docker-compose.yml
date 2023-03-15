@@ -25,7 +25,7 @@ services:
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
-            PARSE_SERVER_RATE_LIMIT: 'true'
+            PARSE_SERVER_RATE_LIMIT: 'false'
             PARSE_SERVER_RATE_LIMIT_REQUEST_COUNT: '100'
             PARSE_SERVER_RATE_LIMIT_INCLUDE_PRIMARY_KEY: 'false'
             PARSE_SERVER_RATE_LIMIT_INCLUDE_INTERNAL_REQUESTS: 'false'
