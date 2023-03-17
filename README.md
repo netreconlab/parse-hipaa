@@ -97,10 +97,9 @@ You can use the one-button deployment to quickly deploy to Heroko. **Note that t
     - Add a value for `PARSE_DASHBOARD_USER_ID` so you can log into your Parse Dashboard 
     - Add the hash of your password as the value for `PARSE_DASHBOARD_USER_PASSWORD` so you can log into your Parse Dashboard. You can get the hash of your desired password from [bcrypt-generator.com](https://bcrypt-generator.com) 
     - You can leave all other **Config vars** as they are or modify them as needed
-3. If you don't plan on using `parse-hipaa` with `ParseCareKit` you should set `PARSE_SERVER_USING_PARSECAREKIT=false` under **Config vars**. This will ensure that ParseCareKit classes/tables are not created on the parse-hipaa server
-4. Scroll to the bottom of the page and press **Deploy app**
-5. When finished you can access your respective server and dashboard by visiting **https://YOUR_APP_NAME.herokuapp.com/parse** or **https://YOUR_APP_NAME.herokuapp.com/dashboard**. The mount points are based on `PARSE_SERVER_MOUNT_PATH` and `PARSE_DASHBOARD_MOUNT_PATH`
-6. Be sure to go to `Settings->Reveal Config Vars` to get your `PARSE_SERVER_APPLICATION_ID`. Add the `PARSE_SERVER_APPLICATION_ID` and **https://YOUR_APP_NAME.herokuapp.com/parse** as `applicationId` and `serverURL` respectively to your client app to connect your parse-hipaa server
+3. Scroll to the bottom of the page and press **Deploy app**
+4. When finished you can access your respective server and dashboard by visiting **https://YOUR_APP_NAME.herokuapp.com/parse** or **https://YOUR_APP_NAME.herokuapp.com/dashboard**. The mount points are based on `PARSE_SERVER_MOUNT_PATH` and `PARSE_DASHBOARD_MOUNT_PATH`
+5. Be sure to go to `Settings->Reveal Config Vars` to get your `PARSE_SERVER_APPLICATION_ID`. Add the `PARSE_SERVER_APPLICATION_ID` and **https://YOUR_APP_NAME.herokuapp.com/parse** as `applicationId` and `serverURL` respectively to your client app to connect your parse-hipaa server
 
 #### Using your own files for Heroku deployment
 1. Fork the the parse-hipaa repo
