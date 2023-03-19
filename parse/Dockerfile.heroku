@@ -1,1 +1,1 @@
-FROM netreconlab/parse-hipaa:6.0.0-dashboard
+FROM netreconlab/parse-hipaa:6.0.1-dashboard
