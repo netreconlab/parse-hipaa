@@ -10,8 +10,8 @@ COPY ./scripts/ ./scripts/
 USER root
 RUN apk --no-cache add git \
  && npm install --omit=dev netreconlab/parse-server-carekit#main parse-server-any-analytics-adapter@^1.x.x @analytics/google-analytics@^1.x.x @analytics/google-analytics-v3@^0.x.x \
- && npm install --omit=dev @parse/s3-files-adapter@^1.x.x parse-server-api-mail-adapter@^2.x.x mailgun.js@^8.x.x \
- && npm install --omit=dev clamscan@^2.x.x newrelic@^9.x.x \
+ && npm install --omit=dev @parse/s3-files-adapter@^2.x.x parse-server-api-mail-adapter@^3.x.x mailgun.js@^8.x.x \
+ && npm install --omit=dev clamscan@^2.x.x newrelic@^10.x.x \
  && mkdir ./files \
  && chmod +x ./scripts/wait-for-postgres.sh ./scripts/parse_idempotency_delete_expired_records.sh ./scripts/setup-dbs.sh ./scripts/setup-parse-index.sh ./scripts/setup-pgaudit.sh \
  && chown -R node ./files ./scripts
