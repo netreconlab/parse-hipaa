@@ -331,7 +331,7 @@
       },
       "PARSE_SERVER_LIVEQUERY_CLASSNAMES": {
         "description": "parse-server's LiveQuery classNames. Example: Clock, Contact.",
-        "value": "Clock"
+        "value": "Clock, RevisionRecord"
       },
       "PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT": {
         "description": "Number of milliseconds between ping/pong frames. The WebSocket server sends ping/pong frames to the clients to keep the WebSocket alive. This value defines the interval of the ping/pong frame from the server to clients.",
