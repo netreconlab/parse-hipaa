@@ -82,7 +82,7 @@ const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 10
 const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || 'INFO';
 let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
 primaryKeyIPs = primaryKeyIPs.split(", ");
-let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock';
+let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'Clock, RevisionRecord';
 classNames = classNames.split(", ");
 let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
 if (trustServerProxy == 'true') {
