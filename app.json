@@ -109,6 +109,10 @@
         "description": "Is true if file upload should be allowed for authenticated users.",
         "value": "true"
       },
+      "PARSE_SERVER_FILE_UPLOAD_FILE_EXTENSIONS": {
+        "description": "Sets the allowed file extensions for uploading files. The extension is defined as an array of file extensions, or a regex pattern. It is recommended to restrict the file upload extensions as much as possible. HTML files are especially problematic as they may be used by an attacker who uploads a HTML form to look legitimate under your app's domain name, or to compromise the session token of another user via accessing the browser's local storage. Defaults to `^[^hH][^tT][^mM][^lL]?$` which allows any file extension except HTML files.",
+        "value": "^[^hH][^tT][^mM][^lL]?$"
+      },
       "PARSE_SERVER_MAX_UPLOAD_SIZE": {
         "description": "Max file size for uploads, defaults to 20mb.",
         "value": "20mb"
@@ -331,7 +335,7 @@
       },
       "PARSE_SERVER_LIVEQUERY_CLASSNAMES": {
         "description": "parse-server's LiveQuery classNames. Example: Clock, Contact.",
-        "value": "Clock"
+        "value": "Clock, RevisionRecord"
       },
       "PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT": {
         "description": "Number of milliseconds between ping/pong frames. The WebSocket server sends ping/pong frames to the clients to keep the WebSocket alive. This value defines the interval of the ping/pong frame from the server to clients.",
