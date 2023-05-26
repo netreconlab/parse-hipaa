@@ -134,6 +134,12 @@ if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_AUTHENTICATED_USER == 'false
   fileUploadAuthenticated = false
 }
 
+let fileExtensions = '^[^hH][^tT][^mM][^lL]?$';
+if ("PARSE_SERVER_FILE_UPLOAD_FILE_EXTENSIONS" in process.env) {
+  const extensions = process.env.PARSE_SERVER_FILE_UPLOAD_FILE_EXTENSIONS.split(", ");
+  fileExtensions = extensions;
+}
+
 let enableAnonymousUsers = true;
 if (process.env.PARSE_SERVER_ENABLE_ANON_USERS == 'false') {
   enableAnonymousUsers = false
@@ -276,6 +282,7 @@ configuration = {
     enableForPublic: fileUploadPublic,
     enableForAnonymousUser: fileUploadAnonymous,
     enableForAuthenticatedUser: fileUploadAuthenticated,
+    fileExtensions: fileExtensions,
   },
   maxUploadSize: fileMaxUploadSize,
   enableSchemaHooks: enableSchemaHooks,
