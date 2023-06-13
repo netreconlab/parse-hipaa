@@ -134,7 +134,7 @@ if (process.env.PARSE_SERVER_FILE_UPLOAD_ENABLE_FOR_AUTHENTICATED_USER == 'false
   fileUploadAuthenticated = false
 }
 
-let fileExtensions = '^[^hH][^tT][^mM][^lL]?$';
+let fileExtensions = ['^[^hH][^tT][^mM][^lL]?$'];
 if ("PARSE_SERVER_FILE_UPLOAD_FILE_EXTENSIONS" in process.env) {
   const extensions = process.env.PARSE_SERVER_FILE_UPLOAD_FILE_EXTENSIONS.split(", ");
   fileExtensions = extensions;
