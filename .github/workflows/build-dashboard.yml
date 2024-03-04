@@ -4,11 +4,11 @@ on:
   schedule:
     - cron: '19 17 * * *'
   push:
-    branches: [ main ]
+    branches: [ '7-alpha' ]
   pull_request:
-    branches: [ main ]
+    branches: [ '7-alpha' ]
   merge_group:
-     branches: [ main ]
+     branches: [ '7-alpha' ]
 
 env:
   REGISTRY: docker.io
