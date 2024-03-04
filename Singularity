@@ -1,3 +1,3 @@
 Bootstrap: docker
-From: netreconlab/parse-hipaa:latest
+From: netreconlab/parse-hipaa:7.0.0-alpha.23
 
