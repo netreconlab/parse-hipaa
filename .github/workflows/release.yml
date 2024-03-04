@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   docker:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -64,7 +64,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: parse/.
-          platforms: linux/amd64, linux/arm/v6, linux/arm/v7, linux/arm64/v8
+          platforms: linux/amd64, linux/arm64/v8
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-latest.outputs.tags }}
           labels: ${{ steps.meta-latest.outputs.labels }}
@@ -83,7 +83,7 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     container:
-      image: quay.io/singularity/singularity:v3.11.0
+      image: quay.io/singularity/singularity:v4.1.0
     strategy:
       fail-fast: false
       matrix:
