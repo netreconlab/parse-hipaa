@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM netreconlab/parse-server:latest AS build
+FROM parseplatform/parse-server:7.0.0-alpha.25 AS build
 
 # Setup directories
 COPY ./scripts/ ./scripts/
