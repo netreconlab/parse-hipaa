@@ -19,7 +19,7 @@ RUN apk --no-cache add git \
 ############################################################
 # Release stage
 ############################################################
-FROM parseplatform/parse-server:7.0.0-alpha.25 AS release
+FROM parseplatform/parse-server:7.0.0-alpha.28 AS release
 
 # Start parse-hipaa setup as root
 USER root
