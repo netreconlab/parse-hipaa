@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parseplatform/parse-server:7.0.0-alpha.26 AS build
+FROM parseplatform/parse-server:7.0.0-alpha.28 AS build
 
 # Setup directories
 COPY ./scripts/ ./scripts/
