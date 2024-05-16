@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parseplatform/parse-server:latest AS build
+FROM netreconlab/parse-server:latest AS build
 
 # Setup directories
 COPY ./scripts/ ./scripts/
@@ -19,7 +19,7 @@ RUN apk --no-cache add git \
 ############################################################
 # Release stage
 ############################################################
-FROM parseplatform/parse-server:latest AS release
+FROM netreconlab/parse-server:latest AS release
 
 # Start parse-hipaa setup as root
 USER root
