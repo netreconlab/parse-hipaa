@@ -1,7 +1,7 @@
 ############################################################
 # Build stage
 ############################################################
-FROM parseplatform/parse-server:7.1.0-alpha.3 AS build
+FROM parseplatform/parse-server:7.1.0-alpha.8 AS build
 
 # Setup directories
 COPY ./scripts/ ./scripts/
@@ -19,7 +19,7 @@ RUN apk --no-cache add git \
 ############################################################
 # Release stage
 ############################################################
-FROM parseplatform/parse-server:7.1.0-alpha.3 AS release
+FROM parseplatform/parse-server:7.1.0-alpha.8 AS release
 
 # Start parse-hipaa setup as root
 USER root
