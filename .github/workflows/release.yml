@@ -61,7 +61,7 @@ jobs:
 
       - name: Build and push Docker image for latest
         if: env.TAG == env.LATEST
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: parse/.
           platforms: linux/amd64, linux/arm64/v8
@@ -71,7 +71,7 @@ jobs:
 
       - name: Build and push Docker image
         if: env.TAG != env.LATEST
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: parse/.
           platforms: linux/amd64, linux/arm64/v8
