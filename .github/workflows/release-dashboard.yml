@@ -80,7 +80,7 @@ jobs:
 
       - name: Update Singularity file tag
         run: |
-          sed -i "s/latest/$TAG/" ./Singularity
+          sed -i "s/latest/$TAG/" ./Singularity.dashboard
 
       - name: Build Singularity image
         env:

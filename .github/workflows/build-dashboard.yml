@@ -87,7 +87,7 @@ jobs:
       - name: Update Singularity file tag
         if: github.event_name != 'pull_request' && github.event_name != 'merge_group'
         run: |
-          sed -i "s/latest/$TAG/" ./Singularity
+          sed -i "s/latest/$TAG/" ./Singularity.dashboard
 
       - name: Build Singularity image
         if: ${{ env.keepgoing == 'true' }}
