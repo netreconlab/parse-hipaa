@@ -114,6 +114,15 @@ if (process.env.PARSE_SERVER_ENCODE_PARSE_OBJECT_IN_CLOUD_FUNCTION == 'true') {
   encodeParseObjectInCloudFunction = true
 }
 
+let enablePagesRouter = false;
+if (process.env.PARSE_SERVER_PAGES_ENABLE_ROUTER == 'true') {
+  enablePagesRouter = true
+}
+
+const pagesOptions = {
+  enableRouter: enablePagesRouter,
+};
+
 let useDirectAccess = false;
 if (process.env.PARSE_SERVER_DIRECT_ACCESS == 'true') {
   useDirectAccess = true
@@ -299,6 +308,7 @@ configuration = {
   enforcePrivateUsers: enforcePrivateUsers,
   jsonLogs: jsonLogs,
   logsFolder: logsFolder,
+  pages: pagesOptions,
   preserveFileName: preserveFileName,
   revokeSessionOnPasswordReset: revokeSessionOnPasswordReset,
   sessionLength: sessionLength,
