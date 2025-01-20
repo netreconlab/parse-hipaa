@@ -241,6 +241,10 @@
         "description": "Enables database real-time hooks to update single schema cache. Set to `true` if using multiple Parse Servers instances connected to the same database. Failing to do so will cause a schema change to not propagate to all instances and re-syncing will only happen when the instances restart.",
         "value": "true"
       },
+      "PARSE_SERVER_ENCODE_PARSE_OBJECT_IN_CLOUD_FUNCTION": {
+        "description": "If set to `true`, a `Parse.Object` that is in the payload when calling a Cloud Function will be converted to an instance of `Parse.Object`. If `false`, the object will not be converted and instead be a plain JavaScript object, which contains the raw data of a `Parse.Object` but is not an actual instance of `Parse.Object`. Default is `false`. The expected behavior would be that the object is converted to an instance of `Parse.Object`, so you would normally set this option to `true`. The default is `false` because this is a temporary option that has been introduced to avoid a breaking change when fixing a bug where JavaScript objects are not converted to actual instances of `Parse.Object`.",
+        "value": "true"
+      },
       "PARSE_SERVER_DIRECT_ACCESS": {
         "description": "WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres.",
         "value": "false"
