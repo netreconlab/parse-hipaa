@@ -10,7 +10,7 @@ const cors = require('cors');
 const FSFilesAdapter = require('@parse/fs-files-adapter');
 
 const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
-const graphMountPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
+const graphQLPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
@@ -31,7 +31,7 @@ if ("NEW_RELIC_APP_NAME" in process.env) {
 const publicServerURL = process.env.PARSE_SERVER_PUBLIC_URL || serverURL;
 const url = new URL(publicServerURL);
 const graphURL = new URL(publicServerURL);
-graphURL.pathname = graphMountPath;
+graphURL.pathname = graphQLPath;
 const dashboardURL = new URL(publicServerURL);
 dashboardURL.pathname = dashboardMountPath;
 
@@ -108,6 +108,11 @@ if (process.env.PARSE_SERVER_ALLOW_CUSTOM_OBJECTID == 'true') {
 let enableSchemaHooks = false;
 if (process.env.PARSE_SERVER_DATABASE_ENABLE_SCHEMA_HOOKS == 'true') {
   enableSchemaHooks = true
+}
+
+let encodeParseObjectInCloudFunction = false;
+if (process.env.PARSE_SERVER_ENCODE_PARSE_OBJECT_IN_CLOUD_FUNCTION == 'true') {
+  encodeParseObjectInCloudFunction = true
 }
 
 let useDirectAccess = false;
@@ -258,6 +263,9 @@ if (Object.keys(filesAdapter).length === 0) {
 
 configuration = {
   databaseURI: databaseUri || 'mongodb://localhost:27017/dev',
+  databaseOptions: {
+    enableSchemaHooks: enableSchemaHooks,
+  },
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: applicationId,
   masterKey: primaryKey,
@@ -286,7 +294,7 @@ configuration = {
     fileExtensions: fileExtensions,
   },
   maxUploadSize: fileMaxUploadSize,
-  enableSchemaHooks: enableSchemaHooks,
+  encodeParseObjectInCloudFunction: encodeParseObjectInCloudFunction,
   directAccess: useDirectAccess,
   allowExpiredAuthDataToken: allowExpiredAuthDataToken,
   enforcePrivateUsers: enforcePrivateUsers,
@@ -301,11 +309,9 @@ configuration = {
   startLiveQueryServer: startLiveQueryServer,
   liveQuery: {
     classNames: classNames, // List of classes to support for query subscriptions
-    websocketTimeout: websocketTimeout,
-    cacheTimeout: cacheTimeout
   },
   mountGraphQL: enableGraphQL, 
-  graphMountPath: graphMountPath,
+  graphQLPath: graphQLPath,
   mountPlayground: mountPlayground,
   playgroundPath: playgroundPath,
   verifyUserEmails: verifyUserEmails,

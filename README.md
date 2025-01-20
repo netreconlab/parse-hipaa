@@ -103,13 +103,13 @@ You can use the one-button deployment to quickly deploy to Heroko. **Note that t
 6. Be sure to go to `Settings->Reveal Config Vars` to get your `PARSE_SERVER_APPLICATION_ID`. Add the `PARSE_SERVER_APPLICATION_ID` and **https://YOUR_APP_NAME.herokuapp.com/parse** as `applicationId` and `serverURL` respectively to your client app to connect your parse-hipaa server
 
 #### Using your own files for Heroku deployment
-1. Fork the the parse-hipaa repo
+1. Fork the parse-hipaa repo
 2. Edit `heroku.yml` in your repo by changing `parse/Dockerfile.heroku` to `parse/Dockerfile`. This will build from your respective repo instead of using the pre-built docker image
 3. You can now edit `parse/index.js` and `parse/cloud` as you wish
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
 ### Local: Using Docker Image with Postgres or Mongo
-By default, the `docker-compose.yml` uses [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres/). The the `docker-compose.mongo.yml` uses [hipaa-mongo](https://github.com/netreconlab/hipaa-mongo/). 
+By default, the `docker-compose.yml` uses [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres/). The `docker-compose.mongo.yml` uses [hipaa-mongo](https://github.com/netreconlab/hipaa-mongo/). 
 
 #### Postgres
 To use the Postgres HIPAA compliant variant of parse-hipaa, simply type:
