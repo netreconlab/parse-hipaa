@@ -13,6 +13,7 @@ const mountPath = process.env.PARSE_SERVER_MOUNT_PATH || '/parse';
 const graphQLPath = process.env.PARSE_SERVER_GRAPHQL_PATH || '/graphql';
 const dashboardMountPath = process.env.PARSE_DASHBOARD_MOUNT_PATH || '/dashboard';
 const applicationId = process.env.PARSE_SERVER_APPLICATION_ID || 'myAppId';
+const maintenanceKey = process.env.PARSE_SERVER_MAINTENANCE_KEY || 'myMaintenanceKey';
 const primaryKey = process.env.PARSE_SERVER_PRIMARY_KEY || 'myKey';
 const webhookKey = process.env.PARSE_SERVER_WEBHOOK_KEY || 'webhookKey';
 const redisURL = process.env.PARSE_SERVER_REDIS_URL || process.env.REDIS_TLS_URL || process.env.REDIS_URL;
@@ -81,8 +82,10 @@ const playgroundPath = process.env.PARSE_SERVER_MOUNT_PLAYGROUND || '/playground
 const websocketTimeout = process.env.PARSE_LIVE_QUERY_SERVER_WEBSOCKET_TIMEOUT || 10 * 1000;
 const cacheTimeout = process.env.PARSE_LIVE_QUERY_SERVER_CACHE_TIMEOUT || 5 * 1000;
 const logLevel = process.env.PARSE_LIVE_QUERY_SERVER_LOG_LEVEL || 'INFO';
-let primaryKeyIPs = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
-primaryKeyIPs = primaryKeyIPs.split(", ");
+let maintenanceKeyIps = process.env.PARSE_SERVER_MAINTENANCE_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
+maintenanceKeyIps = maintenanceKeyIps.split(", ");
+let primaryKeyIps = process.env.PARSE_SERVER_PRIMARY_KEY_IPS || '172.16.0.0/12, 192.168.0.0/16, 10.0.0.0/8, 127.0.0.1, ::1';
+primaryKeyIps = primaryKeyIps.split(", ");
 let classNames = process.env.PARSE_SERVER_LIVEQUERY_CLASSNAMES || 'GameScore';
 classNames = classNames.split(", ");
 let trustServerProxy = process.env.PARSE_SERVER_TRUST_PROXY || false;
@@ -277,8 +280,10 @@ configuration = {
   },
   cloud: process.env.PARSE_SERVER_CLOUD || __dirname + '/cloud/main.js',
   appId: applicationId,
+  maintenanceKey: maintenanceKey,
+  maintenanceKeyIps: maintenanceKeyIps,
   masterKey: primaryKey,
-  masterKeyIps: primaryKeyIPs,
+  masterKeyIps: primaryKeyIps,
   webhookKey: process.env.PARSE_SERVER_WEBHOOK_KEY,
   encryptionKey: process.env.PARSE_SERVER_ENCRYPTION_KEY,
   objectIdSize: objectIdSize,
