@@ -6,3 +6,4 @@
 *.csr
 data
 docker-compose-private-debug.yml
+files/
