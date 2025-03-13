@@ -24,7 +24,7 @@ services:
             PARSE_SERVER_ALLOW_CUSTOM_OBJECTID: 'true' # Required to be true for ParseCareKit
             PARSE_SERVER_ENABLE_SCHEMA_HOOKS: 'true'
             PARSE_SERVER_ENCODE_PARSE_OBJECT_IN_CLOUD_FUNCTION: 'true'
-            PARSE_SERVER_PAGES_ENABLE_ROUTER": 'true'
+            PARSE_SERVER_PAGES_ENABLE_ROUTER: 'true'
             PARSE_SERVER_DIRECT_ACCESS: 'false' # WARNING: Setting to 'true' is known to cause crashes on parse-hipaa running postgres
             PARSE_SERVER_ENABLE_PRIVATE_USERS: 'true'
             PARSE_SERVER_USING_PARSECAREKIT: 'false' # If you are not using ParseCareKit, set this to 'false'
