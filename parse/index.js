@@ -113,11 +113,6 @@ if (process.env.PARSE_SERVER_DATABASE_ENABLE_SCHEMA_HOOKS == 'true') {
   enableSchemaHooks = true
 }
 
-let encodeParseObjectInCloudFunction = false;
-if (process.env.PARSE_SERVER_ENCODE_PARSE_OBJECT_IN_CLOUD_FUNCTION == 'true') {
-  encodeParseObjectInCloudFunction = true
-}
-
 let enablePagesRouter = false;
 if (process.env.PARSE_SERVER_PAGES_ENABLE_ROUTER == 'true') {
   enablePagesRouter = true
@@ -308,7 +303,6 @@ configuration = {
     fileExtensions: fileExtensions,
   },
   maxUploadSize: fileMaxUploadSize,
-  encodeParseObjectInCloudFunction: encodeParseObjectInCloudFunction,
   directAccess: useDirectAccess,
   allowExpiredAuthDataToken: allowExpiredAuthDataToken,
   enforcePrivateUsers: enforcePrivateUsers,

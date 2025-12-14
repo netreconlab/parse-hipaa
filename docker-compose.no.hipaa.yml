@@ -51,7 +51,7 @@ services:
         environment:
             PARSE_DASHBOARD_TRUST_PROXY: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+            MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access usc.edu/dashboard it should be "/dashboard"
         command: parse-dashboard --dev
         volumes:
             - ./parse/parse-dashboard-config.json:/src/Parse-Dashboard/parse-dashboard-config.json
@@ -69,6 +69,6 @@ services:
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
-    # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+    # Uncomment volumes below to persist PostgreSQL data. Make sure to change the directory to store data locally
     #volumes:
-    #    - ./data:/var/lib/postgresql/data
+    #    - ./data:/var/lib/postgresql/18/docker #Mount your own drive, be sure to change 18 to your respective postgres version

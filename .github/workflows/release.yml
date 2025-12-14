@@ -5,7 +5,7 @@ on:
     tags: [ '*.*.*', '*.*.*-*' ]
 
 env:
-  LATEST: '8.0.1'
+  LATEST: '9.1.0'
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up QEMU
         id: qemu
@@ -91,7 +91,7 @@ jobs:
 
     steps:
       - name: Check out code for the container build
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Continue if Singularity recipe exists
         run: |
