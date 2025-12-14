@@ -40,7 +40,7 @@ services:
             PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED: 'false'
             PARSE_DASHBOARD_ALLOW_INSECURE_HTTP: 1
             PARSE_DASHBOARD_COOKIE_SESSION_SECRET: AB8849B6-D725-4A75-AA73-AB7103F0363F # This should be constant across all deployments on your system
-            PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. If you want to access cs.uky.edu/dashboard it should be "/dashboard"
+            PARSE_DASHBOARD_MOUNT_PATH: /dashboard # This needs to be exactly what you plan it to be behind the proxy, i.e. if you want to access usc.edu/dashboard it should be "/dashboard"
             PARSE_VERBOSE: 'false'
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Needed for wait-for-postgres.sh
@@ -50,7 +50,7 @@ services:
             - ./scripts/wait-for-postgres.sh:/parse-server/wait-for-postgres.sh
             - ./parse/index.js:/parse-server/index.js
             - ./parse/cloud:/parse-server/cloud
-            - ./files:/parse-server/files # All files uploaded from users are stored to an ecrypted drive locally for HIPAA compliance
+            - ./files:/parse-server/files # All files uploaded from users are stored to an encrypted drive locally for HIPAA compliance
         restart: always
         command: ["./wait-for-postgres.sh", "db", "node", "index.js"]
         depends_on:
@@ -67,9 +67,9 @@ services:
         restart: always
         ports:
             - 127.0.0.1:${DB_PORT}:${DB_PORT}
-        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        # Uncomment volumes below to persist PostgreSQL data. Make sure to change the directory to store data locally
    #     volumes:
-   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/data #Mount your own drive
+   #         - /My/Encrypted/Drive/data:/var/lib/postgresql/18/docker #Mount your own drive, be sure to change 18 to your respective postgres version
    #         - /My/Encrypted/Drive/archivedir:/var/lib/postgresql/archivedir #Mount your own drive
    # monitor:
    #     image: percona/pmm-server:2
@@ -77,7 +77,7 @@ services:
    #     ports:
    #         - 127.0.0.1:1080:${PMM_PORT} # Unsecure connections
    #         - 127.0.0.1:1443:${PMM_TLS_PORT} # Secure connections
-        # Uncomment volumes below to persist postgres data. Make sure to change directory to store data locally
+        # Uncomment volumes below to persist monitor data. Make sure to change the directory to store data locally
     #    volumes:
     #        - /My/Encrypted/Drive/srv:/srv
    # scan:
