@@ -87,7 +87,7 @@ Any/all of the tagged servers can be used in combination with each other to buil
 ### Remote
 
 #### Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/netreconlab/parse-hipaa)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/netreconlab/parse-hipaa/tree/parse-swift)
 
 You can use the one-button-click deployment to quickly deploy to Heroko. **Note that this is non-HIPAA compliant when using Heroku's free services**, so you need to view [Heroku's compliance certifications](https://www.heroku.com/compliance), and upgrade your plans to [Shield Spaces](https://devcenter.heroku.com/articles/heroku-postgres-and-private-spaces). You can [view this document for detailed instructions](https://docs.google.com/document/d/1QDZ65k0DQaq33NdrYuOcC1T8RuCg1irM/edit?usp=sharing&ouid=116811443756382677101&rtpof=true&sd=true). **If you need a Parse Server Heroku deployment for ParseCareKit based apps, use the Heroku button on the [main](https://github.com/netreconlab/parse-hipaa#heroku-with-postgres) branch instead of this one.** Once you click the Heroku button do the following:
 
