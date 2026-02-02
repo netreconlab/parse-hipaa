@@ -161,7 +161,7 @@ cd parse-hipaa
 
 # Initialize EB CLI for the application created by CloudFormation
 # Replace YOUR_REGION with the region where you deployed the CloudFormation stack
-eb init parse-hipaa --region YOUR_REGION
+eb init -p docker parse-hipaa --region YOUR_REGION
 
 # Select the environment created by CloudFormation (default: parse-hipaa-env)
 # This will be prompted interactively, or you can use:
