@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "netreconlab/parse-hipaa:main-dashboard",
+    "Name": "netreconlab/parse-hipaa:main",
     "Update": "true"
   },
   "Ports": [

@@ -102,32 +102,55 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 
 #### AWS Elastic Beanstalk
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=parse-hipaa&templateURL=https://raw.githubusercontent.com/netreconlab/parse-hipaa/main/cloudformation-template.json)
+**⚠️ IMPORTANT NOTE:** The CloudFormation one-click deployment below requires you to generate and provide security keys during setup. See the parameter descriptions in the deployment wizard. For production/HIPAA compliance, you MUST configure HTTPS/SSL after deployment.
 
-You can use the one-click deployment button above to quickly deploy to AWS Elastic Beanstalk using CloudFormation. Alternatively, you can deploy manually using the provided configuration files below. The deployment uses Docker and is configured to use AWS RDS PostgreSQL for the database, CloudWatch for logging, and includes all the environment variables from the Heroku deployment.
+**One-Click CloudFormation Deployment:**
+
+Generate your security keys first (save these securely):
+```bash
+openssl rand -hex 32  # Run this 7 times for each required key
+```
+
+Then click the button to deploy:
+
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=parse-hipaa&templateURL=https://raw.githubusercontent.com/netreconlab/parse-hipaa/main/cloudformation-template.json)
 
 **One-Click Deployment Instructions:**
 
 Once you click the "Launch Stack" button above:
 1. Review the CloudFormation template parameters
-2. Set your **DatabasePassword** (minimum 8 characters, alphanumeric)
-3. Set your **DashboardPassword** for Parse Dashboard access
-4. Optionally customize the **ApplicationName**, **EnvironmentName**, and instance types
-5. Click **Create Stack** to deploy
-6. Wait for the stack creation to complete (typically 10-15 minutes)
-7. Find your application URL in the **Outputs** tab of the CloudFormation stack
-8. Access Parse Server at `http://YOUR_URL/parse` and Parse Dashboard at `http://YOUR_URL/dashboard`
+2. Generate 7 security keys using `openssl rand -hex 32` and paste them into the corresponding parameters:
+   - ParseServerApplicationId
+   - ParseServerPrimaryKey  
+   - ParseServerReadOnlyPrimaryKey
+   - ParseServerMaintenanceKey
+   - ParseServerWebhookKey
+   - ParseServerEncryptionKey
+   - ParseDashboardCookieSessionSecret
+3. Set your **DatabasePassword** (minimum 8 characters, use letters, numbers, and special characters)
+4. Set your **DashboardPassword** for Parse Dashboard access (plain text - will NOT be hashed by CloudFormation)
+5. Optionally customize the **ApplicationName**, **EnvironmentName**, and instance types
+6. For production, set **EnableMultiAZ** to "true" for high availability
+7. Click **Create Stack** to deploy
+8. Wait for the stack creation to complete (typically 15-20 minutes)
+9. Find your application URL in the **Outputs** tab of the CloudFormation stack
+10. Access Parse Server at `http://YOUR_URL/parse` and Parse Dashboard at `http://YOUR_URL/dashboard`
 
-**Important:** After deployment, you'll need to configure additional environment variables (like PARSE_SERVER_APPLICATION_ID, PARSE_SERVER_PRIMARY_KEY, etc.) through the Elastic Beanstalk console or using the EB CLI as described in the manual deployment steps below.
+**⚠️ CRITICAL SECURITY NOTES:**
+- The deployment uses HTTP by default. You MUST configure HTTPS/SSL before exposing to the internet
+- Configure an Application Load Balancer with SSL certificate for HTTPS
+- The dashboard password is stored as plain text (not bcrypt hashed) when using CloudFormation
+- For HIPAA compliance: enable Multi-AZ RDS, configure SSL, review AWS HIPAA requirements, and sign a BAA with AWS
 
-**Manual Deployment:**
+**Manual Deployment (Recommended for Production):**
 
-You can also deploy parse-hipaa manually to AWS Elastic Beanstalk using the provided configuration files below.
+The manual deployment provides better security by allowing you to hash passwords and configure settings step-by-step.
 
 **Prerequisites:**
 - AWS Account with appropriate permissions
 - [AWS CLI](https://aws.amazon.com/cli/) installed and configured
 - [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html) installed
+- `apache2-utils` (Debian/Ubuntu) or `httpd-tools` (RHEL/CentOS) for `htpasswd` command
 
 **Deployment Steps:**
 
@@ -214,7 +237,22 @@ You can also deploy parse-hipaa manually to AWS Elastic Beanstalk using the prov
    ```
 
 7. **Configure S3 file storage (optional but recommended for production):**
+   
+   **RECOMMENDED: Use IAM Instance Profile (no credentials needed):**
    ```bash
+   # Set only the bucket name - no AWS keys needed
+   eb setenv PARSE_SERVER_S3_BUCKET=your-bucket-name
+   ```
+   
+   Then attach an IAM instance profile with S3 permissions to your Elastic Beanstalk environment:
+   - Go to the Elastic Beanstalk console
+   - Select your environment → Configuration → Security
+   - Attach an IAM instance profile with permissions to access your S3 bucket
+   - The application will automatically use the instance profile credentials
+   
+   **NOT RECOMMENDED: Using AWS Access Keys (insecure for HIPAA):**
+   ```bash
+   # Only use this for testing - NOT for production/HIPAA environments
    eb setenv \
      PARSE_SERVER_S3_BUCKET=your-bucket-name \
      AWS_ACCESS_KEY_ID=your-access-key \
@@ -229,25 +267,45 @@ You can also deploy parse-hipaa manually to AWS Elastic Beanstalk using the prov
 
 9. **Set the Parse Server URL:**
    ```bash
+   # For testing/development (HTTP):
    eb setenv PARSE_SERVER_URL=http://YOUR_CNAME/parse
+   
+   # For production (HTTPS - configure SSL first):
+   eb setenv PARSE_SERVER_URL=https://YOUR_CNAME/parse
    ```
    Replace `YOUR_CNAME` with the URL from step 8.
 
 10. **Access your Parse Server:**
+   
+   **For testing/development (HTTP):**
    - Parse Server API: `http://YOUR_CNAME/parse`
    - Parse Dashboard: `http://YOUR_CNAME/dashboard`
+   
+   **⚠️ For production (configure HTTPS first):**
+   - Parse Server API: `https://YOUR_CNAME/parse`
+   - Parse Dashboard: `https://YOUR_CNAME/dashboard`
+   
+   **To configure HTTPS/SSL:**
+   1. Request or upload an SSL certificate in AWS Certificate Manager
+   2. Configure a load balancer for your Elastic Beanstalk environment
+   3. Add HTTPS listener on port 443 with your SSL certificate
+   4. Update security groups to allow HTTPS traffic
+   5. Set PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=0 after SSL is configured
 
 **Important Security Notes:**
 
+- **⚠️ CRITICAL:** The default configuration uses HTTP which is NOT secure. You MUST configure HTTPS/SSL before production use or exposing to the internet.
 - The default configuration creates a single-instance environment. For production/HIPAA compliance, you should:
-  - Enable HTTPS/SSL certificates
-  - Configure a load balancer
-  - Enable Multi-AZ RDS deployment
+  - **Configure HTTPS/SSL certificates (REQUIRED for HIPAA)**
+  - Configure a load balancer with SSL termination
+  - Enable Multi-AZ RDS deployment for high availability
   - Review and comply with [AWS HIPAA compliance requirements](https://aws.amazon.com/compliance/hipaa-compliance/)
   - Sign a Business Associate Agreement (BAA) with AWS
   - Enable encryption at rest for RDS
-  - Enable VPC and security groups
+  - Enable VPC and security groups to restrict access
+  - Use IAM instance profiles instead of AWS access keys for S3
   - Use AWS Secrets Manager for storing sensitive credentials instead of environment variables
+  - Restrict PARSE_SERVER_MAINTENANCE_KEY_IPS and PARSE_SERVER_PRIMARY_KEY_IPS to trusted networks only
   - Clear shell history after setting environment variables: `history -c && history -w`
   - Regularly rotate encryption keys and passwords
 

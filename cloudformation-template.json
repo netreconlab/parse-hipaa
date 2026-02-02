@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Parse HIPAA Server on AWS Elastic Beanstalk - A Parse API server designed to support ParseCareKit based apps",
+  "Description": "Parse HIPAA Server on AWS Elastic Beanstalk - A Parse API server designed to support ParseCareKit based apps. NOTE: This template creates a basic deployment. For HIPAA compliance, you MUST configure HTTPS/SSL, enable Multi-AZ RDS, and review AWS HIPAA requirements.",
   "Parameters": {
     "ApplicationName": {
       "Type": "String",
@@ -26,8 +26,8 @@
       "Description": "Password for the RDS PostgreSQL database (minimum 8 characters)",
       "MinLength": "8",
       "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9]*",
-      "ConstraintDescription": "Must contain only alphanumeric characters and be at least 8 characters"
+      "AllowedPattern": "[a-zA-Z0-9!@#$%^&*()_+=-]*",
+      "ConstraintDescription": "Must be at least 8 characters with alphanumeric and special characters"
     },
     "DashboardUsername": {
       "Type": "String",
@@ -39,13 +39,62 @@
     "DashboardPassword": {
       "Type": "String",
       "NoEcho": true,
-      "Description": "Password for Parse Dashboard login (will be hashed)",
+      "Description": "Password for Parse Dashboard login (minimum 8 characters, will be bcrypt hashed)",
       "MinLength": "8",
       "MaxLength": "100"
     },
+    "ParseServerApplicationId": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Unique identifier for your Parse app (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseServerPrimaryKey": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Master key for Parse Server (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseServerReadOnlyPrimaryKey": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Read-only master key (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseServerMaintenanceKey": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Maintenance key for Parse Server (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseServerWebhookKey": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Webhook key for Parse Server (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseServerEncryptionKey": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "File encryption key (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
+    "ParseDashboardCookieSessionSecret": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Cookie session secret for dashboard (minimum 32 characters, use 'openssl rand -hex 32' to generate)",
+      "MinLength": "32",
+      "MaxLength": "128"
+    },
     "InstanceType": {
       "Type": "String",
-      "Default": "t3.micro",
+      "Default": "t3.small",
       "Description": "EC2 instance type for the application",
       "AllowedValues": [
         "t3.micro",
@@ -64,6 +113,12 @@
         "db.t3.medium",
         "db.t3.large"
       ]
+    },
+    "EnableMultiAZ": {
+      "Type": "String",
+      "Default": "false",
+      "Description": "Enable Multi-AZ deployment for RDS (recommended for production/HIPAA compliance)",
+      "AllowedValues": ["true", "false"]
     }
   },
   "Resources": {
@@ -76,21 +131,6 @@
         "Description": "Parse HIPAA Server - HIPAA compliant Parse Server with PostgreSQL"
       }
     },
-    "ParseHIPAAApplicationVersion": {
-      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
-      "Properties": {
-        "ApplicationName": {
-          "Ref": "ParseHIPAAApplication"
-        },
-        "Description": "Parse HIPAA Server Version",
-        "SourceBundle": {
-          "S3Bucket": {
-            "Fn::Sub": "elasticbeanstalk-samples-${AWS::Region}"
-          },
-          "S3Key": "parse-hipaa/parse-hipaa.zip"
-        }
-      }
-    },
     "ParseHIPAAConfigurationTemplate": {
       "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
       "Properties": {
@@ -98,7 +138,7 @@
           "Ref": "ParseHIPAAApplication"
         },
         "Description": "Parse HIPAA Configuration Template",
-        "SolutionStackName": "64bit Amazon Linux 2023 v4.3.0 running Docker",
+        "SolutionStackName": "64bit Amazon Linux 2023 running Docker",
         "OptionSettings": [
           {
             "Namespace": "aws:autoscaling:launchconfiguration",
@@ -125,7 +165,7 @@
           {
             "Namespace": "aws:rds:dbinstance",
             "OptionName": "DBEngineVersion",
-            "Value": "16.1"
+            "Value": "16"
           },
           {
             "Namespace": "aws:rds:dbinstance",
@@ -152,6 +192,13 @@
             }
           },
           {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "MultiAZDatabase",
+            "Value": {
+              "Ref": "EnableMultiAZ"
+            }
+          },
+          {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "PARSE_DASHBOARD_USERNAMES",
             "Value": {
@@ -160,8 +207,84 @@
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_USER_PASSWORDS",
+            "Value": {
+              "Ref": "DashboardPassword"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED",
+            "Value": "false"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_ALLOW_INSECURE_HTTP",
+            "Value": "1"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "PARSE_DASHBOARD_START",
             "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_APPLICATION_ID",
+            "Value": {
+              "Ref": "ParseServerApplicationId"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_PRIMARY_KEY",
+            "Value": {
+              "Ref": "ParseServerPrimaryKey"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_READ_ONLY_PRIMARY_KEY",
+            "Value": {
+              "Ref": "ParseServerReadOnlyPrimaryKey"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_MAINTENANCE_KEY",
+            "Value": {
+              "Ref": "ParseServerMaintenanceKey"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_WEBHOOK_KEY",
+            "Value": {
+              "Ref": "ParseServerWebhookKey"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_ENCRYPTION_KEY",
+            "Value": {
+              "Ref": "ParseServerEncryptionKey"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_COOKIE_SESSION_SECRET",
+            "Value": {
+              "Ref": "ParseDashboardCookieSessionSecret"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_MAINTENANCE_KEY_IPS",
+            "Value": "127.0.0.1, ::1"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_PRIMARY_KEY_IPS",
+            "Value": "127.0.0.1, ::1"
           },
           {
             "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
@@ -193,16 +316,13 @@
         "Description": "Parse HIPAA Server Environment",
         "TemplateName": {
           "Ref": "ParseHIPAAConfigurationTemplate"
-        },
-        "VersionLabel": {
-          "Ref": "ParseHIPAAApplicationVersion"
         }
       }
     }
   },
   "Outputs": {
     "ApplicationURL": {
-      "Description": "URL of the Parse HIPAA Server",
+      "Description": "URL of the Parse HIPAA Server (HTTP only - configure HTTPS for production)",
       "Value": {
         "Fn::GetAtt": [
           "ParseHIPAAEnvironment",
@@ -211,16 +331,24 @@
       }
     },
     "ParseServerURL": {
-      "Description": "Parse Server API endpoint",
+      "Description": "Parse Server API endpoint (HTTP only - configure HTTPS for production)",
       "Value": {
         "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/parse"
       }
     },
     "DashboardURL": {
-      "Description": "Parse Dashboard URL",
+      "Description": "Parse Dashboard URL (HTTP only - configure HTTPS for production)",
       "Value": {
         "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/dashboard"
       }
+    },
+    "DatabaseEndpoint": {
+      "Description": "RDS Database Endpoint (for manual PARSE_SERVER_DATABASE_URI configuration if needed)",
+      "Value": "Available via RDS_HOSTNAME environment variable in the application"
+    },
+    "SecurityNote": {
+      "Description": "IMPORTANT: For HIPAA compliance",
+      "Value": "This deployment uses HTTP. You MUST configure HTTPS/SSL, enable Multi-AZ RDS, use IAM roles for S3 access, and review AWS HIPAA compliance requirements before production use."
     }
   }
 }
