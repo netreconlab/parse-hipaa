@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Parse HIPAA Server on AWS Elastic Beanstalk - A Parse API server designed to support ParseCareKit based apps. NOTE: This template creates a basic deployment. For HIPAA compliance, you MUST configure HTTPS/SSL, enable Multi-AZ RDS, and review AWS HIPAA requirements.",
+  "Description": "Parse HIPAA Server on AWS Elastic Beanstalk - A Parse API server designed to support ParseCareKit based apps. NOTE: This template creates a basic deployment. For HIPAA compliance, you MUST configure HTTPS/SSL, enable Multi-AZ RDS, and review AWS HIPAA requirements. PREREQUISITE: The IAM role 'aws-elasticbeanstalk-ec2-role' must exist in your AWS account (typically created automatically on first Elastic Beanstalk use).",
   "Parameters": {
     "ApplicationName": {
       "Type": "String",
@@ -287,13 +287,6 @@
             "Value": "127.0.0.1, ::1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
           },
           {
-            "Namespace": "aws:elasticbeanstalk:application:environment",
-            "OptionName": "PARSE_SERVER_URL",
-            "Value": {
-              "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/parse"
-            }
-          },
-          {
             "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
             "OptionName": "StreamLogs",
             "Value": "true"
@@ -354,9 +347,9 @@
       "Value": "Available via RDS_HOSTNAME environment variable in the application"
     },
     "PostDeploymentSteps": {
-      "Description": "REQUIRED: Configure PARSE_SERVER_DATABASE_URI after deployment",
+      "Description": "REQUIRED: Configure database and server URL after deployment",
       "Value": {
-        "Fn::Sub": "Run: eb setenv PARSE_SERVER_DATABASE_URI='postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb' (Get RDS_HOSTNAME via 'eb printenv | grep RDS_HOSTNAME')"
+        "Fn::Sub": "1) Set DATABASE_URI: eb setenv PARSE_SERVER_DATABASE_URI='postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb' (Get RDS_HOSTNAME via 'eb printenv | grep RDS_HOSTNAME'). 2) Set SERVER_URL: eb setenv PARSE_SERVER_URL='http://${ParseHIPAAEnvironment.EndpointURL}/parse'"
       }
     },
     "SecurityNote": {

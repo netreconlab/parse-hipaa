@@ -149,23 +149,34 @@ Once you click the "Launch Stack" button above:
 
 **⚠️ REQUIRED POST-DEPLOYMENT STEPS:**
 
-After the CloudFormation stack completes, you MUST configure the database connection:
+After the CloudFormation stack completes, you MUST configure the database connection and server URL:
 
 ```bash
 # Install EB CLI if not already installed
 pip install awsebcli
 
-# Navigate to your project directory
+# Clone the repository if you haven't already
+git clone https://github.com/netreconlab/parse-hipaa.git
 cd parse-hipaa
 
-# Initialize EB CLI (use the same region as your CloudFormation stack)
-eb init --region YOUR_REGION
+# Initialize EB CLI for the application created by CloudFormation
+# Replace YOUR_REGION with the region where you deployed the CloudFormation stack
+eb init parse-hipaa --region YOUR_REGION
 
-# Get the RDS endpoint
+# Select the environment created by CloudFormation (default: parse-hipaa-env)
+# This will be prompted interactively, or you can use:
+eb use parse-hipaa-env
+
+# Get the RDS endpoint and application URL
 eb printenv | grep RDS_
+eb status
 
-# Set the database URI (replace YOUR_DB_PASSWORD and RDS_HOSTNAME with actual values)
+# Set the database URI (replace YOUR_DB_PASSWORD with the password from CloudFormation step 3)
+# Replace RDS_HOSTNAME with the value from the printenv output above
 eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb"
+
+# Set the Parse Server URL (replace YOUR_CNAME with the CNAME from 'eb status' output)
+eb setenv PARSE_SERVER_URL="http://YOUR_CNAME/parse"
 ```
 
 **Optional: Secure the dashboard password post-deployment**
@@ -277,14 +288,41 @@ The manual deployment provides better security by allowing you to hash passwords
 
 6. **Set required environment variables:**
    ```bash
+   # Generate security keys and save them securely
+   # IMPORTANT: Save these values in a secure password manager or secrets store
+   # You will need PARSE_SERVER_APPLICATION_ID for client applications
+   PARSE_SERVER_APPLICATION_ID=$(openssl rand -hex 32)
+   PARSE_SERVER_PRIMARY_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_READ_ONLY_PRIMARY_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_MAINTENANCE_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_WEBHOOK_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_ENCRYPTION_KEY=$(openssl rand -hex 32)
+   PARSE_DASHBOARD_COOKIE_SESSION_SECRET=$(openssl rand -hex 32)
+   
+   # Display keys for you to save (COPY THESE NOW!)
+   echo "================================================================="
+   echo "⚠️  SAVE THESE VALUES IN A SECURE LOCATION BEFORE CONTINUING ⚠️"
+   echo "================================================================="
+   echo "PARSE_SERVER_APPLICATION_ID: $PARSE_SERVER_APPLICATION_ID"
+   echo "PARSE_SERVER_PRIMARY_KEY: $PARSE_SERVER_PRIMARY_KEY"
+   echo "PARSE_SERVER_READ_ONLY_PRIMARY_KEY: $PARSE_SERVER_READ_ONLY_PRIMARY_KEY"
+   echo "PARSE_SERVER_MAINTENANCE_KEY: $PARSE_SERVER_MAINTENANCE_KEY"
+   echo "PARSE_SERVER_WEBHOOK_KEY: $PARSE_SERVER_WEBHOOK_KEY"
+   echo "PARSE_SERVER_ENCRYPTION_KEY: $PARSE_SERVER_ENCRYPTION_KEY"
+   echo "PARSE_DASHBOARD_COOKIE_SESSION_SECRET: $PARSE_DASHBOARD_COOKIE_SESSION_SECRET"
+   echo "================================================================="
+   echo "Press Enter after saving these values to continue..."
+   read
+   
+   # Set the environment variables
    eb setenv \
-     PARSE_SERVER_APPLICATION_ID=$(openssl rand -hex 32) \
-     PARSE_SERVER_PRIMARY_KEY=$(openssl rand -hex 32) \
-     PARSE_SERVER_READ_ONLY_PRIMARY_KEY=$(openssl rand -hex 32) \
-     PARSE_SERVER_MAINTENANCE_KEY=$(openssl rand -hex 32) \
-     PARSE_SERVER_WEBHOOK_KEY=$(openssl rand -hex 32) \
-     PARSE_SERVER_ENCRYPTION_KEY=$(openssl rand -hex 32) \
-     PARSE_DASHBOARD_COOKIE_SESSION_SECRET=$(openssl rand -hex 32)
+     PARSE_SERVER_APPLICATION_ID="$PARSE_SERVER_APPLICATION_ID" \
+     PARSE_SERVER_PRIMARY_KEY="$PARSE_SERVER_PRIMARY_KEY" \
+     PARSE_SERVER_READ_ONLY_PRIMARY_KEY="$PARSE_SERVER_READ_ONLY_PRIMARY_KEY" \
+     PARSE_SERVER_MAINTENANCE_KEY="$PARSE_SERVER_MAINTENANCE_KEY" \
+     PARSE_SERVER_WEBHOOK_KEY="$PARSE_SERVER_WEBHOOK_KEY" \
+     PARSE_SERVER_ENCRYPTION_KEY="$PARSE_SERVER_ENCRYPTION_KEY" \
+     PARSE_DASHBOARD_COOKIE_SESSION_SECRET="$PARSE_DASHBOARD_COOKIE_SESSION_SECRET"
    ```
 
 7. **Configure S3 file storage (optional but recommended for production):**
