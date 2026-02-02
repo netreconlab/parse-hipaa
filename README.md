@@ -130,6 +130,8 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
    
    Replace `YOUR_DB_PASSWORD` with a secure database password and `yourpassword` with your desired dashboard password. The command will hash the dashboard password automatically.
    
+   **Security Note:** For production environments, consider using AWS Secrets Manager to store the database password instead of passing it via command line. After creating the environment without the `--database.password` parameter, you can set the password through the AWS Console or use `eb setenv` with a value from Secrets Manager.
+   
    **Note:** This step will take several minutes as AWS provisions the RDS database.
 
 4. **Configure database connection:**
@@ -142,6 +144,8 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
    eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb"
    ```
    Replace `YOUR_DB_PASSWORD` with the password you set in step 3, and `RDS_HOSTNAME` with the value from `RDS_HOSTNAME` in the printenv output.
+   
+   **Security Note:** When using `eb setenv` with sensitive data, be aware that the values may be stored in shell history. Clear your shell history after running these commands or use `read -s` to prompt for passwords interactively. For production environments, use AWS Secrets Manager and reference secrets in your application code.
 
 5. **Set required environment variables:**
    ```bash
@@ -189,6 +193,9 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
   - Sign a Business Associate Agreement (BAA) with AWS
   - Enable encryption at rest for RDS
   - Enable VPC and security groups
+  - Use AWS Secrets Manager for storing sensitive credentials instead of environment variables
+  - Clear shell history after setting environment variables: `history -c && history -w`
+  - Regularly rotate encryption keys and passwords
 
 **Updating your deployment:**
 ```bash
