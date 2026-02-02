@@ -124,30 +124,67 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
    Select your desired region during initialization.
 
 3. **Create environment and deploy:**
+   
+   For testing/development:
    ```bash
-   eb create parse-hipaa-env --database.engine postgres --database.username parseuser --database.password YOUR_DB_PASSWORD --envvars PARSE_DASHBOARD_USERNAMES=admin,PARSE_DASHBOARD_USER_PASSWORDS=$(htpasswd -bnBC 10 "" yourpassword | tr -d ':\n')
+   eb create parse-hipaa-env --database.engine postgres --database.username parseuser
    ```
    
-   Replace `YOUR_DB_PASSWORD` with a secure database password and `yourpassword` with your desired dashboard password. The command will hash the dashboard password automatically.
+   You'll be prompted to enter a database password interactively (recommended).
    
-   **Security Note:** For production environments, consider using AWS Secrets Manager to store the database password instead of passing it via command line. After creating the environment without the `--database.password` parameter, you can set the password through the AWS Console or use `eb setenv` with a value from Secrets Manager.
+   Alternatively, for automated deployments (not recommended for production):
+   ```bash
+   eb create parse-hipaa-env --database.engine postgres --database.username parseuser --database.password YOUR_DB_PASSWORD
+   ```
    
    **Note:** This step will take several minutes as AWS provisions the RDS database.
 
-4. **Configure database connection:**
-   After the environment is created, get the RDS endpoint and set the database URI:
+4. **Set dashboard credentials:**
+   ```bash
+   # Generate a hashed password for the dashboard (replace 'yourpassword' with your desired password)
+   HASHED_PASSWORD=$(htpasswd -bnBC 10 "" 'yourpassword' | tr -d ':\n')
+   
+   # Set the dashboard credentials
+   eb setenv PARSE_DASHBOARD_USERNAMES=admin PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD"
+   
+   # Clear the variable from current session
+   unset HASHED_PASSWORD
+   ```
+   
+   **Security Note:** For production environments, consider using AWS Secrets Manager. After deployment, clear your shell history: `history -c && history -w`
+
+5. **Configure database connection:**
+   After the environment is created, get the RDS endpoint and construct the database URI:
    ```bash
    # Get RDS connection information
    eb printenv | grep RDS_
    
-   # Set the database URI (replace the values from the previous command)
-   eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb"
-   ```
-   Replace `YOUR_DB_PASSWORD` with the password you set in step 3, and `RDS_HOSTNAME` with the value from `RDS_HOSTNAME` in the printenv output.
+   # Securely read the database password (won't be displayed or stored in history)
+   read -s -p "Enter database password: " DB_PASSWORD
+   echo
    
-   **Security Note:** When using `eb setenv` with sensitive data, be aware that the values may be stored in shell history. Clear your shell history after running these commands or use `read -s` to prompt for passwords interactively. For production environments, use AWS Secrets Manager and reference secrets in your application code.
+   # Get the RDS hostname from environment
+   RDS_HOST=$(eb printenv | grep RDS_HOSTNAME | cut -d'=' -f2 | tr -d ' ')
+   
+   # Set the database URI
+   eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:${DB_PASSWORD}@${RDS_HOST}:5432/ebdb"
+   
+   # Clear variables
+   unset DB_PASSWORD RDS_HOST
+   ```
+   
+   **For production environments using AWS Secrets Manager:**
+   ```bash
+   # Store database password in Secrets Manager
+   aws secretsmanager create-secret \
+     --name parse-hipaa-db-password \
+     --secret-string "YOUR_DB_PASSWORD"
+   
+   # Modify your application to retrieve the secret at runtime
+   # See AWS Secrets Manager documentation for integration
+   ```
 
-5. **Set required environment variables:**
+6. **Set required environment variables:**
    ```bash
    eb setenv \
      PARSE_SERVER_APPLICATION_ID=$(openssl rand -hex 32) \
@@ -159,7 +196,7 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
      PARSE_DASHBOARD_COOKIE_SESSION_SECRET=$(openssl rand -hex 32)
    ```
 
-6. **Configure S3 file storage (optional but recommended for production):**
+7. **Configure S3 file storage (optional but recommended for production):**
    ```bash
    eb setenv \
      PARSE_SERVER_S3_BUCKET=your-bucket-name \
@@ -167,19 +204,19 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
      AWS_SECRET_ACCESS_KEY=your-secret-key
    ```
 
-7. **Get your application URL:**
+8. **Get your application URL:**
    ```bash
    eb status
    ```
    Look for the `CNAME` field - this is your application URL.
 
-8. **Set the Parse Server URL:**
+9. **Set the Parse Server URL:**
    ```bash
    eb setenv PARSE_SERVER_URL=http://YOUR_CNAME/parse
    ```
-   Replace `YOUR_CNAME` with the URL from step 7.
+   Replace `YOUR_CNAME` with the URL from step 8.
 
-9. **Access your Parse Server:**
+10. **Access your Parse Server:**
    - Parse Server API: `http://YOUR_CNAME/parse`
    - Parse Dashboard: `http://YOUR_CNAME/dashboard`
 
