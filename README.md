@@ -124,31 +124,28 @@ You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configura
    Select your desired region during initialization.
 
 3. **Create environment and deploy:**
-   
-   For testing/development:
    ```bash
    eb create parse-hipaa-env --database.engine postgres --database.username parseuser
    ```
    
-   You'll be prompted to enter a database password interactively (recommended).
-   
-   Alternatively, for automated deployments (not recommended for production):
-   ```bash
-   eb create parse-hipaa-env --database.engine postgres --database.username parseuser --database.password YOUR_DB_PASSWORD
-   ```
+   You'll be prompted to enter a database password interactively (recommended for security).
    
    **Note:** This step will take several minutes as AWS provisions the RDS database.
 
 4. **Set dashboard credentials:**
    ```bash
-   # Generate a hashed password for the dashboard (replace 'yourpassword' with your desired password)
-   HASHED_PASSWORD=$(htpasswd -bnBC 10 "" 'yourpassword' | tr -d ':\n')
+   # Read password securely (won't be displayed or stored in history)
+   read -s -p "Enter dashboard password: " DASHBOARD_PASSWORD
+   echo
+   
+   # Generate hashed password
+   HASHED_PASSWORD=$(htpasswd -bnBC 10 "" "$DASHBOARD_PASSWORD" | tr -d ':\n')
    
    # Set the dashboard credentials
    eb setenv PARSE_DASHBOARD_USERNAMES=admin PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD"
    
-   # Clear the variable from current session
-   unset HASHED_PASSWORD
+   # Clear the variables from current session
+   unset DASHBOARD_PASSWORD HASHED_PASSWORD
    ```
    
    **Security Note:** For production environments, consider using AWS Secrets Manager. After deployment, clear your shell history: `history -c && history -w`
