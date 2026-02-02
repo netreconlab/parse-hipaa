@@ -1,0 +1,226 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Parse HIPAA Server on AWS Elastic Beanstalk - A Parse API server designed to support ParseCareKit based apps",
+  "Parameters": {
+    "ApplicationName": {
+      "Type": "String",
+      "Default": "parse-hipaa",
+      "Description": "Name of the Elastic Beanstalk application",
+      "MinLength": "1",
+      "MaxLength": "100",
+      "AllowedPattern": "[a-zA-Z0-9-]+",
+      "ConstraintDescription": "Must contain only alphanumeric characters and hyphens"
+    },
+    "EnvironmentName": {
+      "Type": "String",
+      "Default": "parse-hipaa-env",
+      "Description": "Name of the Elastic Beanstalk environment",
+      "MinLength": "1",
+      "MaxLength": "40",
+      "AllowedPattern": "[a-zA-Z0-9-]+",
+      "ConstraintDescription": "Must contain only alphanumeric characters and hyphens"
+    },
+    "DatabasePassword": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Password for the RDS PostgreSQL database (minimum 8 characters)",
+      "MinLength": "8",
+      "MaxLength": "41",
+      "AllowedPattern": "[a-zA-Z0-9]*",
+      "ConstraintDescription": "Must contain only alphanumeric characters and be at least 8 characters"
+    },
+    "DashboardUsername": {
+      "Type": "String",
+      "Default": "admin",
+      "Description": "Username for Parse Dashboard login",
+      "MinLength": "1",
+      "MaxLength": "100"
+    },
+    "DashboardPassword": {
+      "Type": "String",
+      "NoEcho": true,
+      "Description": "Password for Parse Dashboard login (will be hashed)",
+      "MinLength": "8",
+      "MaxLength": "100"
+    },
+    "InstanceType": {
+      "Type": "String",
+      "Default": "t3.micro",
+      "Description": "EC2 instance type for the application",
+      "AllowedValues": [
+        "t3.micro",
+        "t3.small",
+        "t3.medium",
+        "t3.large"
+      ]
+    },
+    "DBInstanceClass": {
+      "Type": "String",
+      "Default": "db.t3.micro",
+      "Description": "RDS instance type for PostgreSQL database",
+      "AllowedValues": [
+        "db.t3.micro",
+        "db.t3.small",
+        "db.t3.medium",
+        "db.t3.large"
+      ]
+    }
+  },
+  "Resources": {
+    "ParseHIPAAApplication": {
+      "Type": "AWS::ElasticBeanstalk::Application",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ApplicationName"
+        },
+        "Description": "Parse HIPAA Server - HIPAA compliant Parse Server with PostgreSQL"
+      }
+    },
+    "ParseHIPAAApplicationVersion": {
+      "Type": "AWS::ElasticBeanstalk::ApplicationVersion",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ParseHIPAAApplication"
+        },
+        "Description": "Parse HIPAA Server Version",
+        "SourceBundle": {
+          "S3Bucket": {
+            "Fn::Sub": "elasticbeanstalk-samples-${AWS::Region}"
+          },
+          "S3Key": "parse-hipaa/parse-hipaa.zip"
+        }
+      }
+    },
+    "ParseHIPAAConfigurationTemplate": {
+      "Type": "AWS::ElasticBeanstalk::ConfigurationTemplate",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ParseHIPAAApplication"
+        },
+        "Description": "Parse HIPAA Configuration Template",
+        "SolutionStackName": "64bit Amazon Linux 2023 v4.3.0 running Docker",
+        "OptionSettings": [
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "InstanceType",
+            "Value": {
+              "Ref": "InstanceType"
+            }
+          },
+          {
+            "Namespace": "aws:autoscaling:launchconfiguration",
+            "OptionName": "IamInstanceProfile",
+            "Value": "aws-elasticbeanstalk-ec2-role"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:environment",
+            "OptionName": "EnvironmentType",
+            "Value": "SingleInstance"
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBEngine",
+            "Value": "postgres"
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBEngineVersion",
+            "Value": "16.1"
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBInstanceClass",
+            "Value": {
+              "Ref": "DBInstanceClass"
+            }
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBAllocatedStorage",
+            "Value": "20"
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBUser",
+            "Value": "parseuser"
+          },
+          {
+            "Namespace": "aws:rds:dbinstance",
+            "OptionName": "DBPassword",
+            "Value": {
+              "Ref": "DatabasePassword"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_USERNAMES",
+            "Value": {
+              "Ref": "DashboardUsername"
+            }
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_DASHBOARD_START",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+            "OptionName": "StreamLogs",
+            "Value": "true"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+            "OptionName": "DeleteOnTerminate",
+            "Value": "false"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+            "OptionName": "RetentionInDays",
+            "Value": "7"
+          }
+        ]
+      }
+    },
+    "ParseHIPAAEnvironment": {
+      "Type": "AWS::ElasticBeanstalk::Environment",
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "ParseHIPAAApplication"
+        },
+        "EnvironmentName": {
+          "Ref": "EnvironmentName"
+        },
+        "Description": "Parse HIPAA Server Environment",
+        "TemplateName": {
+          "Ref": "ParseHIPAAConfigurationTemplate"
+        },
+        "VersionLabel": {
+          "Ref": "ParseHIPAAApplicationVersion"
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ApplicationURL": {
+      "Description": "URL of the Parse HIPAA Server",
+      "Value": {
+        "Fn::GetAtt": [
+          "ParseHIPAAEnvironment",
+          "EndpointURL"
+        ]
+      }
+    },
+    "ParseServerURL": {
+      "Description": "Parse Server API endpoint",
+      "Value": {
+        "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/parse"
+      }
+    },
+    "DashboardURL": {
+      "Description": "Parse Dashboard URL",
+      "Value": {
+        "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/dashboard"
+      }
+    }
+  }
+}

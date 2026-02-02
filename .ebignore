@@ -23,6 +23,9 @@ heroku.yml
 app.json
 .slugignore
 
+# CloudFormation template (only for one-click deployment)
+cloudformation-template.json
+
 # Parse directory (using pre-built image)
 parse/
 

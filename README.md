@@ -102,7 +102,27 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 
 #### AWS Elastic Beanstalk
 
-You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configuration files. The deployment uses Docker and is configured to use AWS RDS PostgreSQL for the database, CloudWatch for logging, and includes all the environment variables from the Heroku deployment.
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=parse-hipaa&templateURL=https://raw.githubusercontent.com/netreconlab/parse-hipaa/main/cloudformation-template.json)
+
+You can use the one-click deployment button above to quickly deploy to AWS Elastic Beanstalk using CloudFormation. Alternatively, you can deploy manually using the provided configuration files below. The deployment uses Docker and is configured to use AWS RDS PostgreSQL for the database, CloudWatch for logging, and includes all the environment variables from the Heroku deployment.
+
+**One-Click Deployment Instructions:**
+
+Once you click the "Launch Stack" button above:
+1. Review the CloudFormation template parameters
+2. Set your **DatabasePassword** (minimum 8 characters, alphanumeric)
+3. Set your **DashboardPassword** for Parse Dashboard access
+4. Optionally customize the **ApplicationName**, **EnvironmentName**, and instance types
+5. Click **Create Stack** to deploy
+6. Wait for the stack creation to complete (typically 10-15 minutes)
+7. Find your application URL in the **Outputs** tab of the CloudFormation stack
+8. Access Parse Server at `http://YOUR_URL/parse` and Parse Dashboard at `http://YOUR_URL/dashboard`
+
+**Important:** After deployment, you'll need to configure additional environment variables (like PARSE_SERVER_APPLICATION_ID, PARSE_SERVER_PRIMARY_KEY, etc.) through the Elastic Beanstalk console or using the EB CLI as described in the manual deployment steps below.
+
+**Manual Deployment:**
+
+You can also deploy parse-hipaa manually to AWS Elastic Beanstalk using the provided configuration files below.
 
 **Prerequisites:**
 - AWS Account with appropriate permissions
