@@ -1,0 +1,14 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "netreconlab/parse-hipaa:main-dashboard",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 1337,
+      "HostPort": 80
+    }
+  ],
+  "Logging": "/var/log/parse-hipaa"
+}

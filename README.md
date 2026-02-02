@@ -100,6 +100,104 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 3. You can now edit `parse/index.js` and `parse/cloud` as you wish
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
+#### AWS Elastic Beanstalk
+
+You can deploy parse-hipaa to AWS Elastic Beanstalk using the provided configuration files. The deployment uses Docker and is configured to use AWS RDS PostgreSQL for the database, CloudWatch for logging, and includes all the environment variables from the Heroku deployment.
+
+**Prerequisites:**
+- AWS Account with appropriate permissions
+- [AWS CLI](https://aws.amazon.com/cli/) installed and configured
+- [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html) installed
+
+**Deployment Steps:**
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/netreconlab/parse-hipaa.git
+   cd parse-hipaa
+   ```
+
+2. **Initialize Elastic Beanstalk:**
+   ```bash
+   eb init -p docker parse-hipaa --region us-east-2
+   ```
+   Select your desired region during initialization.
+
+3. **Create environment and deploy:**
+   ```bash
+   eb create parse-hipaa-env --database.engine postgres --database.username parseuser --envvars PARSE_DASHBOARD_USERNAMES=admin,PARSE_DASHBOARD_USER_PASSWORDS=$(htpasswd -bnBC 10 "" yourpassword | tr -d ':\n')
+   ```
+   
+   Replace `yourpassword` with your desired dashboard password. The command will hash it automatically.
+
+4. **Set required environment variables:**
+   ```bash
+   eb setenv \
+     PARSE_SERVER_APPLICATION_ID=$(openssl rand -hex 32) \
+     PARSE_SERVER_PRIMARY_KEY=$(openssl rand -hex 32) \
+     PARSE_SERVER_READ_ONLY_PRIMARY_KEY=$(openssl rand -hex 32) \
+     PARSE_SERVER_MAINTENANCE_KEY=$(openssl rand -hex 32) \
+     PARSE_SERVER_WEBHOOK_KEY=$(openssl rand -hex 32) \
+     PARSE_SERVER_ENCRYPTION_KEY=$(openssl rand -hex 32) \
+     PARSE_DASHBOARD_COOKIE_SESSION_SECRET=$(openssl rand -hex 32)
+   ```
+
+5. **Configure S3 file storage (optional but recommended for production):**
+   ```bash
+   eb setenv \
+     PARSE_SERVER_S3_BUCKET=your-bucket-name \
+     AWS_ACCESS_KEY_ID=your-access-key \
+     AWS_SECRET_ACCESS_KEY=your-secret-key
+   ```
+
+6. **Get your application URL:**
+   ```bash
+   eb status
+   ```
+   Look for the `CNAME` field - this is your application URL.
+
+7. **Set the Parse Server URL:**
+   ```bash
+   eb setenv PARSE_SERVER_URL=http://YOUR_CNAME/parse
+   ```
+   Replace `YOUR_CNAME` with the URL from step 6.
+
+8. **Access your Parse Server:**
+   - Parse Server API: `http://YOUR_CNAME/parse`
+   - Parse Dashboard: `http://YOUR_CNAME/dashboard`
+
+**Important Security Notes:**
+
+- The default configuration creates a single-instance environment. For production/HIPAA compliance, you should:
+  - Enable HTTPS/SSL certificates
+  - Configure a load balancer
+  - Enable Multi-AZ RDS deployment
+  - Review and comply with [AWS HIPAA compliance requirements](https://aws.amazon.com/compliance/hipaa-compliance/)
+  - Sign a Business Associate Agreement (BAA) with AWS
+  - Enable encryption at rest for RDS
+  - Enable VPC and security groups
+
+**Updating your deployment:**
+```bash
+git pull origin main
+eb deploy
+```
+
+**Monitoring and Logs:**
+- View logs: `eb logs`
+- View real-time logs: `eb logs --stream`
+- CloudWatch logs are enabled by default
+
+**Additional Configuration:**
+
+The deployment includes configurations in `.ebextensions/` directory:
+- `01_environment.config` - Application environment variables
+- `02_database.config` - RDS PostgreSQL configuration
+- `03_logs.config` - CloudWatch logging configuration
+- `04_container.config` - Docker container settings
+
+You can modify these files to customize your deployment.
+
 ### Local: Using Docker Image with Postgres or Mongo
 By default, the `docker-compose.yml` uses [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres/). The `docker-compose.mongo.yml` uses [hipaa-mongo](https://github.com/netreconlab/hipaa-mongo/). 
 
