@@ -26,7 +26,7 @@
       "Description": "Password for the RDS PostgreSQL database (minimum 8 characters)",
       "MinLength": "8",
       "MaxLength": "41",
-      "AllowedPattern": "[a-zA-Z0-9!@#$%^&*()_+=-]*",
+      "AllowedPattern": "[a-zA-Z0-9!@#$%^&*()_+=-]+",
       "ConstraintDescription": "Must be at least 8 characters with alphanumeric and special characters"
     },
     "DashboardUsername": {
@@ -39,7 +39,7 @@
     "DashboardPassword": {
       "Type": "String",
       "NoEcho": true,
-      "Description": "Password for Parse Dashboard login (minimum 8 characters, will be bcrypt hashed)",
+      "Description": "Password for Parse Dashboard login (minimum 8 characters) - stored as plain text",
       "MinLength": "8",
       "MaxLength": "100"
     },
@@ -279,12 +279,19 @@
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "PARSE_SERVER_MAINTENANCE_KEY_IPS",
-            "Value": "127.0.0.1, ::1"
+            "Value": "127.0.0.1, ::1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
           },
           {
             "Namespace": "aws:elasticbeanstalk:application:environment",
             "OptionName": "PARSE_SERVER_PRIMARY_KEY_IPS",
-            "Value": "127.0.0.1, ::1"
+            "Value": "127.0.0.1, ::1, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16"
+          },
+          {
+            "Namespace": "aws:elasticbeanstalk:application:environment",
+            "OptionName": "PARSE_SERVER_URL",
+            "Value": {
+              "Fn::Sub": "http://${ParseHIPAAEnvironment.EndpointURL}/parse"
+            }
           },
           {
             "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
@@ -346,9 +353,15 @@
       "Description": "RDS Database Endpoint (for manual PARSE_SERVER_DATABASE_URI configuration if needed)",
       "Value": "Available via RDS_HOSTNAME environment variable in the application"
     },
+    "PostDeploymentSteps": {
+      "Description": "REQUIRED: Configure PARSE_SERVER_DATABASE_URI after deployment",
+      "Value": {
+        "Fn::Sub": "Run: eb setenv PARSE_SERVER_DATABASE_URI='postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb' (Get RDS_HOSTNAME via 'eb printenv | grep RDS_HOSTNAME')"
+      }
+    },
     "SecurityNote": {
       "Description": "IMPORTANT: For HIPAA compliance",
-      "Value": "This deployment uses HTTP. You MUST configure HTTPS/SSL, enable Multi-AZ RDS, use IAM roles for S3 access, and review AWS HIPAA compliance requirements before production use."
+      "Value": "This deployment uses HTTP and stores credentials as plain text environment variables. You MUST configure HTTPS/SSL, enable Multi-AZ RDS, use AWS Secrets Manager for credentials, and review AWS HIPAA compliance requirements before production use."
     }
   }
 }

@@ -106,20 +106,31 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 
 **One-Click CloudFormation Deployment:**
 
+**⚠️ IMPORTANT:** This one-click deployment is for testing/development only. For production use, follow the manual deployment method below for better security and control.
+
 Generate your security keys first (save these securely):
 ```bash
-openssl rand -hex 32  # Run this 7 times for each required key
+# Generate all 7 required keys at once
+echo "ParseServerApplicationId: $(openssl rand -hex 32)"
+echo "ParseServerPrimaryKey: $(openssl rand -hex 32)"
+echo "ParseServerReadOnlyPrimaryKey: $(openssl rand -hex 32)"
+echo "ParseServerMaintenanceKey: $(openssl rand -hex 32)"
+echo "ParseServerWebhookKey: $(openssl rand -hex 32)"
+echo "ParseServerEncryptionKey: $(openssl rand -hex 32)"
+echo "ParseDashboardCookieSessionSecret: $(openssl rand -hex 32)"
 ```
 
 Then click the button to deploy:
 
 [![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=parse-hipaa&templateURL=https://raw.githubusercontent.com/netreconlab/parse-hipaa/main/cloudformation-template.json)
 
+**Note:** The CloudFormation template URL points to the main branch. For production deployments, download the template locally and upload it to your own S3 bucket to ensure version stability.
+
 **One-Click Deployment Instructions:**
 
 Once you click the "Launch Stack" button above:
 1. Review the CloudFormation template parameters
-2. Generate 7 security keys using `openssl rand -hex 32` and paste them into the corresponding parameters:
+2. Paste the 7 security keys you generated above into the corresponding parameters:
    - ParseServerApplicationId
    - ParseServerPrimaryKey  
    - ParseServerReadOnlyPrimaryKey
@@ -128,7 +139,7 @@ Once you click the "Launch Stack" button above:
    - ParseServerEncryptionKey
    - ParseDashboardCookieSessionSecret
 3. Set your **DatabasePassword** (minimum 8 characters, use letters, numbers, and special characters)
-4. Set your **DashboardPassword** for Parse Dashboard access (plain text - will NOT be hashed by CloudFormation)
+4. Set your **DashboardPassword** for Parse Dashboard access (⚠️ stored as **plain text** - not bcrypt hashed)
 5. Optionally customize the **ApplicationName**, **EnvironmentName**, and instance types
 6. For production, set **EnableMultiAZ** to "true" for high availability
 7. Click **Create Stack** to deploy
@@ -136,10 +147,50 @@ Once you click the "Launch Stack" button above:
 9. Find your application URL in the **Outputs** tab of the CloudFormation stack
 10. Access Parse Server at `http://YOUR_URL/parse` and Parse Dashboard at `http://YOUR_URL/dashboard`
 
+**⚠️ REQUIRED POST-DEPLOYMENT STEPS:**
+
+After the CloudFormation stack completes, you MUST configure the database connection:
+
+```bash
+# Install EB CLI if not already installed
+pip install awsebcli
+
+# Navigate to your project directory
+cd parse-hipaa
+
+# Initialize EB CLI (use the same region as your CloudFormation stack)
+eb init --region YOUR_REGION
+
+# Get the RDS endpoint
+eb printenv | grep RDS_
+
+# Set the database URI (replace YOUR_DB_PASSWORD and RDS_HOSTNAME with actual values)
+eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb"
+```
+
+**Optional: Secure the dashboard password post-deployment**
+```bash
+# Generate a bcrypt hash of your password
+HASHED_PASSWORD=$(htpasswd -bnBC 10 "" "your-password" | tr -d ':\n')
+
+# Update the environment to use the hashed password
+eb setenv PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD" PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true
+```
+
 **⚠️ CRITICAL SECURITY NOTES:**
 - The deployment uses HTTP by default. You MUST configure HTTPS/SSL before exposing to the internet
-- Configure an Application Load Balancer with SSL certificate for HTTPS
+- The CloudFormation stack creates a **SingleInstance** Elastic Beanstalk environment (no load balancer by default)
+- **For HTTPS with Load Balancer:**
+  1. Convert the environment type to *LoadBalanced* in Elastic Beanstalk Configuration
+  2. Configure an **Application Load Balancer** with an SSL certificate from AWS Certificate Manager
+  3. Add HTTPS listener on port 443
+  4. Update security groups to allow HTTPS traffic
+  5. Set `PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=0` after SSL is configured
+- **For HTTPS without Load Balancer (single instance):**
+  1. Follow the [Nginx + Let's Encrypt instructions](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) from the main documentation
+  2. Configure Nginx to terminate SSL in front of the parse-hipaa container
 - The dashboard password is stored as plain text (not bcrypt hashed) when using CloudFormation
+- Sensitive credentials are stored as plain text environment variables - for HIPAA compliance, migrate to AWS Secrets Manager
 - For HIPAA compliance: enable Multi-AZ RDS, configure SSL, review AWS HIPAA requirements, and sign a BAA with AWS
 
 **Manual Deployment (Recommended for Production):**
@@ -185,7 +236,7 @@ The manual deployment provides better security by allowing you to hash passwords
    HASHED_PASSWORD=$(htpasswd -bnBC 10 "" "$DASHBOARD_PASSWORD" | tr -d ':\n')
    
    # Set the dashboard credentials
-   eb setenv PARSE_DASHBOARD_USERNAMES=admin PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD"
+   eb setenv PARSE_DASHBOARD_USERNAMES=admin PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD" PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true
    
    # Clear the variables from current session
    unset DASHBOARD_PASSWORD HASHED_PASSWORD

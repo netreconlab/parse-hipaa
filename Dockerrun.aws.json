@@ -10,5 +10,6 @@
       "HostPort": 80
     }
   ],
-  "Logging": "/var/log/parse-hipaa"
+  "Logging": "/var/log/parse-hipaa",
+  "Comment": "NOTE: This uses the 'main' tag which points to the latest code. For production, consider using a specific version tag (e.g., 'x.x.x' or 'x.x.x-dashboard') for consistency and rollback capability. Port 80 is for HTTP only - configure HTTPS via load balancer for production."
 }
