@@ -1,0 +1,44 @@
+# Elastic Beanstalk ignore file
+# Files and directories to exclude from the application source bundle
+
+# Git
+.git
+.gitignore
+.github
+
+# Docker compose files (not needed for EB deployment)
+docker-compose*.yml
+singularity-compose.yml
+
+# Local environment files
+.env
+dashboard.env
+general.env
+
+# Documentation
+README.md
+
+# Heroku specific files
+heroku.yml
+app.json
+.slugignore
+
+# CloudFormation template (only for one-click deployment)
+cloudformation-template.json
+
+# Parse directory (using pre-built image)
+parse/
+
+# Scripts (not needed since using pre-built image)
+scripts/
+
+# Nginx (not needed for EB Docker deployment)
+nginx/
+
+# Singularity
+Singularity
+
+# Build artifacts and logs
+logs/
+*.log
+node_modules/

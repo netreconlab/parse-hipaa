@@ -1,0 +1,15 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "netreconlab/parse-hipaa:main-dashboard",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": 1337,
+      "HostPort": 80
+    }
+  ],
+  "Logging": "/var/log/parse-hipaa",
+  "Comment": "NOTE: This uses the 'main-dashboard' tag, which points to the latest code that includes the Parse Dashboard. For production, consider using a specific version tag (e.g., 'x.x.x' or 'x.x.x-dashboard') for consistency and rollback capability. Port 80 is for HTTP only - configure HTTPS via load balancer for production."
+}

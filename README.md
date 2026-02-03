@@ -100,6 +100,325 @@ You can use the one-button-click deployment to quickly deploy to Heroko. **Note 
 3. You can now edit `parse/index.js` and `parse/cloud` as you wish
 4. You can then follow the directions on heroku's site for [deployment](https://devcenter.heroku.com/articles/git) and [integration](https://devcenter.heroku.com/articles/github-integration)
 
+#### AWS Elastic Beanstalk
+
+**⚠️ IMPORTANT NOTE:** The CloudFormation one-click deployment below requires you to generate and provide security keys during setup. See the parameter descriptions in the deployment wizard. For production/HIPAA compliance, you MUST configure HTTPS/SSL after deployment.
+
+**One-Click CloudFormation Deployment:**
+
+**⚠️ IMPORTANT:** This one-click deployment is for testing/development only. For production use, follow the manual deployment method below for better security and control.
+
+Generate your security keys first (save these securely):
+```bash
+# Generate all 7 required keys at once
+echo "ParseServerApplicationId: $(openssl rand -hex 32)"
+echo "ParseServerPrimaryKey: $(openssl rand -hex 32)"
+echo "ParseServerReadOnlyPrimaryKey: $(openssl rand -hex 32)"
+echo "ParseServerMaintenanceKey: $(openssl rand -hex 32)"
+echo "ParseServerWebhookKey: $(openssl rand -hex 32)"
+echo "ParseServerEncryptionKey: $(openssl rand -hex 32)"
+echo "ParseDashboardCookieSessionSecret: $(openssl rand -hex 32)"
+```
+
+Then click the button to deploy:
+
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/create/review?stackName=parse-hipaa&templateURL=https://raw.githubusercontent.com/netreconlab/parse-hipaa/main/cloudformation-template.json)
+
+**Note:** The CloudFormation template URL points to the main branch. For production deployments, download the template locally and upload it to your own S3 bucket to ensure version stability.
+
+**One-Click Deployment Instructions:**
+
+Once you click the "Launch Stack" button above:
+1. Review the CloudFormation template parameters
+2. Paste the 7 security keys you generated above into the corresponding parameters:
+   - ParseServerApplicationId
+   - ParseServerPrimaryKey  
+   - ParseServerReadOnlyPrimaryKey
+   - ParseServerMaintenanceKey
+   - ParseServerWebhookKey
+   - ParseServerEncryptionKey
+   - ParseDashboardCookieSessionSecret
+3. Set your **DatabasePassword** (minimum 8 characters, use letters, numbers, and special characters)
+4. Set your **DashboardPassword** for Parse Dashboard access (⚠️ stored as **plain text** - not bcrypt hashed)
+5. Optionally customize the **ApplicationName**, **EnvironmentName**, and instance types
+6. For production, set **EnableMultiAZ** to "true" for high availability
+7. Click **Create Stack** to deploy
+8. Wait for the stack creation to complete (typically 15-20 minutes)
+9. Find your application URL in the **Outputs** tab of the CloudFormation stack
+10. Access Parse Server at `http://YOUR_URL/parse` and Parse Dashboard at `http://YOUR_URL/dashboard`
+
+**⚠️ REQUIRED POST-DEPLOYMENT STEPS:**
+
+After the CloudFormation stack completes, you MUST configure the database connection and server URL:
+
+```bash
+# Install EB CLI if not already installed
+pip install awsebcli
+
+# Clone the repository if you haven't already
+git clone https://github.com/netreconlab/parse-hipaa.git
+cd parse-hipaa
+
+# Initialize EB CLI for the application created by CloudFormation
+# Replace YOUR_REGION with the region where you deployed the CloudFormation stack
+eb init -p docker parse-hipaa --region YOUR_REGION
+
+# Select the environment created by CloudFormation (default: parse-hipaa-env)
+# This will be prompted interactively, or you can use:
+eb use parse-hipaa-env
+
+# Get the RDS endpoint and application URL
+eb printenv | grep RDS_
+eb status
+
+# Set the database URI (replace YOUR_DB_PASSWORD with the password from CloudFormation step 3)
+# Replace RDS_HOSTNAME with the value from the printenv output above
+eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:YOUR_DB_PASSWORD@RDS_HOSTNAME:5432/ebdb"
+
+# Set the Parse Server URL (replace YOUR_CNAME with the CNAME from 'eb status' output)
+eb setenv PARSE_SERVER_URL="http://YOUR_CNAME/parse"
+```
+
+**Optional: Secure the dashboard password post-deployment**
+```bash
+# Generate a bcrypt hash of your password
+HASHED_PASSWORD=$(htpasswd -bnBC 10 "" "your-password" | tr -d ':\n')
+
+# Update the environment to use the hashed password
+eb setenv PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD" PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true
+```
+
+**⚠️ CRITICAL SECURITY NOTES:**
+- The deployment uses HTTP by default. You MUST configure HTTPS/SSL before exposing to the internet
+- The CloudFormation stack creates a **SingleInstance** Elastic Beanstalk environment (no load balancer by default)
+- **For HTTPS with Load Balancer:**
+  1. Convert the environment type to *LoadBalanced* in Elastic Beanstalk Configuration
+  2. Configure an **Application Load Balancer** with an SSL certificate from AWS Certificate Manager
+  3. Add HTTPS listener on port 443
+  4. Update security groups to allow HTTPS traffic
+  5. Set `PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=0` after SSL is configured
+- **For HTTPS without Load Balancer (single instance):**
+  1. Follow the [Nginx + Let's Encrypt instructions](https://github.com/netreconlab/parse-hipaa#deploying-on-a-real-system) from the main documentation
+  2. Configure Nginx to terminate SSL in front of the parse-hipaa container
+- The dashboard password is stored as plain text (not bcrypt hashed) when using CloudFormation
+- Sensitive credentials are stored as plain text environment variables - for HIPAA compliance, migrate to AWS Secrets Manager
+- For HIPAA compliance: enable Multi-AZ RDS, configure SSL, review AWS HIPAA requirements, and sign a BAA with AWS
+
+**Manual Deployment (Recommended for Production):**
+
+The manual deployment provides better security by allowing you to hash passwords and configure settings step-by-step.
+
+**Prerequisites:**
+- AWS Account with appropriate permissions
+- [AWS CLI](https://aws.amazon.com/cli/) installed and configured
+- [EB CLI](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html) installed
+- `apache2-utils` (Debian/Ubuntu) or `httpd-tools` (RHEL/CentOS) for `htpasswd` command
+
+**Deployment Steps:**
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/netreconlab/parse-hipaa.git
+   cd parse-hipaa
+   ```
+
+2. **Initialize Elastic Beanstalk:**
+   ```bash
+   eb init -p docker parse-hipaa --region us-east-2
+   ```
+   Select your desired region during initialization.
+
+3. **Create environment and deploy:**
+   ```bash
+   eb create parse-hipaa-env --database.engine postgres --database.username parseuser
+   ```
+   
+   You'll be prompted to enter a database password interactively (recommended for security).
+   
+   **Note:** This step will take several minutes as AWS provisions the RDS database.
+
+4. **Set dashboard credentials:**
+   ```bash
+   # Read password securely (won't be displayed or stored in history)
+   read -s -p "Enter dashboard password: " DASHBOARD_PASSWORD
+   echo
+   
+   # Generate hashed password
+   HASHED_PASSWORD=$(htpasswd -bnBC 10 "" "$DASHBOARD_PASSWORD" | tr -d ':\n')
+   
+   # Set the dashboard credentials
+   eb setenv PARSE_DASHBOARD_USERNAMES=admin PARSE_DASHBOARD_USER_PASSWORDS="$HASHED_PASSWORD" PARSE_DASHBOARD_USER_PASSWORD_ENCRYPTED=true
+   
+   # Clear the variables from current session
+   unset DASHBOARD_PASSWORD HASHED_PASSWORD
+   ```
+   
+   **Security Note:** For production environments, consider using AWS Secrets Manager. After deployment, clear your shell history: `history -c && history -w`
+
+5. **Configure database connection:**
+   After the environment is created, get the RDS endpoint and construct the database URI:
+   ```bash
+   # Get RDS connection information
+   eb printenv | grep RDS_
+   
+   # Securely read the database password (won't be displayed or stored in history)
+   read -s -p "Enter database password: " DB_PASSWORD
+   echo
+   
+   # Get the RDS hostname from environment
+   RDS_HOST=$(eb printenv | grep RDS_HOSTNAME | cut -d'=' -f2 | tr -d ' ')
+   
+   # Set the database URI
+   eb setenv PARSE_SERVER_DATABASE_URI="postgres://parseuser:${DB_PASSWORD}@${RDS_HOST}:5432/ebdb"
+   
+   # Clear variables
+   unset DB_PASSWORD RDS_HOST
+   ```
+   
+   **For production environments using AWS Secrets Manager:**
+   ```bash
+   # Store database password in Secrets Manager
+   aws secretsmanager create-secret \
+     --name parse-hipaa-db-password \
+     --secret-string "YOUR_DB_PASSWORD"
+   
+   # Modify your application to retrieve the secret at runtime
+   # See AWS Secrets Manager documentation for integration
+   ```
+
+6. **Set required environment variables:**
+   ```bash
+   # Generate security keys and save them securely
+   # IMPORTANT: Save these values in a secure password manager or secrets store
+   # You will need PARSE_SERVER_APPLICATION_ID for client applications
+   PARSE_SERVER_APPLICATION_ID=$(openssl rand -hex 32)
+   PARSE_SERVER_PRIMARY_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_READ_ONLY_PRIMARY_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_MAINTENANCE_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_WEBHOOK_KEY=$(openssl rand -hex 32)
+   PARSE_SERVER_ENCRYPTION_KEY=$(openssl rand -hex 32)
+   PARSE_DASHBOARD_COOKIE_SESSION_SECRET=$(openssl rand -hex 32)
+   
+   # Display keys for you to save (COPY THESE NOW!)
+   echo "================================================================="
+   echo "⚠️  SAVE THESE VALUES IN A SECURE LOCATION BEFORE CONTINUING ⚠️"
+   echo "================================================================="
+   echo "PARSE_SERVER_APPLICATION_ID: $PARSE_SERVER_APPLICATION_ID"
+   echo "PARSE_SERVER_PRIMARY_KEY: $PARSE_SERVER_PRIMARY_KEY"
+   echo "PARSE_SERVER_READ_ONLY_PRIMARY_KEY: $PARSE_SERVER_READ_ONLY_PRIMARY_KEY"
+   echo "PARSE_SERVER_MAINTENANCE_KEY: $PARSE_SERVER_MAINTENANCE_KEY"
+   echo "PARSE_SERVER_WEBHOOK_KEY: $PARSE_SERVER_WEBHOOK_KEY"
+   echo "PARSE_SERVER_ENCRYPTION_KEY: $PARSE_SERVER_ENCRYPTION_KEY"
+   echo "PARSE_DASHBOARD_COOKIE_SESSION_SECRET: $PARSE_DASHBOARD_COOKIE_SESSION_SECRET"
+   echo "================================================================="
+   echo "Press Enter after saving these values to continue..."
+   read
+   
+   # Set the environment variables
+   eb setenv \
+     PARSE_SERVER_APPLICATION_ID="$PARSE_SERVER_APPLICATION_ID" \
+     PARSE_SERVER_PRIMARY_KEY="$PARSE_SERVER_PRIMARY_KEY" \
+     PARSE_SERVER_READ_ONLY_PRIMARY_KEY="$PARSE_SERVER_READ_ONLY_PRIMARY_KEY" \
+     PARSE_SERVER_MAINTENANCE_KEY="$PARSE_SERVER_MAINTENANCE_KEY" \
+     PARSE_SERVER_WEBHOOK_KEY="$PARSE_SERVER_WEBHOOK_KEY" \
+     PARSE_SERVER_ENCRYPTION_KEY="$PARSE_SERVER_ENCRYPTION_KEY" \
+     PARSE_DASHBOARD_COOKIE_SESSION_SECRET="$PARSE_DASHBOARD_COOKIE_SESSION_SECRET"
+   ```
+
+7. **Configure S3 file storage (optional but recommended for production):**
+   
+   **RECOMMENDED: Use IAM Instance Profile (no credentials needed):**
+   ```bash
+   # Set only the bucket name - no AWS keys needed
+   eb setenv PARSE_SERVER_S3_BUCKET=your-bucket-name
+   ```
+   
+   Then attach an IAM instance profile with S3 permissions to your Elastic Beanstalk environment:
+   - Go to the Elastic Beanstalk console
+   - Select your environment → Configuration → Security
+   - Attach an IAM instance profile with permissions to access your S3 bucket
+   - The application will automatically use the instance profile credentials
+   
+   **NOT RECOMMENDED: Using AWS Access Keys (insecure for HIPAA):**
+   ```bash
+   # Only use this for testing - NOT for production/HIPAA environments
+   eb setenv \
+     PARSE_SERVER_S3_BUCKET=your-bucket-name \
+     AWS_ACCESS_KEY_ID=your-access-key \
+     AWS_SECRET_ACCESS_KEY=your-secret-key
+   ```
+
+8. **Get your application URL:**
+   ```bash
+   eb status
+   ```
+   Look for the `CNAME` field - this is your application URL.
+
+9. **Set the Parse Server URL:**
+   ```bash
+   # For testing/development (HTTP):
+   eb setenv PARSE_SERVER_URL=http://YOUR_CNAME/parse
+   
+   # For production (HTTPS - configure SSL first):
+   eb setenv PARSE_SERVER_URL=https://YOUR_CNAME/parse
+   ```
+   Replace `YOUR_CNAME` with the URL from step 8.
+
+10. **Access your Parse Server:**
+   
+   **For testing/development (HTTP):**
+   - Parse Server API: `http://YOUR_CNAME/parse`
+   - Parse Dashboard: `http://YOUR_CNAME/dashboard`
+   
+   **⚠️ For production (configure HTTPS first):**
+   - Parse Server API: `https://YOUR_CNAME/parse`
+   - Parse Dashboard: `https://YOUR_CNAME/dashboard`
+   
+   **To configure HTTPS/SSL:**
+   1. Request or upload an SSL certificate in AWS Certificate Manager
+   2. Configure a load balancer for your Elastic Beanstalk environment
+   3. Add HTTPS listener on port 443 with your SSL certificate
+   4. Update security groups to allow HTTPS traffic
+   5. Set PARSE_DASHBOARD_ALLOW_INSECURE_HTTP=0 after SSL is configured
+
+**Important Security Notes:**
+
+- **⚠️ CRITICAL:** The default configuration uses HTTP which is NOT secure. You MUST configure HTTPS/SSL before production use or exposing to the internet.
+- The default configuration creates a single-instance environment. For production/HIPAA compliance, you should:
+  - **Configure HTTPS/SSL certificates (REQUIRED for HIPAA)**
+  - Configure a load balancer with SSL termination
+  - Enable Multi-AZ RDS deployment for high availability
+  - Review and comply with [AWS HIPAA compliance requirements](https://aws.amazon.com/compliance/hipaa-compliance/)
+  - Sign a Business Associate Agreement (BAA) with AWS
+  - Enable encryption at rest for RDS
+  - Enable VPC and security groups to restrict access
+  - Use IAM instance profiles instead of AWS access keys for S3
+  - Use AWS Secrets Manager for storing sensitive credentials instead of environment variables
+  - Restrict PARSE_SERVER_MAINTENANCE_KEY_IPS and PARSE_SERVER_PRIMARY_KEY_IPS to trusted networks only
+  - Clear shell history after setting environment variables: `history -c && history -w`
+  - Regularly rotate encryption keys and passwords
+
+**Updating your deployment:**
+```bash
+git pull origin main
+eb deploy
+```
+
+**Monitoring and Logs:**
+- View logs: `eb logs`
+- View real-time logs: `eb logs --stream`
+- CloudWatch logs are enabled by default
+
+**Additional Configuration:**
+
+The deployment includes configurations in `.ebextensions/` directory:
+- `01_environment.config` - Application environment variables
+- `02_database.config` - RDS PostgreSQL configuration
+- `03_logs.config` - CloudWatch logging configuration
+- `04_container.config` - Docker container settings
+
+You can modify these files to customize your deployment.
+
 ### Local: Using Docker Image with Postgres or Mongo
 By default, the `docker-compose.yml` uses [hipaa-postgres](https://github.com/netreconlab/hipaa-postgres/). The `docker-compose.mongo.yml` uses [hipaa-mongo](https://github.com/netreconlab/hipaa-mongo/). 
 
