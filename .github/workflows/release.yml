@@ -5,7 +5,7 @@ on:
     tags: [ '*.*.*', '*.*.*-*' ]
 
 env:
-  LATEST: '9.9.0'
+  LATEST: '9.10.0'
   REGISTRY: docker.io
   IMAGE_NAME: ${{ github.repository }}
 
